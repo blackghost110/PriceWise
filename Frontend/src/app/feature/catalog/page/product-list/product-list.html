@@ -1,0 +1,52 @@
+<app-header/>
+
+<div style="margin: 20px">
+
+  <h2>Liste de tout les produits
+    <button mat-button color="primary" routerLink="/store-list">
+      Vers magasins
+      <mat-icon iconPositionEnd>arrow_forward_ios</mat-icon>
+    </button>
+  </h2>
+  <br>
+
+
+  <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px; margin-top: 20px;">
+    <mat-form-field appearance="outline">
+      <mat-label>Rechercher un produit</mat-label>
+      <input matInput
+             placeholder="Nom ou marque..."
+             [value]="searchTerm()"
+             (input)="onSearchChange($event.target!.value)">
+      @if (searchTerm()) {
+        <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
+      } @else {
+        <mat-icon matIconSuffix>search</mat-icon>
+      }
+    </mat-form-field>
+
+  </div>
+
+  @for (product of filteredProducts(); track product.productId) {
+    <article style="border: 1px solid black; padding: 0 10px; margin: 10px">
+      <h3>{{ product.name }}
+        @if (product.brand) {
+          -  <small>{{ product.brand }}</small>
+        }
+        <br>
+        <em><small>{{ product.storeName }} {{ product.storeCity }} {{ product.storePostalCode }} </small> </em>
+      </h3>
+      <p>{{ product.quantity }}{{ product.unit }}</p>
+
+      <h4>Prix :  {{ product.productPrice | currency: 'EUR' }}</h4>
+      <p>Prix Brut : {{ product.grossPrice | currency: 'EUR' }}/{{product.unit === 'g' ? 'Kg' : 'L'}}</p>
+      <p>
+        Dernier prix : <strong>{{ product.priceDate | date: 'mediumDate' }}</strong>
+      </p>
+
+    </article>
+  }
+
+</div>
+
+<app-footer/>

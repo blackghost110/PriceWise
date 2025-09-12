@@ -1,0 +1,48 @@
+<form [formGroup]="priceForm">
+
+  <h2 mat-dialog-title>Ajouter un prix pour {{ product.name }}</h2>
+  <mat-dialog-content>
+    <p>Veuillez remplir ces champs</p>
+
+    <mat-form-field>
+      <mat-label>Prix</mat-label>
+      <input matInput type="number" placeholder="0.00" class="arrow-display" formControlName="productPrice"/>
+      <span matTextSuffix> €</span>
+    </mat-form-field>
+    <br>
+    <mat-form-field>
+      <mat-label>Prix Brut</mat-label>
+      <input matInput type="number" placeholder="0.00" class="arrow-display" formControlName="grossPrice"/>
+      <span matTextSuffix> €</span>
+      <mat-hint align="start">Prix normalisé au €/Kg ou €/L </mat-hint>
+    </mat-form-field>
+    <br>
+    <br>
+    <mat-form-field>
+      <mat-label>Date de l'observation</mat-label>
+      <input matInput [matDatepickerFilter]="dateFutureFilter" [matDatepicker]="picker" readonly formControlName="priceDate">
+      <mat-datepicker-toggle matIconSuffix [for]="picker" ></mat-datepicker-toggle>
+      <mat-datepicker #picker ></mat-datepicker>
+    </mat-form-field>
+    @if (isSameDate()) {
+      <p>Un prix existe deja à cette date, voulez-vous le modifier ?</p>
+    }
+
+
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+
+    @if (isSameDate()) {
+      <button matButton (click)="onChangeDate()">Annuler</button>
+      <button matButton >Modifier prix</button>
+    } @else {
+      <button matButton (click)="onClose()">Fermer</button>
+      <button matButton (click)="onAddPrice()">Ajouter prix</button>
+    }
+
+  </mat-dialog-actions>
+
+</form>
+

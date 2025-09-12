@@ -1,0 +1,37 @@
+<nav>
+  <div class="logo">
+    <a routerLink="../">MonPanierMalin LOGO</a>
+  </div>
+
+  <hr>
+
+  <ul>
+<!--    <li routerLink="">Accueil</li>-->
+
+    <button mat-button style="color: #484848">
+      Accueil
+      <mat-icon>home</mat-icon>
+    </button>
+
+    <button mat-button routerLink="/store-list" style="color: #484848">
+      Catalogue
+      <mat-icon>storefront</mat-icon>
+    </button>
+
+    <button mat-button [matMenuTriggerFor]="menu" style="color: #484848">
+      {{ currentUser() }}
+      <mat-icon>settings</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="onLogout()">
+        <mat-icon>logout</mat-icon>
+        <span>Déconnexion</span>
+      </button>
+
+
+    </mat-menu>
+
+
+  </ul>
+</nav>
+<hr>

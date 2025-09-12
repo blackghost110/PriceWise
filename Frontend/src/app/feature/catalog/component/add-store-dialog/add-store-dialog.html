@@ -1,0 +1,59 @@
+<form [formGroup]="storeForm">
+
+  <h2 mat-dialog-title>Ajouter un magasin</h2>
+  <mat-dialog-content>
+    <p>Veuillez remplir ces champs</p>
+
+    <mat-form-field>
+      <mat-label>Nom</mat-label>
+      <input matInput placeholder="Ex. Delhaize" formControlName="name"/>
+    </mat-form-field>
+    <br>
+
+
+    <span class="mat-form-field-wrapper">
+    <mat-form-field>
+      <mat-label>Rue</mat-label>
+      <input matInput placeholder="Ex. Bd des Gérardchamps" [matAutocomplete]="auto" formControlName="street"/>
+
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onStoreSelected($event.option.value)">
+        @for (store of filteredStores(); track store.storeId) {
+          <mat-option [value]="store">
+            <span>{{ store.name }} - {{ store.city }} {{ store.postalCode }}</span>
+            <small> ({{ store.street }}, {{ store.number }})</small>
+          </mat-option>
+        }
+      </mat-autocomplete>
+
+    </mat-form-field>
+    </span>
+    <mat-form-field>
+      <mat-label>Numéro</mat-label>
+      <input matInput placeholder="Ex. 118" formControlName="number"/>
+    </mat-form-field>
+
+
+    <span class="mat-form-field-wrapper">
+    <mat-form-field>
+      <mat-label>Code postal</mat-label>
+      <input matInput placeholder="Ex. 4800" formControlName="postalCode"/>
+    </mat-form-field>
+      </span>
+    <mat-form-field>
+      <mat-label>Ville</mat-label>
+      <input matInput placeholder="Ex. Verviers" formControlName="city"/>
+    </mat-form-field>
+
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+
+
+    <button matButton (click)="onClose()">Fermer</button>
+    <button matButton (click)="onAddStore()">Ajouter magasin</button>
+
+
+  </mat-dialog-actions>
+
+</form>

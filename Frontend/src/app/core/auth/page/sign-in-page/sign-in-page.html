@@ -1,0 +1,38 @@
+<form [formGroup]="form" style="margin: 20px">
+  <h2>Connectez-vous à votre compte</h2>
+  <p routerLink="/signup" style="cursor: pointer">Nouveau sur PriceWise? Créer un compte</p>
+  <br><br>
+
+  @if (errorMessage()) {
+    <p style="color: red">{{ errorMessage() }}</p>
+  }
+
+  <p>
+    <label for="email">Email</label>
+    <input id="email" type="email" formControlName="username"/>
+  </p>
+
+  <p>
+    <label for="password">Mot de passe</label>
+    <input id="password" type="password" formControlName="password"/>
+  </p>
+
+
+  <button type="submit" [disabled]="form.invalid || isLoading()" (click)="onLogin()">
+    @if (isLoading()) {
+      <span>Connexion en cours...</span>
+    }@else {
+      <span>Se connecter</span>
+    }
+  </button>
+
+
+  @if (isEnteredUsernameValid) {
+    <p class="control-error">Veuillez entrer un email valide</p>
+  }
+  @if (isEnteredPasswordValid) {
+    <p class="control-error">Le mot de passe doit contenir au moins 6 caractères</p>
+  }
+
+
+</form>

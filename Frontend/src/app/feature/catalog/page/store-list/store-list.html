@@ -1,0 +1,37 @@
+<app-header/>
+<div style="margin: 20px">
+
+  <h2>Liste des magasins
+    <button mat-button color="primary" routerLink="/product-list">
+    Vers produits
+      <mat-icon iconPositionEnd>arrow_forward_ios</mat-icon>
+    </button>
+  </h2>
+
+
+  <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
+    <mat-form-field appearance="outline">
+      <mat-label>Rechercher un magasin</mat-label>
+      <input matInput
+             placeholder="Nom ou rue..."
+             [value]="searchTerm()"
+             (input)="onSearchChange($event.target!.value)">
+      @if (searchTerm()) {
+        <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
+      } @else {
+        <mat-icon matIconSuffix>search</mat-icon>
+      }
+    </mat-form-field>
+
+    <button matButton="elevated" (click)="onOpenDialogAddStore()">Ajouter un magasin</button>
+  </div>
+
+  @for (store of filteredStores(); track store.storeId) {
+    <article style="border: 1px solid black; padding: 0 10px; margin: 10px" (click)="onNavigateToStore(store)">
+      <h3>{{ store.name }} - {{ store.city }} {{ store.postalCode }}</h3>
+      <p>{{ store.street }}, {{ store.number }}</p>
+    </article>
+  }
+
+</div>
+

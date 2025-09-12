@@ -1,0 +1,83 @@
+<form [formGroup]="productForm">
+
+  <h2 mat-dialog-title>Ajouter un produit pour {{ store.name }}</h2>
+  <mat-dialog-content>
+    <p>Veuillez remplir ces champs</p>
+
+      <span class="mat-form-field-wrapper">
+        <mat-form-field>
+          <mat-label>Nom</mat-label>
+          <input matInput placeholder="Ex. Lait entier" formControlName="name" [matAutocomplete]="auto" />
+
+          <!-- Autocomplétion -->
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onProductSelected($event.option.value)" >
+            @for (product of filteredProducts(); track product.productId) {
+              <mat-option [value]="product">
+                <span>{{ product.name }}</span>
+                @if (product.brand) {
+                  <small> - {{ product.brand }}</small>
+                }
+                <small> ({{ product.quantity }}{{ product.unit }})</small>
+              </mat-option>
+            }
+          </mat-autocomplete>
+
+        </mat-form-field>
+      </span>
+      <span>
+        <mat-form-field>
+          <mat-label>Marque</mat-label>
+          <input matInput placeholder="Ex. Milbona"  formControlName="brand"/>
+        </mat-form-field>
+      </span>
+    <br>
+
+    <span class="mat-form-field-wrapper">
+      <mat-form-field>
+      <mat-label>Unité</mat-label>
+      <mat-select required formControlName="unit">
+        <mat-option value="g">Gramme</mat-option>
+        <mat-option value="ml">Millilitre</mat-option>
+        <mat-option value="p">Pièce</mat-option>
+      </mat-select>
+    </mat-form-field>
+    </span>
+    <span>
+      <mat-form-field>
+      <mat-label>Quantité</mat-label>
+      <input matInput type="number" placeholder="0" class="arrow-display" formControlName="quantity"/>
+    </mat-form-field>
+    </span>
+
+
+    <br>
+
+    <mat-form-field>
+      <mat-label>Prix</mat-label>
+      <input matInput type="number" placeholder="0.00" class="arrow-display" formControlName="productPrice"/>
+      <span matTextSuffix> €</span>
+    </mat-form-field>
+    <br>
+    <mat-form-field>
+      <mat-label>Prix Brut</mat-label>
+      <input matInput type="number" placeholder="0.00" class="arrow-display" formControlName="grossPrice"/>
+      <span matTextSuffix> €</span>
+      <mat-hint align="start">Prix normalisé au €/Kg ou €/L </mat-hint>
+    </mat-form-field>
+    <br>
+    @if (isProductConflict()) {
+      <p style="color: red">Ce produit existe deja, veuillez entrez un autre produit</p>
+    }
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+
+
+    <button matButton (click)="onClose()">Fermer</button>
+    <button matButton (click)="onAddProduct()">Ajouter produit</button>
+
+
+  </mat-dialog-actions>
+
+</form>

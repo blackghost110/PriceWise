@@ -1,0 +1,5 @@
+input.arrow-display::-webkit-outer-spin-button,
+input.arrow-display::-webkit-inner-spin-button {
+  display: none;
+}
+

@@ -1,0 +1,41 @@
+import {Component, inject, OnInit} from '@angular/core';
+import {Router, RouterLink} from '@angular/router';
+import {AuthService} from '@core/auth/auth.service';
+import {MatIcon} from '@angular/material/icon';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
+import {MatButton, MatIconButton} from '@angular/material/button';
+
+@Component({
+  selector: 'app-header',
+  imports: [
+    RouterLink,
+    MatIcon,
+    MatMenuTrigger,
+    MatIconButton,
+    MatMenuItem,
+    MatMenu,
+    MatButton
+  ],
+  templateUrl: './header.html',
+  styleUrl: './header.css'
+})
+export class Header implements OnInit {
+
+  router = inject(Router)
+  authService = inject(AuthService)
+
+  currentUser = this.authService.currentUser;
+  isAuthenticated = this.authService.isAuthenticated;
+
+
+  ngOnInit(){
+    this.authService.me()
+  }
+
+
+  onLogout() {
+    this.authService.logOut()
+    console.log('logout')
+  }
+
+}
