@@ -3,7 +3,7 @@ import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '@core/auth/auth.service';
 import {MatIcon} from '@angular/material/icon';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
-import {MatButton, MatIconButton} from '@angular/material/button';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-header',
@@ -11,7 +11,6 @@ import {MatButton, MatIconButton} from '@angular/material/button';
     RouterLink,
     MatIcon,
     MatMenuTrigger,
-    MatIconButton,
     MatMenuItem,
     MatMenu,
     MatButton
@@ -25,8 +24,6 @@ export class Header implements OnInit {
   authService = inject(AuthService)
 
   currentUser = this.authService.currentUser;
-  isAuthenticated = this.authService.isAuthenticated;
-
 
   ngOnInit(){
     this.authService.me()

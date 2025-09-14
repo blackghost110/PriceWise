@@ -1,6 +1,5 @@
 import {Component, DestroyRef, inject, signal} from '@angular/core';
 import {
-  MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogContent,
   MatDialogRef,
@@ -9,7 +8,6 @@ import {
 import {MatButton} from '@angular/material/button';
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ProductDto, ProductUnitType} from '@features/catalog/data/dto/product.dto';
 import {CreateStorePayload} from '@features/catalog/data/payload/create-store.payload';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {StoreService} from '@features/catalog/service/store.service';

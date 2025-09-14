@@ -57,7 +57,7 @@ export class PriceService {
                 product: {productId: productId}
             },
             order: {
-                created: 'DESC'
+                priceDate: 'DESC'
             }
         })
     }

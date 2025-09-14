@@ -1,0 +1,24 @@
+<form [formGroup]="listForm">
+
+  <h2 mat-dialog-title>Ajouter une liste</h2>
+  <mat-dialog-content>
+
+    <p>Veuillez remplir ce champs</p>
+
+    <mat-form-field>
+      <mat-label>Nom</mat-label>
+      <input matInput placeholder="Ex. Charcuterie" formControlName="name"/>
+    </mat-form-field>
+
+  </mat-dialog-content>
+
+  @if (isListConflict()) {
+    <p style="color: red">une liste existe deja avec ce nom, veuillez en choisir un autre</p>
+  }
+
+  <mat-dialog-actions>
+    <button matButton (click)="onClose()">Fermer</button>
+    <button matButton (click)="onAddList()">Ajouter liste</button>
+  </mat-dialog-actions>
+
+</form>

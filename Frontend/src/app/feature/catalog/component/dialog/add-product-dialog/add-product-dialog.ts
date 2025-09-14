@@ -11,7 +11,7 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {MatButton} from '@angular/material/button';
 import {MatHint, MatInput, MatLabel} from '@angular/material/input';
 import {MatFormField, MatSuffix} from '@angular/material/form-field';
-import {MatOption, MatSelect, MatSelectModule} from '@angular/material/select';
+import {MatOption, MatSelect} from '@angular/material/select';
 import {CreateProductPayload} from '@features/catalog/data/payload/create-product.payload';
 import {ProductDto, ProductUnitType} from '@features/catalog/data/dto/product.dto';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';

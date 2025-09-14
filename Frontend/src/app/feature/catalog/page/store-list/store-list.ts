@@ -1,17 +1,14 @@
 import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import {Header} from '@core/layout/header/header';
 import {StoreDto} from '@features/catalog/data/dto/store.dto';
 import {Router, RouterLink} from '@angular/router';
-import {ProductDto} from '@features/catalog/data/dto/product.dto';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {StoreService} from '@features/catalog/service/store.service';
 import {MatButton} from '@angular/material/button';
 
-import {MatFormField, MatInput, MatLabel, MatPrefix, MatSuffix} from '@angular/material/input';
-import {AddProductDialog} from '@features/catalog/component/add-product-dialog/add-product-dialog';
+import {MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
 import {MatDialog} from '@angular/material/dialog';
-import {AddStoreDialog} from '@features/catalog/component/add-store-dialog/add-store-dialog';
+import {AddStoreDialog} from '@features/catalog/component/dialog/add-store-dialog/add-store-dialog';
 import {MatIcon} from '@angular/material/icon';
 
 @Component({
@@ -24,6 +21,7 @@ import {MatIcon} from '@angular/material/icon';
     MatInput,
     MatLabel,
     RouterLink,
+    MatSuffix,
   ],
   templateUrl: './store-list.html',
   styleUrl: './store-list.css'

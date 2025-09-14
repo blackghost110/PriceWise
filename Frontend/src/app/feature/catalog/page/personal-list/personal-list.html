@@ -1,0 +1,87 @@
+<app-header/>
+
+<div style="margin: 20px">
+
+  <h2>Liste des produits favoris</h2>
+  <br>
+
+
+
+  <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px; margin-top: 20px;">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Rechercher un produit</mat-label>
+      <input matInput
+             placeholder="Nom ou marque..."
+             [value]="searchTerm()"
+             (input)="onSearchChange($event.target!.value)">
+      @if (searchTerm()) {
+        <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
+      } @else {
+        <mat-icon matIconSuffix>search</mat-icon>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Choisir une liste</mat-label>
+      <mat-select [(value)]="selectedList">
+        <mat-option value="0">Aucune</mat-option>
+        @for (list of personalList(); track list.listId){
+          <mat-option [value]="list.listId">{{list.name}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+
+      <button mat-button [matMenuTriggerFor]="Menu" style="color: #484848">
+        <mat-icon>settings</mat-icon>
+      </button>
+
+      <mat-menu #Menu="matMenu">
+
+        <button mat-menu-item (click)="onOpenDialogAddList()">
+          <mat-icon>add</mat-icon>
+          <span>Ajouter</span>
+        </button>
+        @if (selectedList() !== '0') {
+          <button mat-menu-item (click)="onOpenDialogUpdateList()">
+            <mat-icon>edit_square</mat-icon>
+            <span>Modifier</span>
+          </button>
+          <button mat-menu-item (click)="onOpenDialogConfirm()">
+            <mat-icon>delete</mat-icon>
+            <span>Supprimer</span>
+          </button>
+
+        }
+
+      </mat-menu>
+
+
+  </div>
+
+  @for (product of filteredProducts(); track product.listProductId) {
+    <article style="border: 1px solid black; padding: 0 10px; margin: 10px">
+      <h3>{{ product.name }}
+        @if (product.brand) {
+          -  <small>{{ product.brand }}</small>
+        }
+        <br>
+        <em><small>{{ product.storeName }} {{ product.storeCity }} {{ product.storePostalCode }} </small> </em>
+      </h3>
+      <p>{{ product.quantity }}{{ product.unit }}</p>
+
+      <h4>Prix :  {{ product.productPrice | currency: 'EUR' }}</h4>
+      <p>Prix Brut : {{ product.grossPrice | currency: 'EUR' }}/{{product.unit === 'g' ? 'Kg' : 'L'}}</p>
+      <p>
+        Dernier prix : <strong>{{ product.priceDate | date: 'mediumDate' }}</strong>
+      </p>
+
+    </article>
+  }
+
+</div>
+
+
+
+<app-footer/>

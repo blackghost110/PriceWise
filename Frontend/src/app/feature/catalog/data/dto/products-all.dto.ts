@@ -1,6 +1,6 @@
 import {ProductUnitType} from '@features/catalog/data/dto/product.dto';
 
-export interface ProductAllDto {
+export interface ProductsAllDto {
 
   productId: number;
   name: string;

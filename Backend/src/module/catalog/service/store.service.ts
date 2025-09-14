@@ -20,7 +20,7 @@ export class StoreService {
         const existingStore = await this.storeRepository.findOne({
             where: {
                 name: ILike(createStoreDto.name),
-                street: ILike(createStoreDto.street),
+                searchInput: ILike(createStoreDto.street),
                 number: ILike(createStoreDto.number),
                 postalCode: ILike(createStoreDto.postalCode),
                 city: ILike(createStoreDto.city)

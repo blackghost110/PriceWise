@@ -6,6 +6,8 @@ import {StoreList} from '@features/catalog/page/store-list/store-list';
 import {authGuard, publicGuard} from '@core/auth/auth.guard';
 import {StoreProducts} from '@features/catalog/page/store-list/store-products/store-products';
 import {ProductList} from '@features/catalog/page/product-list/product-list';
+import {PersonalList} from '@features/catalog/page/personal-list/personal-list';
+import {ProductDetail} from '@features/catalog/page/product-detail/product-detail';
 
 export const routes: Routes = [
 
@@ -31,6 +33,16 @@ export const routes: Routes = [
   {
     path: 'product-list',
     component: ProductList,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'personal-list',
+    component: PersonalList,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'product-detail/:productId',
+    component: ProductDetail,
     canActivate: [authGuard]
   },
   {

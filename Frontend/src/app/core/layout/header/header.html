@@ -18,17 +18,20 @@
       <mat-icon>storefront</mat-icon>
     </button>
 
-    <button mat-button [matMenuTriggerFor]="menu" style="color: #484848">
+    <button mat-button routerLink="/personal-list" style="color: #484848">
+      Liste
+      <mat-icon>bookmarks</mat-icon>
+    </button>
+
+    <button mat-button [matMenuTriggerFor]="currentUserMenu" style="color: #484848">
       {{ currentUser() }}
       <mat-icon>settings</mat-icon>
     </button>
-    <mat-menu #menu="matMenu">
+    <mat-menu #currentUserMenu="matMenu">
       <button mat-menu-item (click)="onLogout()">
         <mat-icon>logout</mat-icon>
         <span>Déconnexion</span>
       </button>
-
-
     </mat-menu>
 
 

@@ -1,0 +1,48 @@
+<app-header/>
+
+<div style="margin: 20px">
+@if (productDetail(); as product) {
+
+
+  <h2>Detail du produit : {{ product.name }} {{ product.brand }}</h2>
+  <h4> De {{product.storeName}} - {{product.storeCity}} {{product.storePostalCode}}</h4>
+
+  <mat-form-field appearance="outline" style="margin-right: 10px">
+    <mat-label>Période</mat-label>
+    <mat-select required [(ngModel)]="timelineFilter">
+      <mat-option value="0">Tout</mat-option>
+      <mat-option value="1">1 mois</mat-option>
+      <mat-option value="6">6 mois</mat-option>
+      <mat-option value="12">1 an</mat-option>
+      <mat-option value="36">3 ans</mat-option>
+      <mat-option value="60">5 ans</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Type de prix</mat-label>
+    <mat-select required [(ngModel)]="priceTypeFilter">
+      <mat-option value="product">Prix produit</mat-option>
+      <mat-option value="gross">Prix brut</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button matFab extended style="float: inline-end; margin-right: 50px" (click)="onOpenDialogSearchProduct()">
+    <mat-icon>balance</mat-icon>
+    Compare
+  </button>
+
+  <div class="graph-container2">
+    <canvas baseChart
+            [data]="productChartData()"
+            [options]="productChartOptions"
+            [type]="'line'">
+    </canvas>
+  </div>
+
+}
+
+</div>
+
+<app-footer/>
+

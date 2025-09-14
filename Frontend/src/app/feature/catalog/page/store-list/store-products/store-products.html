@@ -43,6 +43,7 @@
       </p>
 
       <button matButton="text" (click)="onOpenDialogAddPrice(product)">Ajouter prix</button>
+      <button matButton="text" [routerLink]="['/product-detail', product.productId]">Detail</button>
     </article>
   }
 

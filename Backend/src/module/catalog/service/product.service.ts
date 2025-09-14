@@ -9,6 +9,7 @@ import {Credential} from "../../../security/model/entity/credential.entity";
 import {StoreEntity} from "../model/store.entity";
 import { StoreProductsResponse } from '../model/type/store-products.response';
 import { AllProductsResponse } from '../model/type/all-products.response';
+import { ProductDetailResponse } from '../model/type/product-detail.response';
 
 @Injectable()
 export class ProductService {
@@ -96,6 +97,38 @@ export class ProductService {
       storePostalCode: product.store.postalCode,
       storeCity: product.store.city
     }));
+  }
+
+  async getProductDetails(productId: number): Promise<ProductDetailResponse> {
+      const product = await this.productRepository.findOne({
+        where: { productId: productId },
+        relations: ['store', 'prices'],
+        order: {prices: { priceDate: 'ASC'} }
+      })
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return {
+      productId: product.productId,
+      name: product.name,
+      brand: product.brand,
+      unit: product.unit,
+      quantity: product.quantity,
+
+      storeName: product.store.name,
+      storeStreet: product.store.street,
+      storeNumber: product.store.number,
+      storePostalCode: product.store.postalCode,
+      storeCity: product.store.city,
+
+      prices: product.prices.map((price) => ({
+        priceId: price.priceId,
+        productPrice: (price.productPrice),
+        grossPrice: (price.grossPrice),
+        priceDate: price.priceDate
+      }))
+    };
   }
 
 

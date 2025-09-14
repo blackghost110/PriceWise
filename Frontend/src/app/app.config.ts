@@ -12,6 +12,7 @@ import {HttpInterceptor} from '@shared/api/service/http.interceptor';
 import {registerLocaleData} from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import {provideNativeDateAdapter} from '@angular/material/core';
+import {provideCharts, withDefaultRegisterables} from 'ng2-charts';
 
 registerLocaleData(localeFr, 'fr-FR');
 
@@ -22,8 +23,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(
-      withInterceptors([HttpInterceptor])
-    )
+    provideHttpClient(withInterceptors([HttpInterceptor])),
+    provideCharts(withDefaultRegisterables())
   ]
 };

@@ -1,0 +1,75 @@
+
+
+  <h2 mat-dialog-title>Comparer un produit</h2>
+  <mat-dialog-content class="mat-dialog-flex">
+    <div>
+      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px; margin-top: 20px;">
+        <mat-form-field appearance="outline">
+          <mat-label>Rechercher un produit</mat-label>
+          <input matInput
+                 placeholder="Nom ou marque..."
+                 [value]="searchTerm()"
+                 (input)="onSearchChange($event.target!.value)">
+          @if (searchTerm()) {
+            <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
+          } @else {
+            <mat-icon matIconSuffix>search</mat-icon>
+          }
+        </mat-form-field>
+
+      </div>
+
+      @for (product of filteredProducts(); track product.productId) {
+        <article style="border: 1px solid black; padding: 0 10px; margin: 10px">
+          <h3>{{ product.name }}<small>({{ product.quantity }}{{ product.unit }})</small>
+            @if (product.brand) {
+              -  <small>{{ product.brand }}</small>
+            }
+            <br>
+            <em><small>{{ product.storeName }} {{ product.storeCity }} {{ product.storePostalCode }} </small> </em>
+
+          </h3>
+          <p><small>{{ product.storeStreet }}, {{ product.storeNumber }}</small></p>
+
+          <button (click)="onAddToSelectedProducts(product)">Ajouter</button>
+
+        </article>
+      }
+    </div>
+    <div>
+      <h3>Produits choisis</h3>
+      @for (product of selectedProducts(); track $index) {
+        <p>{{ product.name }}<small>({{ product.quantity }}{{ product.unit }})</small>
+          @if (product.brand) {
+            -  <small>{{ product.brand }}</small>
+          }
+          <em><small> {{ product.storeName }} {{ product.storeCity }} {{ product.storePostalCode }} </small> </em>
+
+        </p>
+        <p><small>{{ product.storeStreet }}, {{ product.storeNumber }}</small></p>
+
+        @if ($index !== 0) {
+          <button (click)="onRemoveFromSelectedProducts(product)">Supprimer</button>
+        }
+        <hr>
+      }
+
+    </div>
+
+
+
+
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+
+
+      <button matButton (click)="onClose()">Annuler</button>
+      <button matButton (click)="onAddCompare()">Comparer produit</button>
+
+  </mat-dialog-actions>
+
+
+
+

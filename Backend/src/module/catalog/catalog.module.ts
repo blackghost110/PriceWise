@@ -18,11 +18,13 @@ import {SecurityController} from "../../security/security.controller";
 import {SecurityService} from "../../security/security.service";
 import {Token} from "../../security/model/entity/token.entity";
 import {TokenService} from "../../security/jwt/token.service";
+import { ListProductController } from './controller/list-product.controller';
+import { ListProductService } from './service/list-product.service';
 
 @Module({
     imports: [TypeOrmModule.forFeature([ListEntity, Credential, ProductEntity, StoreEntity, PriceEntity, ListProductEntity, Token])],
-    controllers: [ListController, ProductController, StoreController, PriceController, SecurityController],
-    providers: [ListService, ProductService, StoreService, PriceService, SecurityService, TokenService],
+    controllers: [ListController, ProductController, StoreController, PriceController, SecurityController, ListProductController],
+    providers: [ListService, ProductService, StoreService, PriceService, SecurityService, TokenService, ListProductService],
 })
 export class CatalogModule {
 }

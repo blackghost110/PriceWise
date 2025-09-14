@@ -9,12 +9,6 @@ export class ListProductEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     listProductId: number;
 
-    @Column()
-    customName: string;
-
-    @Column({ default: false })
-    isFavorite: boolean;
-
     @ManyToOne(() => ListEntity, (list) => list.listProducts)
     @JoinColumn({ name: 'listId'})
     list: ListEntity;
