@@ -2,6 +2,8 @@ import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Exclude} from "class-transformer";
 import {BaseEntity} from "@common/model/base.entity";
 import {ListEntity} from "../../../module/catalog/model/list.entity";
+import { PostEntity } from '../../../module/social/model/post.entity';
+import { CommentEntity } from '../../../module/social/model/comment.entity';
 
 @Entity({ name: 'credential'})
 export class Credential extends BaseEntity {
@@ -20,5 +22,11 @@ export class Credential extends BaseEntity {
 
     @OneToMany(() => ListEntity, (list) => list.user)
     lists: ListEntity[];
+
+    @OneToMany(() => PostEntity, (post) => post.user)
+    posts: PostEntity[];
+
+    @OneToMany(() => CommentEntity, (comment) => comment.user)
+    comments: CommentEntity[]
 
 }

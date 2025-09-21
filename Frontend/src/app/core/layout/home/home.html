@@ -1,0 +1,55 @@
+<app-header/>
+<div class="home-background">
+
+
+<main class="main-content">
+  <div class="landing-container">
+    <article class="landing-article">
+      <h1>Suivre, comparer, débattre : l’intelligence collective au service de vos choix</h1>
+      <p>PriceWise est une application collaborative qui met la transparence des prix entre les mains de tous.
+        Chaque utilisateur peut ajouter et consulter les prix des produits dans les magasins de son choix.
+        Grâce à cette base de données partagée, il devient possible de suivre l’évolution des prix dans le temps,
+        de comparer facilement entre enseignes, et de profiter d’un espace communautaire pour échanger autour des bons plans.
+        Ensemble, nous construisons une nouvelle manière de consommer, plus intelligente et plus juste</p>
+      <button matFab extended style="margin-right: 60px" [routerLink]="AppNode.STORE_LIST_PAGE">EXPLORER LE CATALOGUE</button>
+      <button matButton="outlined" [routerLink]="AppNode.FORUM">FORUM</button>
+    </article>
+    <img src="/image/market_bag.png" alt="bag">
+  </div>
+
+
+
+    <section class="function-container">
+      <article class="article-function">
+        <img src="/image/inflation_icon.png" alt="">
+        <h4>Prix en mouvement</h4>
+        <p>Accédez à l’évolution des prix pour n’importe quel produit, grâce aux contributions de la communauté.
+          Filtrez vos recherches par période, magasin ou code postal pour comprendre les tendances et repérer le bon moment pour acheter.</p>
+      </article>
+      <article class="article-function">
+        <img src="/image/compare_icon.png" alt="">
+        <h4>Comparateur malin</h4>
+        <p>Mettez côte à côte les produits de différents magasins ou comparez plusieurs articles entre eux, sans restriction.
+          Les prix s’affichent sur une ligne du temps claire et intuitive. Ajoutez vos favoris pour garder un œil sur les articles qui comptent pour vous.</p>
+      </article>
+      <article class="article-function">
+        <img src="/image/earth_icon.png" alt="">
+        <h4>Force du collectif</h4>
+        <p>Rejoignez un espace d’échanges où chacun peut partager ses bons plans, débattre des prix ou poser des questions.
+          Commentez les publications, découvrez les astuces des autres et contribuez à une communauté active et solidaire.</p>
+      </article>
+
+
+    </section>
+
+
+
+
+</main>
+
+
+
+</div>
+
+
+<app-footer/>

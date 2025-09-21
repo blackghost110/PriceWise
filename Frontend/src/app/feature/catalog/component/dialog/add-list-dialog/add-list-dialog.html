@@ -12,8 +12,8 @@
 
   </mat-dialog-content>
 
-  @if (isListConflict()) {
-    <p style="color: red">une liste existe deja avec ce nom, veuillez en choisir un autre</p>
+  @if (errorMessage()) {
+    <p class="control-error">{{ errorMessage() }}</p>
   }
 
   <mat-dialog-actions>

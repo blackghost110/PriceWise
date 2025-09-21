@@ -1,19 +1,23 @@
-import {inject, Injectable, signal} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {CreatePricePayload} from '@features/catalog/data/payload/create-price.payload';
-import {HttpClient} from '@angular/common/http';
-import {StoreDto} from '@features/catalog/data/dto/store.dto';
 import {ApiService} from '@shared/api/service/api.service';
+import {UpdatePricePayload} from '@features/catalog/data/payload/update-price.payload';
+import {ApiURI} from '@shared/api/api-uri.enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PriceService {
 
-  api = inject(ApiService)
+  private readonly api = inject(ApiService)
 
 
   addPrice(payload: CreatePricePayload, productId: number) {
-    return this.api.post(`price/${productId}`, payload);
+    return this.api.post(`${ApiURI.PRICE_CREATE}/${productId}`, payload);
+  }
+
+  updatePrice(payload: UpdatePricePayload, priceId: number) {
+    return this.api.put(`${ApiURI.PRICE_UPDATE}/${priceId}`, payload);
   }
 
 }

@@ -1,53 +1,90 @@
 <app-header/>
 
-<div style="margin: 20px">
+<main class="main-content">
+  <div class="content-container">
+    <div class="main-section">
+      <div class="section-header">
+        <h2>Liste des produits de {{ store()?.name }} - {{ store()?.city }}
+          <button mat-button [routerLink]="AppNode.STORE_LIST_PAGE">
+            <mat-icon>arrow_back_ios_new</mat-icon>
+            Retour aux magasins
+          </button>
+        </h2>
+        <!--        <p>Selection de magasin disponible : 20</p>-->
 
-  <h2>Liste des produits de {{ store()?.name }} - {{ store()?.city }}</h2>
-  <button mat-button color="primary" routerLink="/store-list">
-    <mat-icon>arrow_back_ios_new</mat-icon>
-    Retour aux magasins
-  </button>
-  <br>
+        <mat-form-field appearance="outline" class="white-background">
+          <mat-label>Rechercher un produit</mat-label>
+          <input matInput
+                 placeholder="Nom ou marque..."
+                 [value]="searchTerm()"
+                 (input)="onSearchChange($event.target!.value)">
+          @if (searchTerm()) {
+            <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
+          } @else {
+            <mat-icon matIconSuffix>search</mat-icon>
+          }
+        </mat-form-field>
+        <button matButton="elevated" (click)="onOpenDialogAddProduct()" style="float: right">Ajouter un produit</button>
+      </div>
 
+      @if (filteredProducts()?.length !== 0) {
+        <table mat-table [dataSource]="dataSource" class="product-table">
+          <ng-container matColumnDef="name" >
+            <th mat-header-cell *matHeaderCellDef> Nom </th>
+            <td mat-cell *matCellDef="let product" ><strong class="table-name">{{product.name}}</strong> @if (product.brand) { <small> ({{ product.brand }})</small> } </td>
+          </ng-container>
 
-  <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px; margin-top: 50px;">
-    <mat-form-field appearance="outline">
-      <mat-label>Rechercher un produit</mat-label>
-      <input matInput
-             placeholder="Nom ou marque..."
-             [value]="searchTerm()"
-             (input)="onSearchChange($event.target!.value)">
-      @if (searchTerm()) {
-        <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef> Quantité </th>
+            <td mat-cell *matCellDef="let product" class="table-quantity">{{ product.quantity }}{{ product.unit }} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef> Prix </th>
+            <td mat-cell *matCellDef="let product"><span class="table-price">{{ product.productPrice | currency: 'EUR' }}</span> | <span class="table-price-gross">{{ product.grossPrice | currency: 'EUR' }}/{{product.unit === 'g' ? 'Kg' : product.unit === 'ml' ? 'L' : 'P'}}</span></td>
+          </ng-container>
+
+          <ng-container matColumnDef="lastPrice">
+            <th mat-header-cell *matHeaderCellDef> Dernier Prix </th>
+            <td mat-cell *matCellDef="let product">{{ product.priceDate | date: 'mediumDate' }} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="action" >
+            <th mat-header-cell *matHeaderCellDef> </th>
+            <td mat-cell *matCellDef="let product" class="table-action" (click)="$event.stopPropagation()">
+              <button matIconButton [matMenuTriggerFor]="ProductMenu">
+                <mat-icon>settings</mat-icon>
+              </button>
+              <mat-menu #ProductMenu="matMenu">
+                <button mat-menu-item (click)="onOpenDialogAddPrice(product)">
+                  <mat-icon>more_time</mat-icon>
+                  Ajouter un prix
+                </button>
+                <button mat-menu-item (click)="onOpenDialogAddToList(product)">
+                  <mat-icon>bookmark_add</mat-icon>
+                  Ajouter dans une liste
+                </button>
+              </mat-menu>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="getProductDetailUrl(row.productId)"></tr>
+
+        </table>
+        <mat-paginator [pageSizeOptions]="[10, 20]"
+                       showFirstLastButtons
+                       aria-label="Select page of periodic elements">
+        </mat-paginator>
       } @else {
-        <mat-icon matIconSuffix>search</mat-icon>
+        <p>Aucun produit disponible! Vérifiez vos filtres.</p>
       }
-    </mat-form-field>
 
-    <button matButton="elevated" (click)="onOpenDialogAddProduct()">Ajouter un produit</button>
+
+    </div>
   </div>
 
-  @for (product of filteredProducts(); track product.productId) {
-    <article style="border: 1px solid black; padding: 0 10px; margin: 10px">
-      <h3>{{ product.name }}
-        @if (product.brand) {
-          -  <small>{{ product.brand }}</small>
-        }
-      </h3>
-      <p>{{ product.quantity }}{{ product.unit }}</p>
-
-      <h4>Prix :  {{ product.productPrice | currency: 'EUR' }}</h4>
-      <p>Prix Brut : {{ product.grossPrice | currency: 'EUR' }}/{{product.unit === 'g' ? 'Kg' : 'L'}}</p>
-      <p>
-        Dernier prix : <strong>{{ product.priceDate | date: 'mediumDate' }}</strong>
-      </p>
-
-      <button matButton="text" (click)="onOpenDialogAddPrice(product)">Ajouter prix</button>
-      <button matButton="text" [routerLink]="['/product-detail', product.productId]">Detail</button>
-    </article>
-  }
-
-</div>
+</main>
 
 <app-footer/>
 

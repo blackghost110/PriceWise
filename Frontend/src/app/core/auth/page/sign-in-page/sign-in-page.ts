@@ -1,17 +1,20 @@
 import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
-import {debounceTime, finalize, tap} from 'rxjs';
+import { RouterLink} from '@angular/router';
+import {debounceTime, delay, finalize, tap} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../auth.service';
 import {ApiResponse} from '@shared/api/data/api.response';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
+import {MatButton} from '@angular/material/button';
+import {AppNode} from '@shared/route/node.enum';
 
 @Component({
   selector: 'app-sign-in-page',
   imports: [
     ReactiveFormsModule,
-    RouterLink
+    RouterLink,
+    MatButton
   ],
   templateUrl: './sign-in-page.html',
   styleUrl: './sign-in-page.css'
@@ -19,7 +22,6 @@ import {ErrorMessageService} from '@shared/api/service/error-message.service';
 export class SignInPage implements OnInit {
 
   private authService = inject(AuthService);
-  private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   private errorMessageService = inject(ErrorMessageService)
 
@@ -84,13 +86,14 @@ export class SignInPage implements OnInit {
     this.errorMessage.set(null);
     this.isLoading.set(true);
 
+
     this.authService.login(this.form.value as any).pipe(
+      delay(4000),
       takeUntilDestroyed(this.destroyRef),
       tap((apiResponse: ApiResponse) => {
         if (!apiResponse.result) {
           console.log('apiResponse details : ', apiResponse)
-          const userFriendlyMessage = this.errorMessageService.getErrorMessage(apiResponse.code)
-          this.errorMessage.set(userFriendlyMessage)
+          this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
         }
       }),
       finalize(() => this.isLoading.set(false))
@@ -102,4 +105,5 @@ export class SignInPage implements OnInit {
     })
   }
 
+  protected readonly AppNode = AppNode;
 }

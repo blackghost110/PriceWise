@@ -1,0 +1,35 @@
+<form [formGroup]="postForm">
+
+  <h2 mat-dialog-title>Créer une discussion</h2>
+  <mat-dialog-content>
+
+    <p>Veuillez remplir ces champs</p>
+
+
+    <mat-form-field style="margin-right: 10px" routerLink="">
+      <mat-label>Titre</mat-label>
+      <input matInput placeholder="Ex. Inflation..." formControlName="title"/>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Code Postal</mat-label>
+      <input matInput placeholder="Ex. 4800" formControlName="postalCode"/>
+    </mat-form-field>
+    <br>
+    <mat-form-field>
+      <mat-label>Message</mat-label>
+      <textarea matInput formControlName="message" rows="8" cols="47" ></textarea>
+    </mat-form-field>
+    @if (errorMessage()) {
+      <p class="control-error">{{ errorMessage() }}</p>
+    }
+
+
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button matButton (click)="onClose()">Fermer</button>
+    <button matButton (click)="onAddPost()">Ajouter la discussion</button>
+  </mat-dialog-actions>
+
+</form>

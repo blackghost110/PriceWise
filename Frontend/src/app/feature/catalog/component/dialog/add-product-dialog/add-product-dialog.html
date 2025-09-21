@@ -3,6 +3,7 @@
   <h2 mat-dialog-title>Ajouter un produit pour {{ store.name }}</h2>
   <mat-dialog-content>
     <p>Veuillez remplir ces champs</p>
+    <p>Veuillez encoder ces données exactement de la même manière qu’elles le sont en magasin</p>
 
       <span class="mat-form-field-wrapper">
         <mat-form-field>
@@ -65,8 +66,8 @@
       <mat-hint align="start">Prix normalisé au €/Kg ou €/L </mat-hint>
     </mat-form-field>
     <br>
-    @if (isProductConflict()) {
-      <p style="color: red">Ce produit existe deja, veuillez entrez un autre produit</p>
+    @if (errorMessage()) {
+      <p class="control-error">{{ errorMessage() }}</p>
     }
 
   </mat-dialog-content>

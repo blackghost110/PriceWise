@@ -1,54 +1,75 @@
 export enum ApiCodeResponse {
+  // SECURITY API EXCEPTIONS --------------------------------------------//
 
-    // Security API Exceptions
+  PAYLOAD_PARAM_IS_MISSING = 'api.error.payload-param-is-missing',
+  TOKEN_GEN_ERROR = 'api.error.stock-detail',
+  USER_ALREADY_EXIST = 'api.security.error.user-exist',
+  CREDENTIAL_DELETE_ERROR = 'api.security.error.credential-delete',
+  TOKEN_EXPIRED = 'api.security.error.token-expired',
+  USER_NOT_FOUND = 'api.security.error.user-not-found',
+  SIGNUP_ERROR = 'api.security.error.signup',
+  NO_TOKEN_FOUNDED = 'api.security.error.no-token-found',
+  PAYLOAD_IS_NOT_VALID = 'api.error.payload-is-not-valid',
+  COMMON_SUCCESS = 'api.success.common',
 
-    PAYLOAD_PARAM_IS_MISSING = 'api.error.payload-param-is-missing',
-    TOKEN_GEN_ERROR = 'api.error.stock-detail',
-    USER_ALREADY_EXIST = 'api.security.error.user-exist',
-    CREDENTIAL_DELETE_ERROR = 'api.security.error.credential-delete',
-    TOKEN_EXPIRED = 'api.security.error.token-expired',
-    USER_NOT_FOUND = 'api.security.error.user-not-found',
-    SIGNUP_ERROR = 'api.security.error.signup',
-    NO_TOKEN_FOUNDED = 'api.security.error.no-token-found',
-    PAYLOAD_IS_NOT_VALID = 'api.error.payload-is-not-valid',
-    COMMON_SUCCESS = 'api.success.common',
+  // SOCIAL API EXCEPTIONS --------------------------------------------//
 
+  // Post Service Exception Codes
+  POST_CREATE_EXCEPTION = 'api.post.error.create-exception',
+  POST_GET_ALL_EXCEPTION = 'api.post.error.get-all-exception',
+  POST_GET_BY_ID_EXCEPTION = 'api.post.error.get-by-id-exception',
 
-    // Member Service Payload Exceptions
+  // Comment Service Exception Codes
+  COMMENT_CREATE_EXCEPTION = 'api.comment.error.create-exception',
+  COMMENT_CREATE_USER_EXCEPTION = 'api.comment.error.create-user-exception',
+  COMMENT_GET_BY_ID_EXCEPTION = 'api.comment.error.get-by-id-exception',
 
-    MEMBER_PAYLOAD_ACTIVE_INVALID = 'api.member.error.payload-active-invalid',
-    MEMBER_PAYLOAD_SUBSCRIPTION_NOT_VALID = 'api.member.error.payload-subscription-not-valid',
-    MEMBER_PAYLOAD_ACTIVATION_CODE_LENGTH_ERROR = 'api.member.error.payload-activation-code-length-error',
-    MEMBER_PAYLOAD_IBAN_LENGTH_ERROR = 'api.member.error.payload-iban-length-error',
-    MEMBER_PAYLOAD_PHONE_LENGTH_ERROR = 'api.member.error.payload-phone-length-error',
-    MEMBER_PAYLOAD_MAIL_LENGTH_ERROR = 'api.member.error.payload-mail-length-error',
-    MEMBER_PAYLOAD_MAIL_IS_NOT_VALID = 'api.member.error.payload-mail-is-not-valid',
-    MEMBER_PAYLOAD_BIRTHDATE_IS_NOT_VALID = 'api.member.error.payload-birthdate-is-not-valid',
-    MEMBER_PAYLOAD_LASTNAME_LENGTH_ERROR = 'api.member.error.payload-lastname-length-error',
-    MEMBER_PAYLOAD_LASTNAME_IS_NOT_STRING = 'api.member.error.payload-lastname-is-not-string',
-    MEMBER_PAYLOAD_FIRSTNAME_LENGTH_ERROR = 'api.member.error.payload-firstname-length-error',
-    MEMBER_PAYLOAD_FIRSTNAME_IS_NOT_STRING = 'api.member.error.payload-firstname-is-not-string',
-    MEMBER_PAYLOAD_MEMBER_ID_LENGTH_ERROR = 'api.member.error.payload-member-id-length-error',
-    MEMBER_PAYLOAD_MEMBER_ID_MANDATORY = 'api.member.error.payload-member-id-mandatory',
+  // CATALOG API EXCEPTIONS --------------------------------------------//
 
+  // List Service Exception Codes
+  LIST_CREATE_CONFLICT_EXCEPTION = 'api.list.error.create-conflict-exception',
+  LIST_CREATE_EXCEPTION = 'api.list.error.create-exception',
+  LIST_GET_BY_USER_EXCEPTION = 'api.list.error.get-by-user-exception',
+  LIST_UPDATE_NOT_FOUND_EXCEPTION = 'api.list.error.update-not-found-exception',
+  LIST_UPDATE_CONFLICT_EXCEPTION = 'api.list.error.update-conflict-exception',
+  LIST_UPDATE_FORBIDDEN_EXCEPTION = 'api.list.error.update-forbidden-exception',
+  LIST_UPDATE_EXCEPTION = 'api.list.error.update-exception',
+  LIST_DELETE_NOT_FOUND_EXCEPTION = 'api.list.error.delete-not-found-exception',
+  LIST_DELETE_FORBIDDEN_EXCEPTION = 'api.list.error.delete-forbidden-exception',
+  LIST_DELETE_EXCEPTION = 'api.list.error.delete-exception',
 
+  // List Product Service Exception Codes
+  LIST_PRODUCT_CREATE_CONFLICT_EXCEPTION = 'api.list-product.error.create-conflict-exception',
+  LIST_PRODUCT_CREATE_NOT_FOUND_LIST_EXCEPTION = 'api.list-product.error.create-not-found-list-exception',
+  LIST_PRODUCT_CREATE_NOT_FOUND_PRODUCT_EXCEPTION = 'api.list-product.error.create-not-found-product-exception',
+  LIST_PRODUCT_CREATE_EXCEPTION = 'api.list-product.error.create-exception',
+  LIST_PRODUCT_GET_BY_LIST_EXCEPTION = 'api.list-product.error.get-by-list-exception',
 
-// Member Service Crud Exceptions
+  // Price Service Exception Codes
+  PRICE_CREATE_USER_NOT_FOUND_EXCEPTION = 'api.price.error.create-user-not-found-exception',
+  PRICE_CREATE_PRODUCT_NOT_FOUND_EXCEPTION = 'api.price.error.create-product-not-found-exception',
+  PRICE_CREATE_BAD_REQUEST_EXCEPTION = 'api.price.error.create-bad-request-exception',
+  PRICE_CREATE_CONFLICT_EXCEPTION = 'api.price.error.create-conflict-exception',
+  PRICE_CREATE_EXCEPTION = 'api.price.error.create-exception',
+  PRICE_GET_PRICES_EXCEPTION = 'api.price.error.get-prices-exception',
+  PRICE_GET_LAST_PRICE_EXCEPTION = 'api.price.error.get-last-price-exception',
+  PRICE_UPDATE_BAD_REQUEST_EXCEPTION = 'api.price.error.update-bad-request-exception',
+  PRICE_UPDATE_NOT_FOUND_EXCEPTION = 'api.price.error.update-not-found-exception',
+  PRICE_UPDATE_USER_NOT_FOUND_EXCEPTION = 'api.price.error.update-user-not-found-exception',
+  PRICE_UPDATE_EXCEPTION = 'api.price.error.update-exception',
 
-    MEMBER_UPDATE_EXCEPTION = 'api.member.error.update-exception',
-    MEMBER_LIST_EXCEPTION = 'api.member.error.list-exception',
-    MEMBER_DELETE_EXCEPTION = 'api.member.error.delete-exception',
-    MEMBER_NOT_FOUND_EXCEPTION = 'api.member.error.not-found-exception',
-    MEMBER_CREATE_EXCEPTION = 'api.member.error.create-exception',
+  // Product Service Exception Codes
+  PRODUCT_CREATE_NOT_FOUND_EXCEPTION = 'api.product.error.create-not-found-exception',
+  PRODUCT_CREATE_CONFLICT_EXCEPTION = 'api.product.error.create-conflict-exception',
+  PRODUCT_CREATE_EXCEPTION = 'api.product.error.create-exception',
+  PRODUCT_GET_ALL_EXCEPTION = 'api.product.error.get-all-exception',
+  PRODUCT_DETAIL_NOT_FOUND_EXCEPTION = 'api.product.error.detail-not-found-exception',
 
-
-    // MemberPlan Service Crud Exceptions
-
-    MEMBERPLAN_UPDATE_EXCEPTION = 'api.memberplan.error.update-exception',
-    MEMBERPLAN_LIST_EXCEPTION = 'api.memberplan.error.list-exception',
-    MEMBERPLAN_DELETE_EXCEPTION = 'api.memberplan.error.delete-exception',
-    MEMBERPLAN_NOT_FOUND_EXCEPTION = 'api.memberplan.error.not-found-exception',
-    MEMBERPLAN_CREATE_EXCEPTION = 'api.memberplan.error.create-exception',
-
-
+  // Store Service Exception Codes
+  STORE_CREATE_CONFLICT_EXCEPTION = 'api.store.error.create-conflict-exception',
+  STORE_CREATE_EXCEPTION = 'api.store.error.create-exception',
+  STORE_FIND_ALL_EXCEPTION = 'api.store.error.find-all-exception',
+  STORE_FIND_TWO_EXCEPTION = 'api.store.error.find-two-exception',
+  STORE_INFO_EXCEPTION = 'api.store.error.info-exception',
+  STORE_GET_PRODUCTS_EXCEPTION = 'api.store.error.get-products-exception',
 }

@@ -13,7 +13,9 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {ListService} from '@features/catalog/service/list.service';
 import {CreateListPayload} from '@features/catalog/data/payload/create-list.payload';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {ProductDto} from '@features/catalog/data/dto/product.dto';
+import {ErrorMessageService} from '@shared/api/service/error-message.service';
+import {tap} from 'rxjs';
+import {ApiResponse} from '@shared/api/data/api.response';
 
 @Component({
   selector: 'app-update-list-dialog',
@@ -34,14 +36,16 @@ export class UpdateListDialog {
 
   destroyRef = inject(DestroyRef);
   dialogRef = inject(MatDialogRef<UpdateListDialog>);
+
   listService = inject(ListService)
+  private errorMessageService = inject(ErrorMessageService)
+
   data = inject(MAT_DIALOG_DATA);
 
   // injected dialog data
   listId: number = this.data.listId;
 
-  isListConflict = signal(false)
-
+  errorMessage = signal<string | null>(null);
 
 
   listForm = new FormGroup({
@@ -59,6 +63,8 @@ export class UpdateListDialog {
       console.log('invalid form')
       return
     }
+    this.errorMessage.set(null);
+
     const formValue = this.listForm.value;
     const payload: CreateListPayload = {
       name: formValue.name!,
@@ -66,11 +72,15 @@ export class UpdateListDialog {
     console.log('price payload :', payload)
 
     this.listService.updateList(payload, this.listId).pipe(
-      takeUntilDestroyed(this.destroyRef)
+      takeUntilDestroyed(this.destroyRef),
+      tap((apiResponse: ApiResponse) => {
+        if (!apiResponse.result) {
+          console.log('apiResponse details : ', apiResponse)
+          this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
+        }
+      }),
     ).subscribe(response => {
-      if (!response.result) {
-        this.isListConflict.set(true);
-      } else {
+      if (response.result) {
         this.dialogRef.close();
       }
     })

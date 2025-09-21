@@ -1,19 +1,21 @@
 import {
-  ConflictException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListEntity } from '../model/list.entity';
-import { ILike, Repository } from 'typeorm';
+import {  Repository } from 'typeorm';
 import { ListProductEntity } from '../model/list-product.entity';
 import { CreateListProductDto } from '../model/dto/create-list-product.dto';
-import { CreateStoreDto } from '../model/dto/create-store.dto';
-import { StoreEntity } from '../model/store.entity';
 import { ProductEntity } from '../model/product.entity';
-import { ProductService } from './product.service';
 import { ListProductResponse } from '../model/type/list-product.response';
 import { PriceEntity } from '../model/price.entity';
+import {
+  ListProductCreateConflictException,
+  ListProductCreateException,
+  ListProductCreateNotFoundListException,
+  ListProductCreateNotFoundProductException,
+  ListProductGetByListException,
+} from '../catalog.exception';
 
 @Injectable()
 export class ListProductService {
@@ -33,65 +35,77 @@ export class ListProductService {
       },
     });
     if (existingListProduct) {
-      throw new ConflictException(`product is already in this list`,);
+      throw new ListProductCreateConflictException();
     }
     const list = await this.listRepository.findOne({ where: { listId: dto.listId } });
     if (!list) {
-      throw new NotFoundException(`list not found`,);
+      throw new ListProductCreateNotFoundListException();
     }
     const product = await this.productRepository.findOne({ where: { productId: dto.productId } });
     if (!product) {
-      throw new NotFoundException(`product not found`,);
+      throw new ListProductCreateNotFoundProductException();
+    }
+    try {
+
+      const listProduct = new ListProductEntity();
+      listProduct.product = product;
+      listProduct.list = list;
+
+      return await this.listProductRepository.save(listProduct);
+
+    } catch (e) {
+      throw new ListProductCreateException();
     }
 
-    const listProduct = new ListProductEntity();
-    listProduct.product = product;
-    listProduct.list = list;
-
-    return await this.listProductRepository.save(listProduct);
   }
 
   async getListProductsByList(listId: number): Promise<ListProductResponse[]> {
 
-    const subQuery = this.priceRepository
-      .createQueryBuilder('price2')
-      .select('MAX(price2.priceDate)', 'maxDate')
-      .where('price2.productId = product.productId')
-      .getQuery();
+    try {
+      const subQuery = this.priceRepository
+        .createQueryBuilder('price2')
+        .select('MAX(price2.priceDate)', 'maxDate')
+        .where('price2.productId = product.productId')
+        .getQuery();
 
-    const queryBuilder = this.listProductRepository
-      .createQueryBuilder('listProduct')
-      .leftJoinAndSelect('listProduct.product', 'product')
-      .leftJoinAndSelect('product.store', 'store')
-      .leftJoinAndSelect(
-        'product.prices',
-        'price',
-        `price.priceDate = (${subQuery})`
-      )
-      .where('listProduct.listId = :listId', { listId })
-      .orderBy('price.created', 'DESC')
-      .getMany();
+      const queryBuilder = this.listProductRepository
+        .createQueryBuilder('listProduct')
+        .leftJoinAndSelect('listProduct.product', 'product')
+        .leftJoinAndSelect('product.store', 'store')
+        .leftJoinAndSelect(
+          'product.prices',
+          'price',
+          `price.priceDate = (${subQuery})`
+        )
+        .where('listProduct.listId = :listId', { listId })
+        .orderBy('price.created', 'DESC')
+        .getMany();
 
-    const listProducts = await queryBuilder;
+      const listProducts = await queryBuilder;
 
-    return listProducts.map((listProduct) => ({
-      created: listProduct.created,
-      listProductId: listProduct.listProductId,
+      return listProducts.map((listProduct) => ({
+        created: listProduct.created,
+        listProductId: listProduct.listProductId,
 
-      productId: listProduct.product.productId,
-      name: listProduct.product.name,
-      brand: listProduct.product.brand,
-      unit: listProduct.product.unit,
-      quantity: listProduct.product.quantity,
-      productPrice: listProduct.product.prices[0].productPrice,
-      grossPrice: listProduct.product.prices[0].grossPrice,
-      priceDate: listProduct.product.prices[0].priceDate,
-      storeName: listProduct.product.store.name,
-      storeStreet: listProduct.product.store.street,
-      storeNumber: listProduct.product.store.number,
-      storePostalCode: listProduct.product.store.postalCode,
-      storeCity: listProduct.product.store.city
-    }));
+        productId: listProduct.product.productId,
+        name: listProduct.product.name,
+        brand: listProduct.product.brand,
+        unit: listProduct.product.unit,
+        quantity: listProduct.product.quantity,
+        productPrice: listProduct.product.prices[0].productPrice,
+        grossPrice: listProduct.product.prices[0].grossPrice,
+        priceDate: listProduct.product.prices[0].priceDate,
+        storeName: listProduct.product.store.name,
+        storeStreet: listProduct.product.store.street,
+        storeNumber: listProduct.product.store.number,
+        storePostalCode: listProduct.product.store.postalCode,
+        storeCity: listProduct.product.store.city
+      }));
+    } catch (e) {
+      throw new ListProductGetByListException();
+    }
+
+
   }
 
 }

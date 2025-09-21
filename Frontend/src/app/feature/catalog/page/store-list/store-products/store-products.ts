@@ -1,10 +1,10 @@
-import {Component, computed, DestroyRef, inject, input, OnInit, signal} from '@angular/core';
+import {Component, computed, DestroyRef, effect, inject, input, OnInit, signal, viewChild} from '@angular/core';
 import {Header} from "@core/layout/header/header";
 import { RouterLink} from '@angular/router';
 import {ProductDto} from '@features/catalog/data/dto/product.dto';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CurrencyPipe, DatePipe} from '@angular/common';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton, MatMiniFabButton} from '@angular/material/button';
 import {AddPriceDialog} from '@features/catalog/component/dialog/add-price-dialog/add-price-dialog';
 import {MatDialog} from '@angular/material/dialog';
 import {ProductService} from '@features/catalog/service/product.service';
@@ -16,6 +16,21 @@ import {MatFormField, MatSuffix} from '@angular/material/form-field';
 import {MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {MatIcon} from '@angular/material/icon';
+import {
+  MatCell,
+  MatCellDef,
+  MatColumnDef,
+  MatHeaderCell, MatHeaderCellDef,
+  MatHeaderRow,
+  MatHeaderRowDef,
+  MatRow, MatRowDef, MatTable, MatTableDataSource
+} from '@angular/material/table';
+import {MatPaginator} from '@angular/material/paginator';
+import {
+  AddProductToListDialog
+} from '@features/catalog/component/dialog/add-product-to-list-dialog/add-product-to-list-dialog';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
+import {AppNode} from '@shared/route/node.enum';
 
 @Component({
   selector: 'app-store-products',
@@ -31,6 +46,21 @@ import {MatIcon} from '@angular/material/icon';
     MatInput,
     MatIcon,
     MatSuffix,
+    MatCell,
+    MatCellDef,
+    MatColumnDef,
+    MatHeaderCell,
+    MatHeaderRow,
+    MatHeaderRowDef,
+    MatPaginator,
+    MatRow,
+    MatRowDef,
+    MatTable,
+    MatHeaderCellDef,
+    MatMenu,
+    MatMenuTrigger,
+    MatIconButton,
+    MatMenuItem,
   ],
   templateUrl: './store-products.html',
   styleUrl: './store-products.css'
@@ -42,6 +72,10 @@ export class StoreProducts implements OnInit {
   private readonly dialog = inject(MatDialog);
   private productService = inject(ProductService);
   private storeService = inject(StoreService);
+  paginator = viewChild(MatPaginator);
+
+  dataSource = new MatTableDataSource<ProductDto>([]);
+  displayedColumns: string[] = ['name','quantity', 'price', 'lastPrice', 'action' ];
 
 
   // dynamic url
@@ -56,6 +90,24 @@ export class StoreProducts implements OnInit {
 
   searchTerm = signal('');
 
+
+  constructor() {
+    // Effect pour mettre à jour le dataSource quand les données changent
+    effect(() => {
+      const product = this.filteredProducts();
+      if (product) {
+        this.dataSource.data = product;
+      }
+    });
+
+    // Effect pour connecter le paginator quand il est disponible
+    effect(() => {
+      const pag = this.paginator();
+      if (pag) {
+        this.dataSource.paginator = pag;
+      }
+    });
+  }
 
   ngOnInit() {
     this.isLoading.set(true);
@@ -93,14 +145,23 @@ export class StoreProducts implements OnInit {
 
   })
 
+
+  getProductDetailUrl(productId: string): string {
+    return AppNode.PRODUCT_DETAIL_PAGE.replace(':productId', productId);
+  }
+
   onSearchChange(searchValue: string) {
     this.searchTerm.set(searchValue);
   }
 
-
-
   onOpenDialogAddPrice(product: ProductDto,) {
     const dialogRef = this.dialog.open(AddPriceDialog, {
+      data: {product: product}
+    });
+  }
+
+  onOpenDialogAddToList(product: ProductDto,) {
+    const dialogRef = this.dialog.open(AddProductToListDialog, {
       data: {product: product}
     });
   }
@@ -114,4 +175,6 @@ export class StoreProducts implements OnInit {
   onClearSearch() {
     this.searchTerm.set('')
   }
+
+  protected readonly AppNode = AppNode;
 }

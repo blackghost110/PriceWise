@@ -4,24 +4,35 @@ export enum ApiURI {
   ME='account/me',
   REFRESH_TOKEN = 'account/refresh',
 
-  PUBLICATION_CREATE = 'publication/create',
-  PUBLICATION_LIST = 'publication/list',
-  PUBLICATION_LIST_USER = 'publication/list-user',
-  PUBLICATION_DELETE = 'publication/delete',
-  PUBLICATION_DELETE_USER = 'publication/deletePubliUser',
-  PUBLICATION_LAST = 'publication/last',
 
-  PROFIL_USER = 'profil/profil-user',
-  PROFIL_UPDATE_USER = 'profil/update-user',
+  COMMENT_CREATE='comment',
+  COMMENT_GET_ALL='comment',
 
-  COMMENTAIRE_CREATE = 'commentaire/create',
-  COMMENTAIRE_LIST = 'commentaire/list',
-  COMMENTAIRE_LIST_USER = 'commentaire/list-user',
-  COMMENTAIRE_LAST = 'commentaire/last',
+  POST_CREATE='post',
+  POST_GET='post',
+  POST_GET_ALL='posts',
 
-  JAIME_CREATE = 'jaime/create',
-  JAIME_PUBLICATION_LIST = 'jaime/list',
-  JAIME_LAST = 'jaime/last',
+  LIST_CREATE='list',
+  LIST_GET_ALL='list/user',
+  LIST_UPDATE='list',
+  LIST_DELETE='list',
 
+  LIST_PRODUCT_CREATE='list-product',
+  LIST_PRODUCT_GET_ALL='list-product',
+
+  PRICE_CREATE='price',
+  PRICE_UPDATE='price',
+
+  PRODUCT_CREATE='product',
+  PRODUCT_DETAIL='product',
+  PRODUCT_GET_BY_STORE='store/:storeId/products',
+  PRODUCT_MULTIPLE_DETAIL='product',
+  // -- x
+
+  STORE_CREATE='store',
+  STORE_GET='store',
+  STORE_GET_ALL='store',
+  STORE_GET_TWO='store/last',
+  
 
 }

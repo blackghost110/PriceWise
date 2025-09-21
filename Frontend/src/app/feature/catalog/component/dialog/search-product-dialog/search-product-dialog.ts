@@ -6,14 +6,13 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatLabel} from '@angular/material/form-field';
 import {MatFormField, MatInput} from '@angular/material/input';
 import {ReactiveFormsModule} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ProductService} from '@features/catalog/service/product.service';
 import {MatIcon} from '@angular/material/icon';
-import { DatePipe} from '@angular/common';
 import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
 
 @Component({
@@ -28,6 +27,7 @@ import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
     ReactiveFormsModule,
     MatFormField,
     MatIcon,
+    MatIconButton
   ],
   templateUrl: './search-product-dialog.html',
   styleUrl: './search-product-dialog.css'
@@ -47,11 +47,9 @@ export class SearchProductDialog implements OnInit {
 
   searchTerm = signal('');
 
-  onLog() {
-    console.log('seletedproducts :', this.selectedProducts())
-  }
 
   ngOnInit() {
+    this.productService.clearSelectedProducts();
     this.productService.getAllProducts().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     this.productService.pushSelectedProduct(this.selectedProduct);
   }
@@ -89,7 +87,31 @@ export class SearchProductDialog implements OnInit {
   })
 
   onAddCompare() {
+    // Récupérer les IDs des produits sélectionnés (sauf le premier qui est le produit principal)
+    const additionalProductIds = this.selectedProducts()
+      .slice(1) // On skip le premier car c'est le produit principal déjà chargé
+      .map(product => product.productId.toString());
 
+    if (additionalProductIds.length > 0) {
+      // Récupérer les détails de tous les produits supplémentaires
+      this.productService.getMultipleProductDetails(additionalProductIds)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (products) => {
+            // Ajouter le produit principal en premier
+            const allProducts = [this.selectedProduct, ...products];
+            this.productService.setComparisonProducts(allProducts);
+            this.dialogRef.close({ compare: true });
+          },
+          error: (error) => {
+            console.error('Erreur lors de la récupération des produits:', error);
+          }
+        });
+    } else {
+      // Si aucun produit supplémentaire, on ferme juste avec le produit principal
+      this.productService.setComparisonProducts([this.selectedProduct]);
+      this.dialogRef.close({ compare: true });
+    }
   }
 
   onAddToSelectedProducts(product: ProductsAllDto) {
@@ -111,7 +133,7 @@ export class SearchProductDialog implements OnInit {
 
   onClose() {
     this.productService.clearSelectedProducts();
-    this.dialogRef.close();
+    this.dialogRef.close({ compare: false });
   }
 
 }

@@ -11,15 +11,74 @@ export class ErrorMessageService {
     ['api.security.error.user-exist', 'Cet utilisateur existe déjà'],
     ['api.security.error.token-expired', 'Votre session a expiré, veuillez vous reconnecter'],
     ['api.security.error.credential-delete', 'Impossible de supprimer cet utilisateur'],
-    ['api.error.no-token-founded', 'Vous devez être connecté pour accéder à cette ressource'],
+    ['api.security.error.no-token-found', 'Vous devez être connecté pour accéder à cette ressource'],
+    ['api.security.error.signup', 'Une erreur est survenue lors de l\'inscription'],
 
     // Erreurs de validation
     ['api.error.payload-is-not-valid', 'Les données fournies ne sont pas valides'],
     ['api.error.payload-param-is-missing', 'Des informations requises sont manquantes'],
+    ['api.error.stock-detail', 'Impossible de générer le token d\'authentification'],
 
-    // Erreurs générales
-    ['api.error.signup', 'Une erreur est survenue lors de l\'inscription'],
-    ['api.error.token-gen-error', 'Impossible de générer le token d\'authentification'],
+    // Messages de succès
+    ['api.success.common', 'Opération réalisée avec succès'],
+
+    // ERREURS SOCIAL (Posts & Comments)
+    // Posts
+    ['api.post.error.create-exception', 'Impossible de créer le post. Veuillez réessayer.'],
+    ['api.post.error.get-all-exception', 'Impossible de charger les posts. Veuillez réessayer.'],
+    ['api.post.error.get-by-id-exception', 'Ce post n\'existe pas ou n\'est plus disponible'],
+
+    // Comments
+    ['api.comment.error.create-exception', 'Impossible de créer le commentaire. Veuillez réessayer.'],
+    ['api.comment.error.create-user-exception', 'Utilisateur introuvable pour créer le commentaire'],
+    ['api.comment.error.get-by-id-exception', 'Ce commentaire n\'existe pas ou n\'est plus disponible'],
+
+    // ERREURS CATALOG (Lists, Products, Prices, Stores)
+    // Lists
+    ['api.list.error.create-conflict-exception', 'Une liste avec ce nom existe déjà'],
+    ['api.list.error.create-exception', 'Impossible de créer la liste. Veuillez réessayer.'],
+    ['api.list.error.get-by-user-exception', 'Impossible de charger vos listes. Veuillez réessayer.'],
+    ['api.list.error.update-not-found-exception', 'Cette liste n\'existe pas ou n\'est plus disponible'],
+    ['api.list.error.update-conflict-exception', 'Une liste avec ce nom existe déjà'],
+    ['api.list.error.update-forbidden-exception', 'Vous n\'avez pas les droits pour modifier cette liste'],
+    ['api.list.error.update-exception', 'Impossible de modifier la liste. Veuillez réessayer.'],
+    ['api.list.error.delete-not-found-exception', 'Cette liste n\'existe pas ou a déjà été supprimée'],
+    ['api.list.error.delete-forbidden-exception', 'Vous n\'avez pas les droits pour supprimer cette liste'],
+    ['api.list.error.delete-exception', 'Impossible de supprimer la liste. Veuillez réessayer.'],
+
+    // List Products
+    ['api.list-product.error.create-conflict-exception', 'Ce produit est déjà dans votre liste'],
+    ['api.list-product.error.create-not-found-list-exception', 'Cette liste n\'existe pas ou n\'est plus disponible'],
+    ['api.list-product.error.create-not-found-product-exception', 'Ce produit n\'existe pas ou n\'est plus disponible'],
+    ['api.list-product.error.create-exception', 'Impossible d\'ajouter le produit à la liste. Veuillez réessayer.'],
+    ['api.list-product.error.get-by-list-exception', 'Impossible de charger les produits de cette liste. Veuillez réessayer.'],
+
+    // Prices
+    ['api.price.error.create-user-not-found-exception', 'Utilisateur introuvable pour enregistrer le prix'],
+    ['api.price.error.create-product-not-found-exception', 'Produit introuvable pour enregistrer le prix'],
+    ['api.price.error.create-bad-request-exception', 'Les informations du prix ne sont pas valides'],
+    ['api.price.error.create-conflict-exception', 'Un prix pour ce produit et ce magasin existe déjà pour cette date, voulez vous le modifier ?'],
+    ['api.price.error.create-exception', 'Impossible d\'enregistrer le prix. Veuillez réessayer.'],
+    ['api.price.error.get-prices-exception', 'Impossible de charger les prix. Veuillez réessayer.'],
+    ['api.price.error.get-last-price-exception', 'Impossible de récupérer le dernier prix. Veuillez réessayer.'],
+    ['api.price.error.update-bad-request-exception', 'Les informations du prix ne sont pas valides'],
+    ['api.price.error.update-not-found-exception', 'Ce prix n\'existe pas ou n\'est plus disponible'],
+    ['api.price.error.update-exception', 'Impossible de modifier le prix. Veuillez réessayer.'],
+
+    // Products
+    ['api.product.error.create-not-found-exception', 'Informations manquantes pour créer le produit'],
+    ['api.product.error.create-conflict-exception', 'Un produit avec ce nom existe déjà'],
+    ['api.product.error.create-exception', 'Impossible de créer le produit. Veuillez réessayer.'],
+    ['api.product.error.get-all-exception', 'Impossible de charger les produits. Veuillez réessayer.'],
+    ['api.product.error.detail-not-found-exception', 'Ce produit n\'existe pas ou n\'est plus disponible'],
+
+    // Stores
+    ['api.store.error.create-conflict-exception', 'Un magasin avec ce nom existe déjà'],
+    ['api.store.error.create-exception', 'Impossible de créer le magasin. Veuillez réessayer.'],
+    ['api.store.error.find-all-exception', 'Impossible de charger les magasins. Veuillez réessayer.'],
+    ['api.store.error.find-two-exception', 'Impossible de charger les magasins sélectionnés. Veuillez réessayer.'],
+    ['api.store.error.info-exception', 'Impossible de charger les informations du magasin. Veuillez réessayer.'],
+    ['api.store.error.get-products-exception', 'Impossible de charger les produits du magasin. Veuillez réessayer.'],
 
     // Message par défaut
     ['default', 'Une erreur inattendue s\'est produite. Veuillez réessayer.']
@@ -28,41 +87,24 @@ export class ErrorMessageService {
   /**
    * Traduit un code d'erreur API en message utilisateur
    */
-  getErrorMessage(code: string | null | undefined): string {
+  getErrorMessage(code: string | null | undefined, data?: any): string {
     if (!code) {
       return this.errorMessages.get('default')!;
     }
 
+    if (data !== null && data !== undefined) {
+      switch (code) {
+        case 'api.price.error.create-conflict-exception':
+          return `Un prix existe déjà pour cette date : \nPrix: ${data.productPrice}€ \nPrix brut: ${data.grossPrice}€ \nVoulez-vous modifier le prix ?`;
+
+
+        default:
+          break;
+      }
+    }
+
+
     return this.errorMessages.get(code) || this.errorMessages.get('default')!;
   }
 
-  /**
-   * Traduit plusieurs codes d'erreur (utile pour les erreurs de validation)
-   */
-  getErrorMessages(codes: string[]): string[] {
-    return codes.map(code => this.getErrorMessage(code));
-  }
-
-  /**
-   * Ajoute ou met à jour un message d'erreur personnalisé
-   */
-  setErrorMessage(code: string, message: string): void {
-    this.errorMessages.set(code, message);
-  }
-
-  /**
-   * Récupère un message d'erreur avec des paramètres dynamiques
-   * Exemple : getParameterizedMessage('user.not.found', {username: 'John'})
-   */
-  getParameterizedMessage(code: string, params?: Record<string, any>): string {
-    let message = this.getErrorMessage(code);
-
-    if (params) {
-      Object.keys(params).forEach(key => {
-        message = message.replace(`{${key}}`, params[key]);
-      });
-    }
-
-    return message;
-  }
 }

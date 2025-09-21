@@ -19,6 +19,9 @@ export class ListEntity extends BaseEntity {
     @ManyToOne(() => Credential, (user) => user.lists)
     user: Credential;
 
-    @OneToMany(() => ListProductEntity, (listProduct) => listProduct.list)
+    @OneToMany(() => ListProductEntity, (listProduct) => listProduct.list, {
+      onDelete: "CASCADE",
+      cascade: true,
+    })
     listProducts: ListProductEntity[];
 }

@@ -21,6 +21,10 @@ export class StoreController {
   async findAll() {
     return this.storeService.findAll();
   }
+  @Get('/last')
+  async findTwoLast() {
+    return this.storeService.findTwoLast();
+  }
 
 
   @Get(':storeId')

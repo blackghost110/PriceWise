@@ -1,23 +1,20 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {StoreDto} from '@features/catalog/data/dto/store.dto';
-import {catchError, Observable, tap, throwError} from 'rxjs';
+import {catchError, forkJoin, map, Observable, tap} from 'rxjs';
 import {ProductDto} from '@features/catalog/data/dto/product.dto';
 import {ApiService} from '@shared/api/service/api.service';
 import {ApiResponse} from '@shared/api/data/api.response';
-import {CreatePricePayload} from '@features/catalog/data/payload/create-price.payload';
 import {CreateProductPayload} from '@features/catalog/data/payload/create-product.payload';
 import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
-import {ProductDetail} from '@features/catalog/page/product-detail/product-detail';
 import {ProductDetailDto} from '@features/catalog/data/dto/product-detail.dto';
 import {PriceDto} from '@features/catalog/data/dto/price.dto';
+import {ApiURI} from '@shared/api/api-uri.enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
 
-  private api = inject(ApiService)
+  private readonly api = inject(ApiService)
 
 
   private _storeProducts = signal<ProductDto[] | null>(null)
@@ -48,6 +45,7 @@ export class ProductService {
 
 
   pushSelectedProduct(product: ProductsAllDto) {
+    if (this._selectedProducts().length < 8)
     this._selectedProducts.update(current => [...current, product]);
   }
   clearSelectedProducts() {
@@ -60,7 +58,7 @@ export class ProductService {
 
 
   getProductDetail(productId: string) {
-    return this.api.get(`product/${productId}`)
+    return this.api.get(`${ApiURI.PRODUCT_DETAIL}/${productId}`)
       .pipe(
         tap((response:ApiResponse) => {
           this._productDetail.set(response.data);
@@ -70,7 +68,8 @@ export class ProductService {
   }
 
   getProducts(storeId: number) {
-    return this.api.get(`store/${storeId}/products`)
+    const endpoint = ApiURI.PRODUCT_GET_BY_STORE.replace(':storeId', storeId.toString());
+    return this.api.get(endpoint)
       .pipe(
         tap((response:ApiResponse) => {
           this._storeProducts.set(response.data);
@@ -79,10 +78,25 @@ export class ProductService {
       )
   }
 
-  getAllProducts() {
-    return this.api.get(`products`)
+  // Mise à jour pour accepter les paramètres de requête
+  getAllProducts(filters?: { storeName?: string; storePostalCode?: string }) {
+    let url = 'products';
+
+    // Construction des paramètres de requête
+    if (filters && (filters.storeName || filters.storePostalCode)) {
+      const params = new URLSearchParams();
+      if (filters.storeName) {
+        params.append('storeName', filters.storeName);
+      }
+      if (filters.storePostalCode) {
+        params.append('storePostalCode', filters.storePostalCode);
+      }
+      url += `?${params.toString()}`;
+    }
+
+    return this.api.get(url)
       .pipe(
-        tap((response:ApiResponse) => {
+        tap((response: ApiResponse) => {
           this._allProducts.set(response.data);
           console.log(response)
         })
@@ -94,12 +108,9 @@ export class ProductService {
 
 
   addProduct(payload: CreateProductPayload, storeId: number) {
-    return this.api.post(`product/${storeId}`, payload).pipe(
+    return this.api.post(`${ApiURI.PRODUCT_CREATE}/${storeId}`, payload).pipe(
       tap((response:ApiResponse) => {
-        console.log('tap addproduct')
-        console.log(response)
         if (response.result) {
-          console.log('result true')
           this.getProducts(storeId).subscribe()
         }
       })
@@ -160,6 +171,33 @@ export class ProductService {
     }
 
     return filledPrices;
+  }
+
+
+
+  // Après la déclaration de _selectedProducts
+  private _comparisonProducts = signal<ProductDetailDto[]>([]);
+  comparisonProducts = this._comparisonProducts.asReadonly();
+
+// Nouvelles méthodes pour gérer les produits de comparaison
+  setComparisonProducts(products: ProductDetailDto[]) {
+    this._comparisonProducts.set(products);
+  }
+
+  clearComparisonProducts() {
+    this._comparisonProducts.set([]);
+  }
+
+
+// Méthode pour récupérer les détails de plusieurs produits
+  getMultipleProductDetails(productIds: string[]): Observable<ProductDetailDto[]> {
+    const requests = productIds.map(id =>
+      this.api.get(`${ApiURI.PRODUCT_MULTIPLE_DETAIL}/${id}`).pipe(
+        map((response: ApiResponse) => response.data as ProductDetailDto)
+      )
+    );
+
+    return forkJoin(requests);
   }
 
 }

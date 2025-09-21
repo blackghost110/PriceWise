@@ -1,4 +1,4 @@
-import {Component, computed, effect, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, effect, inject, OnInit, signal, viewChild} from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {Footer} from '@core/layout/footer/footer';
 import {CurrencyPipe, DatePipe} from '@angular/common';
@@ -15,6 +15,19 @@ import {AddListDialog} from '@features/catalog/component/dialog/add-list-dialog/
 import {MatDialog} from '@angular/material/dialog';
 import {UpdateListDialog} from '@features/catalog/component/dialog/update-list-dialog/update-list-dialog';
 import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
+import {
+  MatCell,
+  MatCellDef,
+  MatColumnDef,
+  MatHeaderCell, MatHeaderCellDef,
+  MatHeaderRow,
+  MatHeaderRowDef,
+  MatRow, MatRowDef, MatTable, MatTableDataSource
+} from '@angular/material/table';
+import {MatPaginator} from '@angular/material/paginator';
+import {ListProductDto} from '@features/catalog/data/dto/list-product.dto';
+import {RouterLink} from '@angular/router';
+import {AppNode} from '@shared/route/node.enum';
 
 @Component({
   selector: 'app-personal-list',
@@ -35,7 +48,19 @@ import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
     MatButton,
     MatMenu,
     MatMenuItem,
-    MatMenuTrigger
+    MatMenuTrigger,
+    MatCell,
+    MatCellDef,
+    MatColumnDef,
+    MatHeaderCell,
+    MatHeaderRow,
+    MatHeaderRowDef,
+    MatPaginator,
+    MatRow,
+    MatRowDef,
+    MatTable,
+    MatHeaderCellDef,
+    RouterLink
   ],
   templateUrl: './personal-list.html',
   styleUrl: './personal-list.css'
@@ -46,6 +71,10 @@ export class PersonalList implements OnInit{
   listService = inject(ListService)
   listProductService = inject(ListProductService)
   dialogService = inject(DialogService)
+  paginator = viewChild(MatPaginator);
+
+  dataSource = new MatTableDataSource<ListProductDto>([]);
+  displayedColumns: string[] = ['name','quantity', 'price','place', 'lastPrice' ];
 
 
   personalList = this.listService.personalList
@@ -57,8 +86,25 @@ export class PersonalList implements OnInit{
 
   constructor() {
     effect(() => {
-        this.listProductService.getListProducts(Number(this.selectedList())).subscribe()
+      this.listProductService.getListProducts(Number(this.selectedList())).subscribe()
     })
+
+    //  mettre à jour le dataSource
+    effect(() => {
+      const product = this.filteredProducts();
+      if (product) {
+        this.dataSource.data = product;
+      }
+    });
+
+    //  connecter le paginator
+    effect(() => {
+      const pag = this.paginator();
+      if (pag) {
+        this.dataSource.paginator = pag;
+      }
+    });
+
 
   }
 
@@ -95,6 +141,10 @@ export class PersonalList implements OnInit{
   })
 
 
+
+  getProductDetailUrl(productId: string): string {
+    return AppNode.PRODUCT_DETAIL_PAGE.replace(':productId', productId);
+  }
 
   onOpenDialogAddList() {
     const dialogRef = this.dialog.open(AddListDialog);

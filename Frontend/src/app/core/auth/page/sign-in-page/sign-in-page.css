@@ -1,0 +1,111 @@
+/* Layout principal */
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #ebeeef;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+/* Carte login */
+.login-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* En-tête */
+.login-header {
+  text-align: center;
+  padding: 70px 15px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: bottom;
+  position: relative;
+}
+
+.login-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(54,84,99,0.6);
+  z-index: 0;
+}
+
+.login-title {
+  position: relative;
+  z-index: 1;
+  font-size: 28px;
+  color: white;
+  text-transform: uppercase;
+  text-shadow: 2px 2px black;
+}
+
+/* Formulaire */
+.login-form {
+  padding: 30px;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+.form-input {
+  width: 100%;
+  height: 40px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #555;
+  background: transparent;
+}
+
+.input-underline::before {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #57b846;
+  transition: width 0.3s;
+}
+
+.form-input:focus + .input-underline::before {
+  width: 100%;
+}
+
+/* Lien */
+.form-link {
+  display: block;
+  font-size: 13px;
+  color: #999;
+  margin: 10px 0 20px;
+  text-decoration: none;
+}
+
+.form-link:hover {
+  color: #57b846;
+}
+.submit-button{
+  float: right;
+  margin-bottom: 15px;
+}
+.control-error {
+  color: #a94442;
+  padding: 4px 10px;
+}
+
+
+
+
+

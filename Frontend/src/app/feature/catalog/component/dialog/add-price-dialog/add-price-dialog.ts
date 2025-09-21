@@ -15,6 +15,10 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PriceService} from '@features/catalog/service/price.service';
 import {CreatePricePayload} from '@features/catalog/data/payload/create-price.payload';
 import {ProductDto} from '@features/catalog/data/dto/product.dto';
+import {ErrorMessageService} from '@shared/api/service/error-message.service';
+import {tap} from 'rxjs';
+import {ApiResponse} from '@shared/api/data/api.response';
+import {UpdatePricePayload} from '@features/catalog/data/payload/update-price.payload';
 
 @Component({
   selector: 'app-add-price-dialog',
@@ -39,20 +43,21 @@ import {ProductDto} from '@features/catalog/data/dto/product.dto';
 })
 export class AddPriceDialog {
 
-  private readonly priceService = inject(PriceService)
-
   destroyRef = inject(DestroyRef);
-
   dialogRef = inject(MatDialogRef<AddPriceDialog>);
-  data = inject(MAT_DIALOG_DATA);
 
+  private readonly priceService = inject(PriceService)
+  private errorMessageService = inject(ErrorMessageService)
+
+  data = inject(MAT_DIALOG_DATA);
 
   // injected data
   product: ProductDto = this.data.product;
+  updatePriceId = signal(0);
 
 
   isSameDate = signal(false)
-
+  errorMessage = signal<string | null>(null);
 
 
 
@@ -74,8 +79,9 @@ export class AddPriceDialog {
     if (this.priceForm.invalid) {
       return
     }
+    this.errorMessage.set(null);
 
-    if (!this.isSameDay(this.priceForm.value.priceDate!, this.product.priceDate)) {
+
 
       const formValue = this.priceForm.value;
       console.log('price date avant payload : ', formValue.priceDate);
@@ -84,22 +90,50 @@ export class AddPriceDialog {
         grossPrice: Number(formValue.grossPrice),
         priceDate: this.formatDateToLocal(formValue.priceDate!)
       };
-      console.log('price payload :', payload)
 
       this.priceService.addPrice(payload, this.product.productId).pipe(
-        takeUntilDestroyed(this.destroyRef)
-      ).subscribe({
-        next: (response) => {
-          console.log('addPrice response :', response)
-        },
-      })
-      this.dialogRef.close();
-    } else {
-      this.isSameDate.set(true);
-      this.priceForm.get('priceDate')?.disable();
-      console.log('bingooo meme date, voulez vous mettre un autre prix ?')
+        takeUntilDestroyed(this.destroyRef),
+        tap((apiResponse: ApiResponse) => {
+          if (!apiResponse.result) {
+            console.log('apiResponse details : ', apiResponse)
+            this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code, apiResponse.data))
+            this.isSameDate.set(true);
+            this.updatePriceId.set(apiResponse.data.priceId)
+            this.priceForm.get('priceDate')?.disable();
+          } else {
+            this.onClose()
+          }
+        }),
+      ).subscribe();
+  }
+
+  onUpdatePrice() {
+    if (this.priceForm.invalid) {
+      return;
     }
 
+    this.errorMessage.set(null);
+
+    const formValue = this.priceForm.value;
+
+    const payload: UpdatePricePayload = {
+      productPrice: Number(formValue.productPrice),
+      grossPrice: Number(formValue.grossPrice)
+    };
+
+    const priceId = this.updatePriceId();
+
+    this.priceService.updatePrice(payload, priceId).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      tap((apiResponse: ApiResponse) => {
+        if (!apiResponse.result) {
+          console.log('apiResponse details : ', apiResponse);
+          this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code, apiResponse.data));
+        } else {
+          this.onClose();
+        }
+      })
+    ).subscribe();
   }
 
 
@@ -137,6 +171,7 @@ export class AddPriceDialog {
 
   onChangeDate() {
     this.isSameDate.set(false);
+    this.errorMessage.set(null);
     this.priceForm.get('priceDate')?.enable();
   }
 

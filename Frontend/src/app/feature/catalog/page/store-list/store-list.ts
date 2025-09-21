@@ -1,7 +1,7 @@
 import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {StoreDto} from '@features/catalog/data/dto/store.dto';
-import {Router, RouterLink} from '@angular/router';
+import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {StoreService} from '@features/catalog/service/store.service';
 import {MatButton} from '@angular/material/button';
@@ -10,6 +10,7 @@ import {MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/inp
 import {MatDialog} from '@angular/material/dialog';
 import {AddStoreDialog} from '@features/catalog/component/dialog/add-store-dialog/add-store-dialog';
 import {MatIcon} from '@angular/material/icon';
+import {AppNode} from '@shared/route/node.enum';
 
 @Component({
   selector: 'app-store-list',
@@ -20,8 +21,9 @@ import {MatIcon} from '@angular/material/icon';
     MatFormField,
     MatInput,
     MatLabel,
-    RouterLink,
     MatSuffix,
+    RouterLink,
+    RouterLinkActive,
   ],
   templateUrl: './store-list.html',
   styleUrl: './store-list.css'
@@ -38,6 +40,7 @@ export class StoreList implements OnInit{
 
 
   stores = this.storeService.storeList
+  storeLastTwo = this.storeService.storeLastTwo
 
   errorMessage = signal<string | null>(null);
   isLoading = signal(false);
@@ -49,6 +52,8 @@ export class StoreList implements OnInit{
     this.isLoading.set(true);
     this.storeService.getStores().pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe()
+    this.storeService.getStoreLastTwo().pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe()
   }
 
   filteredStores = computed(() => {
@@ -87,12 +92,13 @@ export class StoreList implements OnInit{
   }
 
   onNavigateToStore(store: StoreDto) {
-    this.router.navigate([`/store-list/${store.storeId}/products`],
-      { state: { store } })
+    const route = AppNode.STORE_LIST_PRODUCTS_PAGE.replace(':storeId', store.storeId);
+    this.router.navigateByUrl(route, { state: { store } });
   }
 
   onClearSearch() {
     this.searchTerm.set('')
   }
 
+  protected readonly AppNode = AppNode;
 }

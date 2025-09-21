@@ -1,37 +1,86 @@
 <app-header/>
-<div style="margin: 20px">
+<nav class="nav-bar">
+  <div class="nav-container">
+    <div class="nav-items">
+      <button [routerLink]="AppNode.STORE_LIST_PAGE" routerLinkActive="active" class="nav-item">
+        <mat-icon>store</mat-icon>
+        <span>Magasin</span>
+      </button>
+      <button [routerLink]="AppNode.PRODUCT_LIST_PAGE" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M640-80q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170T640-80Zm0-80q66 0 113-47t47-113q0-66-47-113t-113-47q-66 0-113 47t-47 113q0 66 47 113t113 47Zm-480 0q-33 0-56.5-23.5T80-240v-304q0-8 1.5-16t4.5-16l80-184h-6q-17 0-28.5-11.5T120-800v-40q0-17 11.5-28.5T160-880h280q17 0 28.5 11.5T480-840v40q0 17-11.5 28.5T440-760h-6l66 152q-19 10-36 21t-32 25l-84-198h-96l-92 216v304h170q5 21 13.5 41.5T364-160H160Zm480-440q-42 0-71-29t-29-71q0-42 29-71t71-29v200q0-42 29-71t71-29q42 0 71 29t29 71H640Z"/></svg>
+        <span>Produit</span>
+      </button>
+    </div>
+  </div>
+</nav>
 
-  <h2>Liste des magasins
-    <button mat-button color="primary" routerLink="/product-list">
-    Vers produits
-      <mat-icon iconPositionEnd>arrow_forward_ios</mat-icon>
-    </button>
-  </h2>
+
+<main class="main-content">
+  <div class="content-container">
+    <div class="main-section">
+      <div class="section-header">
+        <h2>Liste des magasins</h2>
+<!--        <p>Selection de magasin disponible : 20</p>-->
+
+        <mat-form-field appearance="outline" class="white-background">
+          <mat-label>Rechercher un magasin</mat-label>
+          <input matInput
+                 placeholder="Nom ou rue..."
+                 [value]="searchTerm()"
+                 (input)="onSearchChange($event.target!.value)" >
+          @if (searchTerm()) {
+            <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
+          } @else {
+            <mat-icon matIconSuffix>search</mat-icon>
+          }
+        </mat-form-field>
+        <button matButton="elevated" style="float: right" (click)="onOpenDialogAddStore()">
+          <mat-icon>add</mat-icon>
+          Ajouter un magasin</button>
+      </div>
+
+      <div class="list">
+        @if (filteredStores()?.length !== 0) {
+          @for (store of filteredStores(); track store.storeId) {
+            <article class="card" (click)="onNavigateToStore(store)">
+              <h3 class="title">{{ store.name }} - {{ store.city }} {{ store.postalCode }}</h3>
+              <div class="street">
+                <span>{{ store.street }}, {{ store.number }}</span>
+                <button matButton="text" class="detail-button">Detail</button>
+              </div>
+            </article>
+          }
+        } @else {
+          <p>Aucun magasin disponible! Vérifiez vos filtres ou ajoutez un magasin !</p>
+        }
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h3>Nouveau ajout</h3>
+      </div>
+
+      <div class="hot-deals">
+        @for (store of storeLastTwo(); track $index) {
+          <div class="hot-deal-item">
+            <div>
+              <div >{{ store.postalCode }}</div>
+              <div >{{ store.name }} - {{ store.city }}</div>
+              <div >{{ store.street }}, {{ store.number }}</div>
+            </div>
+          </div>
+          @if (!$last) {
+            <hr>
+          }
+        }
+
+      </div>
+    </aside>
 
 
-  <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
-    <mat-form-field appearance="outline">
-      <mat-label>Rechercher un magasin</mat-label>
-      <input matInput
-             placeholder="Nom ou rue..."
-             [value]="searchTerm()"
-             (input)="onSearchChange($event.target!.value)">
-      @if (searchTerm()) {
-        <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
-      } @else {
-        <mat-icon matIconSuffix>search</mat-icon>
-      }
-    </mat-form-field>
-
-    <button matButton="elevated" (click)="onOpenDialogAddStore()">Ajouter un magasin</button>
   </div>
 
-  @for (store of filteredStores(); track store.storeId) {
-    <article style="border: 1px solid black; padding: 0 10px; margin: 10px" (click)="onNavigateToStore(store)">
-      <h3>{{ store.name }} - {{ store.city }} {{ store.postalCode }}</h3>
-      <p>{{ store.street }}, {{ store.number }}</p>
-    </article>
-  }
+</main>
 
-</div>
 

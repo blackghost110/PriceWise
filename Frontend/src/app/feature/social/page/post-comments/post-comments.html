@@ -1,0 +1,70 @@
+<app-header/>
+
+
+<main class="main-content">
+  <div class="content-container">
+    <div class="main-section">
+      <div class="section-header">
+        <h2>
+          <button mat-button color="primary" [routerLink]="AppNode.DASHBOARD_PAGE">
+          <mat-icon>arrow_back_ios_new</mat-icon>
+          Retour aux discussion
+        </button>
+        </h2>
+
+
+      <article class="card" style="padding: 10px">
+        <p class="article-date">Publié le {{postInfo()?.created | date: 'medium'}}</p>
+        <h1>{{postInfo()?.title}}</h1>
+        <p>{{ postInfo()?.user!.username }}</p>
+        <p>{{postInfo()?.message}}</p>
+      </article>
+    </div>
+      <h2>Commentaires</h2>
+      @if (errorMessage()) {
+        <p class="control-error">{{ errorMessage() }}</p>
+      }
+      <form formGroup>
+        <mat-form-field class="white-background" style="width: 100%">
+          <mat-label>Leave a comment</mat-label>
+          <textarea matInput placeholder="Ex. It makes me feel..."
+                    [rows]="isExpanded ? 5 : 1"
+                    (focus)="isExpanded = true"
+                    style="resize: none"
+                    [(ngModel)]="commentText"></textarea>
+
+          @if (isExpanded) {
+            <button
+              mat-raised-button
+              style="float: right"
+              (click)="onAddComment()"
+              [disabled]="!commentText().trim()">
+              Envoyer
+            </button>
+          }
+
+        </mat-form-field>
+
+      </form>
+
+
+      <div class="list">
+        @for (comment of commentList(); track comment.commentId) {
+          <article class="card" >
+            <div class="comment-header">
+              <p class="commentUsername">{{comment.user.username}}</p>
+              <p class="commentDate">{{comment.created | date: "medium"}}</p>
+            </div>
+
+            <p>{{comment.message}}</p>
+          </article>
+        }
+      </div>
+    </div>
+
+
+  </div>
+
+</main>
+
+<app-footer/>

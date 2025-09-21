@@ -12,8 +12,10 @@ import {CreateStorePayload} from '@features/catalog/data/payload/create-store.pa
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {StoreService} from '@features/catalog/service/store.service';
 import {MatAutocomplete, MatAutocompleteTrigger, MatOption} from '@angular/material/autocomplete';
-import {debounceTime, distinctUntilChanged, map, startWith} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, startWith, tap} from 'rxjs';
 import {StoreDto} from '@features/catalog/data/dto/store.dto';
+import {ErrorMessageService} from '@shared/api/service/error-message.service';
+import {ApiResponse} from '@shared/api/data/api.response';
 
 @Component({
   selector: 'app-add-store-dialog',
@@ -39,8 +41,9 @@ export class AddStoreDialog {
   dialogRef = inject(MatDialogRef<AddStoreDialog>);
 
   storeService = inject(StoreService)
+  private errorMessageService = inject(ErrorMessageService)
 
-  isStoreConflict = signal(false)
+  errorMessage = signal<string | null>(null);
 
   allStores = signal<StoreDto[]>([]);
   filteredStores = signal<StoreDto[]>([]);
@@ -85,6 +88,8 @@ export class AddStoreDialog {
       console.log('invalid form')
       return
     }
+    this.errorMessage.set(null);
+
     const formValue = this.storeForm.value;
     const payload: CreateStorePayload = {
       name: formValue.name!,
@@ -96,11 +101,15 @@ export class AddStoreDialog {
     console.log('price payload :', payload)
 
     this.storeService.addStore(payload).pipe(
-      takeUntilDestroyed(this.destroyRef)
+      takeUntilDestroyed(this.destroyRef),
+      tap((apiResponse: ApiResponse) => {
+        if (!apiResponse.result) {
+          console.log('apiResponse details : ', apiResponse)
+          this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
+        }
+      }),
     ).subscribe(response => {
-      if (!response.result) {
-        this.isStoreConflict.set(true);
-      } else {
+      if (response.result) {
         this.dialogRef.close();
       }
     })
@@ -112,16 +121,15 @@ export class AddStoreDialog {
     const nameControl = this.storeForm.get('street');
 
     if (nameControl) {
-      // Utiliser les reactive forms avec RxJS
       nameControl.valueChanges.pipe(
         startWith(''),
-        debounceTime(300), // Attendre 300ms après la dernière frappe
+        debounceTime(300),
         distinctUntilChanged(),
         map(value => this.filterStores(value || '')),
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(filtered => {
         this.filteredStores.set(filtered);
-        this.isStoreConflict.set(false);
+        this.errorMessage.set(null);
       });
     }
   }

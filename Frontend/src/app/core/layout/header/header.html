@@ -1,40 +1,44 @@
-<nav>
-  <div class="logo">
-    <a routerLink="../">MonPanierMalin LOGO</a>
-  </div>
+<header class="header">
+  <nav class="header-container">
+    <div>
+      <img src="/image/logo_modif.png" alt="logo" class="img">
+    </div>
 
-  <hr>
 
-  <ul>
-<!--    <li routerLink="">Accueil</li>-->
+    <ul>
 
-    <button mat-button style="color: #484848">
-      Accueil
-      <mat-icon>home</mat-icon>
-    </button>
-
-    <button mat-button routerLink="/store-list" style="color: #484848">
-      Catalogue
-      <mat-icon>storefront</mat-icon>
-    </button>
-
-    <button mat-button routerLink="/personal-list" style="color: #484848">
-      Liste
-      <mat-icon>bookmarks</mat-icon>
-    </button>
-
-    <button mat-button [matMenuTriggerFor]="currentUserMenu" style="color: #484848">
-      {{ currentUser() }}
-      <mat-icon>settings</mat-icon>
-    </button>
-    <mat-menu #currentUserMenu="matMenu">
-      <button mat-menu-item (click)="onLogout()">
-        <mat-icon>logout</mat-icon>
-        <span>Déconnexion</span>
+      <button mat-button style="color: #484848" [routerLink]="AppNode.HOME">
+        Accueil
+        <mat-icon>home</mat-icon>
       </button>
-    </mat-menu>
 
+      <button mat-button style="color: #484848" [routerLink]="AppNode.STORE_LIST_PAGE">
+        Catalogue
+        <mat-icon>storefront</mat-icon>
+      </button>
 
-  </ul>
-</nav>
-<hr>
+      <button mat-button [routerLink]="AppNode.PERSONAL_LIST_PAGE" style="color: #484848">
+        Liste
+        <mat-icon>bookmarks</mat-icon>
+      </button>
+
+      <button mat-button [routerLink]="AppNode.FORUM" style="color: #484848">
+        Forum
+        <mat-icon>forum</mat-icon>
+      </button>
+
+      <button mat-button [matMenuTriggerFor]="currentUserMenu" style="color: #484848">
+        {{ currentUser() }}
+        <mat-icon>settings</mat-icon>
+      </button>
+      <mat-menu #currentUserMenu="matMenu">
+        <button mat-menu-item (click)="onLogout()">
+          <mat-icon>logout</mat-icon>
+          <span>Déconnexion</span>
+        </button>
+      </mat-menu>
+
+    </ul>
+  </nav>
+
+</header>

@@ -19,45 +19,52 @@
 
       </div>
 
-      @for (product of filteredProducts(); track product.productId) {
-        <article style="border: 1px solid black; padding: 0 10px; margin: 10px">
-          <h3>{{ product.name }}<small>({{ product.quantity }}{{ product.unit }})</small>
-            @if (product.brand) {
-              -  <small>{{ product.brand }}</small>
-            }
-            <br>
-            <em><small>{{ product.storeName }} {{ product.storeCity }} {{ product.storePostalCode }} </small> </em>
+      <div class="article-container">
+        @for (product of filteredProducts(); track product.productId) {
+          <article class="card" (click)="onAddToSelectedProducts(product)">
+            <h3>{{ product.name }}<small> ({{ product.quantity }}{{ product.unit }})</small>
+              @if (product.brand) {
+                -  <small>{{ product.brand }}</small>
+              }
+              <br>
+              <em><small>{{ product.storeName }} {{ product.storeCity }} {{ product.storePostalCode }} </small> </em>
 
-          </h3>
-          <p><small>{{ product.storeStreet }}, {{ product.storeNumber }}</small></p>
+            </h3>
+            <small>{{ product.storeStreet }}, {{ product.storeNumber }}</small>
+            <button matIconButton style="float: right"><mat-icon>add</mat-icon></button>
 
-          <button (click)="onAddToSelectedProducts(product)">Ajouter</button>
 
-        </article>
-      }
+          </article>
+        }
+      </div>
+
     </div>
     <div>
       <h3>Produits choisis</h3>
-      @for (product of selectedProducts(); track $index) {
-        <p>{{ product.name }}<small>({{ product.quantity }}{{ product.unit }})</small>
-          @if (product.brand) {
-            -  <small>{{ product.brand }}</small>
-          }
-          <em><small> {{ product.storeName }} {{ product.storeCity }} {{ product.storePostalCode }} </small> </em>
-
-        </p>
-        <p><small>{{ product.storeStreet }}, {{ product.storeNumber }}</small></p>
-
-        @if ($index !== 0) {
-          <button (click)="onRemoveFromSelectedProducts(product)">Supprimer</button>
-        }
-        <hr>
+      @if (selectedProducts().length === 8) {
+        <p style="color: red">Vous ne pouvez comparer que huit produits</p>
       }
+      <div class="article-container">
+        @for (product of selectedProducts(); track $index) {
+          <article class="card">
+            <p>{{ product.name }}<small>({{ product.quantity }}{{ product.unit }})</small>
+              @if (product.brand) {
+                -  <small>{{ product.brand }}</small>
+              }
+              <em><small> {{ product.storeName }} {{ product.storeCity }} {{ product.storePostalCode }} </small> </em>
+
+            </p>
+            <p class="chosen-product-delete"><small>{{ product.storeStreet }}, {{ product.storeNumber }}</small>
+              @if ($index !== 0) {
+                <button matIconButton (click)="onRemoveFromSelectedProducts(product)"><mat-icon>clear</mat-icon></button>
+              }
+            </p>
+          </article>
+        }
+      </div>
+
 
     </div>
-
-
-
 
 
   </mat-dialog-content>

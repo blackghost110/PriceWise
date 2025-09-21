@@ -1,38 +1,46 @@
-<form [formGroup]="form" style="margin: 20px">
-  <h2>Connectez-vous à votre compte</h2>
-  <p routerLink="/signup" style="cursor: pointer">Nouveau sur PriceWise? Créer un compte</p>
-  <br><br>
+<div class="page">
+  <div class="login-container">
+    <div class="login-card">
 
-  @if (errorMessage()) {
-    <p style="color: red">{{ errorMessage() }}</p>
-  }
+      <div class="login-header" style="background-image: url('image/shopping_cart.png');">
+        <h1 class="login-title">Se connecter</h1>
+      </div>
 
-  <p>
-    <label for="email">Email</label>
-    <input id="email" type="email" formControlName="username"/>
-  </p>
-
-  <p>
-    <label for="password">Mot de passe</label>
-    <input id="password" type="password" formControlName="password"/>
-  </p>
+      <form [formGroup]="form" class="login-form">
 
 
-  <button type="submit" [disabled]="form.invalid || isLoading()" (click)="onLogin()">
-    @if (isLoading()) {
-      <span>Connexion en cours...</span>
-    }@else {
-      <span>Se connecter</span>
-    }
-  </button>
+        <div class="form-group">
+          <input class="form-input" type="text" name="username" placeholder="Nom d'utilisateur"
+                 formControlName="username">
+          <span class="input-underline"></span>
+        </div>
 
+        <div class="form-group">
+          <input class="form-input" type="password" name="password" placeholder="Mot de passe"
+                 formControlName="password">
+          <span class="input-underline"></span>
+        </div>
+        @if (isEnteredUsernameValid) {
+          <p class="control-error">Veuillez entrer un email valide</p>
+        }
+        @if (isEnteredPasswordValid) {
+          <p class="control-error">Le mot de passe doit contenir au moins 6 caractères</p>
+        }
+        @if (errorMessage()) {
+          <p class="control-error">{{ errorMessage() }}</p>
+        }
 
-  @if (isEnteredUsernameValid) {
-    <p class="control-error">Veuillez entrer un email valide</p>
-  }
-  @if (isEnteredPasswordValid) {
-    <p class="control-error">Le mot de passe doit contenir au moins 6 caractères</p>
-  }
+        <a [routerLink]="AppNode.SIGN_UP_PAGE" class="form-link">Nouveau sur PriceWise ? Créer un compte</a>
 
+        <button class="submit-button" matButton type="submit" [disabled]="form.invalid || isLoading()" (click)="onLogin()">
+          @if (isLoading()) {
+            <span>Connexion en cours...</span>
+          } @else {
+            <span>Se connecter</span>
+          }
+        </button>
+      </form>
 
-</form>
+    </div>
+  </div>
+</div>

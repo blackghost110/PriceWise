@@ -1,9 +1,10 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {ApiService} from '@shared/api/service/api.service';
-import {ListDto} from '@features/catalog/data/dto/list.dto';
 import {catchError, tap, throwError} from 'rxjs';
 import {ApiResponse} from '@shared/api/data/api.response';
 import {ListProductDto} from '@features/catalog/data/dto/list-product.dto';
+import {CreateListProductPayload} from '@features/catalog/data/payload/create-list-product.payload';
+import {ApiURI} from '@shared/api/api-uri.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class ListProductService {
 
 
   getListProducts(listId: number) {
-    return this.api.get(`list-product/${listId}`)
+    return this.api.get(`${ApiURI.LIST_PRODUCT_GET_ALL}/${listId}`)
       .pipe(
         tap((response: ApiResponse) => {
           this._listProducts.set(response.data);
@@ -28,6 +29,14 @@ export class ListProductService {
           return throwError(() => new Error(error));
         })
       )
+  }
+
+  addProductToList(payload: CreateListProductPayload) {
+    return this.api.post(`${ApiURI.LIST_PRODUCT_CREATE}`, payload).pipe(
+      tap((response:ApiResponse) => {
+        console.log(response)
+      })
+    );
   }
 
   clearListProducts() {

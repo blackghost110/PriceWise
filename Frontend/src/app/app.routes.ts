@@ -1,78 +1,102 @@
 import { Routes } from '@angular/router';
-import {AppNode} from './shared/route/node.enum';
-import {SignInPage} from './core/auth/page/sign-in-page/sign-in-page';
+import {AppNode} from '@shared/route/node.enum';
 import {GlobalFallBackPage} from '@shared/route/global-fall-back-page/global-fall-back-page';
-import {StoreList} from '@features/catalog/page/store-list/store-list';
 import {authGuard, publicGuard} from '@core/auth/auth.guard';
-import {StoreProducts} from '@features/catalog/page/store-list/store-products/store-products';
-import {ProductList} from '@features/catalog/page/product-list/product-list';
-import {PersonalList} from '@features/catalog/page/personal-list/personal-list';
-import {ProductDetail} from '@features/catalog/page/product-detail/product-detail';
+
 
 export const routes: Routes = [
 
   {
     path: '',
-    redirectTo: AppNode.SIGN_IN, pathMatch: 'full'
+    redirectTo: AppNode.AUTH, pathMatch: 'full'
   },
   {
-    path: AppNode.SIGN_IN,
-    component: SignInPage,
+    path: AppNode.AUTH,
+    loadChildren: () => import('./core/auth/auth.routes').then(r => r.authRoutes),
     canActivate: [publicGuard]
   },
   {
-    path: 'store-list',
-    component: StoreList,
+    path: 'home',
+    loadComponent: () => import('./core/layout/home/home').then(c => c.Home),
     canActivate: [authGuard]
   },
   {
-    path: 'store-list/:storeId/products',
-    component: StoreProducts,
+    path: 'catalog',
+    loadChildren: () => import('./feature/catalog/catalog.routes').then(r => r.catalogRoutes),
     canActivate: [authGuard]
   },
   {
-    path: 'product-list',
-    component: ProductList,
+    path: 'forum',
+    loadChildren: () => import('./feature/social/social.routes').then(r => r.socialRoutes),
     canActivate: [authGuard]
   },
   {
-    path: 'personal-list',
-    component: PersonalList,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'product-detail/:productId',
-    component: ProductDetail,
-    canActivate: [authGuard]
-  },
-  {
-    path: '**',
+    path: AppNode.FALL_BACK,
     component: GlobalFallBackPage
   }
 
 
 
 
-  // {
-  //   path: '',
-  //   redirectTo: AppNode.PUBLIC, pathMatch: 'full'
-  // },
-  //
-  // {
-  //   path: AppNode.PUBLIC,
-  //   loadChildren: () => import('@security').then(r => r.securityRoutes)
-  // },
-  //
-  // {
-  //   path: AppNode.AUTHENTICATED,
-  //   //canActivate: [DashboardGuard()],
-  //   loadChildren: () => import('@dashboard').then(r => r.dashboardRoutes)
-  // },
-  //
-  // {
-  //   path: AppNode.FALL_BACK,
-  //   loadComponent: () => import('../shared/routes/global-fall-back-page/global-fall-back-page.component').then(r => r.GlobalFallBackPageComponent)
-  // },
 
+  //
+  // ,{
+  //   path: '',
+  //   redirectTo: AppNode.SIGN_IN, pathMatch: 'full'
+  // },
+  // {
+  //   path: AppNode.SIGN_IN,
+  //   component: SignInPage,
+  //   canActivate: [publicGuard]
+  // },
+  // {
+  //   path: 'sign-up',
+  //   component: SignUpPage,
+  //   canActivate: [publicGuard]
+  // },
+  // {
+  //   path: 'home',
+  //   component: Home,
+  //   canActivate: [authGuard]
+  // },
+  // {
+  //   path: 'store-list',
+  //   component: StoreList,
+  //   canActivate: [authGuard]
+  // },
+  // {
+  //   path: 'store-list/:storeId/products',
+  //   component: StoreProducts,
+  //   canActivate: [authGuard]
+  // },
+  // {
+  //   path: 'product-list',
+  //   component: ProductList,
+  //   canActivate: [authGuard]
+  // },
+  // {
+  //   path: 'personal-list',
+  //   component: PersonalList,
+  //   canActivate: [authGuard]
+  // },
+  // {
+  //   path: 'product-detail/:productId',
+  //   component: ProductDetail,
+  //   canActivate: [authGuard]
+  // },
+  // {
+  //   path: 'forum',
+  //   component: Forum,
+  //   canActivate: [authGuard]
+  // },
+  // {
+  //   path: 'post/:postId',
+  //   component: PostComments,
+  //   canActivate: [authGuard]
+  // },
+  // {
+  //   path: '**',
+  //   component: GlobalFallBackPage
+  // }
 
 ];

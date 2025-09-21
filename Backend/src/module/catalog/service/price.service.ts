@@ -1,11 +1,24 @@
-import {BadRequestException, ConflictException, Injectable, NotFoundException} from "@nestjs/common";
+import { Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {PriceEntity} from "../model/price.entity";
 import { Repository} from "typeorm";
 import {CreatePriceDto} from "../model/dto/create-price.dto";
 import {Credential} from "../../../security/model/entity/credential.entity";
 import {ProductEntity} from "../model/product.entity";
-import {UpdatePriceDto} from "../model/dto/update-price.dto";
+import { UpdatePriceDto } from '../model/dto/update-price.dto';
+import {
+  PriceCreateBadRequestException,
+  PriceCreateConflictException,
+  PriceCreateException,
+  PriceCreateProductNotFoundException,
+  PriceCreateUserNotFoundException,
+  PriceGetLastPriceException,
+  PriceGetPricesException,
+  PriceUpdateBadRequestException,
+  PriceUpdateException,
+  PriceUpdateNotFoundException,
+  PriceUpdateUserNotFoundException,
+} from '../catalog.exception';
 
 @Injectable()
 export class PriceService {
@@ -16,14 +29,14 @@ export class PriceService {
     async createPrice(userId: string , createPriceDto: CreatePriceDto, productId: number) {
         const user = await this.credentialRepository.findOne({ where: { credential_id: userId }})
         if (!user) {
-            throw new NotFoundException('User not found');
+          throw new PriceCreateUserNotFoundException();
         }
         const product = await this.productRepository.findOne({ where: { productId } });
         if (!product) {
-            throw new NotFoundException('Product not found');
+          throw new PriceCreateProductNotFoundException();
         }
         if (createPriceDto.productPrice <= 0 || createPriceDto.grossPrice <= 0) {
-            throw new BadRequestException('Price should be greater than 0');
+          throw new PriceCreateBadRequestException();
         }
 
 
@@ -33,10 +46,15 @@ export class PriceService {
                 priceDate: createPriceDto.priceDate
             }
         })
-      console.log('existingPrice : ', existingPrice);
         if (existingPrice) {
-            throw new ConflictException(`Price already exists for this date`);
+          throw new PriceCreateConflictException({
+            priceId: existingPrice.priceId,
+            productPrice: existingPrice.productPrice,
+            grossPrice: existingPrice.grossPrice
+          });
         }
+
+      try {
 
         const price = new PriceEntity();
         price.productPrice = createPriceDto.productPrice;
@@ -45,48 +63,90 @@ export class PriceService {
         price.user = user;
 
         if (createPriceDto.priceDate) {
-            price.priceDate = createPriceDto.priceDate;
+          price.priceDate = createPriceDto.priceDate;
         }
 
         return await this.priceRepository.save(price);
+
+      } catch (e) {
+        throw new PriceCreateException();
+      }
+
+
     }
 
     async getProductPrices(productId: number) {
+      try {
+
         return await this.priceRepository.find({
-            where: {
-                product: {productId: productId}
-            },
-            order: {
-                priceDate: 'DESC'
-            }
+          where: {
+            product: {productId: productId}
+          },
+          order: {
+            priceDate: 'DESC'
+          }
         })
+
+      } catch (e) {
+        throw new PriceGetPricesException();
+      }
+
+
     }
 
     async getProductLastPrice(productId: number) {
+      try {
+
         return await this.priceRepository.findOne({
-            where: { product: {productId} },
-            order: { priceDate: 'DESC'}
+          where: { product: {productId} },
+          order: { priceDate: 'DESC'}
         })
+
+      } catch (e) {
+        throw new PriceGetLastPriceException();
+      }
+
     }
 
-    async updatePrice(user: Credential , updatePriceDto: UpdatePriceDto, priceId: number) {
-
-        if ((updatePriceDto.productPrice ?? 1) <= 0 || (updatePriceDto.grossProductPrice ?? 1) <= 0) {
-            throw new BadRequestException('Price should be greater than 0');
-        }
-        const price = await this.priceRepository.findOne({ where: { priceId } });
-        if (!price) {
-            throw new NotFoundException('Price not found');
-        }
-        console.log('price : ', price)
-        console.log('updateDTO :', updatePriceDto)
-
-        Object.assign(price, updatePriceDto);
-        price.user = user;
-
-
-        return await this.priceRepository.save(price);
+  async updatePrice(userId: string, updatePriceDto: UpdatePriceDto, priceId: number) {
+    // Vérification de l'utilisateur
+    const user = await this.credentialRepository.findOne({ where: { credential_id: userId }});
+    if (!user) {
+      throw new PriceUpdateUserNotFoundException();
     }
+
+    // Vérification que le prix existe
+    const price = await this.priceRepository.findOne({ where: { priceId } });
+    if (!price) {
+      throw new PriceUpdateNotFoundException();
+    }
+
+    // Validation des prix (seulement si ils sont fournis)
+    if (updatePriceDto.productPrice !== undefined && updatePriceDto.productPrice <= 0) {
+      throw new PriceUpdateBadRequestException();
+    }
+    if (updatePriceDto.grossPrice !== undefined && updatePriceDto.grossPrice <= 0) {
+      throw new PriceUpdateBadRequestException();
+    }
+
+    try {
+      // Mise à jour seulement des champs fournis
+      if (updatePriceDto.productPrice !== undefined) {
+        price.productPrice = updatePriceDto.productPrice;
+      }
+      if (updatePriceDto.grossPrice !== undefined) {
+        price.grossPrice = updatePriceDto.grossPrice;
+      }
+
+      // Mise à jour de l'utilisateur qui modifie
+      price.user = user;
+
+      return await this.priceRepository.save(price);
+
+    } catch (e) {
+      throw new PriceUpdateException();
+    }
+  }
 
 
 }

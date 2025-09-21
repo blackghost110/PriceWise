@@ -1,0 +1,114 @@
+/* Navigation */
+.nav-bar {
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.nav-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.nav-items {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  min-width: 100px;
+  justify-content: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 16px 0;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-item:hover {
+  color: #00A6D6;
+  border-bottom-color: #00A6D6;
+  opacity: 0.7;
+}
+.nav-item.active {
+  color: #00A6D6;
+  border-bottom-color: #00A6D6;
+}
+.white-background ::ng-deep .mat-mdc-text-field-wrapper {
+  background-color: white;
+}
+
+
+/* Main Content */
+.main-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.content-container {
+  display: flex;
+  gap: 24px;
+}
+
+.main-section {
+  flex: 1;
+}
+.section-header {
+  margin-bottom: 10px;
+}
+
+.section-header h2 {
+  font-size: 24px;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.section-header p {
+  color: #666;
+  font-size: 14px;
+}
+.product-table {
+  background: white;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+
+}
+mat-paginator {
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+  background: white;
+}
+.product-table .mat-mdc-row:hover {
+  background-color: #f5f5f5; /* Gris très léger */
+  cursor: pointer;
+}
+.table-price {
+  color: #D1514F;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+.table-price-gross {
+  color: dodgerblue;
+  font-size: 1em;
+}
+.table-street {
+  color: #666;
+  font-size: 0.8em;
+}
+.table-quantity {
+  color: darkslategrey;
+}
+.table-name {
+  font-size: 1.2em;
+}
+.form-field-button {
+  margin-right: 16px;
+}

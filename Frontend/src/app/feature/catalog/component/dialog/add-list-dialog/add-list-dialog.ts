@@ -1,7 +1,6 @@
 import {Component, DestroyRef, inject, signal} from '@angular/core';
 import {MatButton} from "@angular/material/button";
 import {
-  MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogContent,
   MatDialogRef,
@@ -10,11 +9,12 @@ import {
 import {MatFormField} from "@angular/material/form-field";
 import {MatInput, MatLabel} from "@angular/material/input";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {StoreDto} from '@features/catalog/data/dto/store.dto';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CreateListPayload} from '@features/catalog/data/payload/create-list.payload';
 import {ListService} from '@features/catalog/service/list.service';
-import {ProductDto} from '@features/catalog/data/dto/product.dto';
+import {ErrorMessageService} from '@shared/api/service/error-message.service';
+import {tap} from 'rxjs';
+import {ApiResponse} from '@shared/api/data/api.response';
 
 @Component({
   selector: 'app-add-list-dialog',
@@ -37,9 +37,9 @@ export class AddListDialog {
   dialogRef = inject(MatDialogRef<AddListDialog>);
 
   listService = inject(ListService)
+  private errorMessageService = inject(ErrorMessageService)
 
-  isListConflict = signal(false)
-
+  errorMessage = signal<string | null>(null);
 
 
 
@@ -65,24 +65,21 @@ export class AddListDialog {
     console.log('price payload :', payload)
 
     this.listService.addList(payload).pipe(
-      takeUntilDestroyed(this.destroyRef)
+      takeUntilDestroyed(this.destroyRef),
+      tap((apiResponse: ApiResponse) => {
+        if (!apiResponse.result) {
+          console.log('apiResponse details : ', apiResponse)
+          this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
+        }
+      }),
     ).subscribe(response => {
-      if (!response.result) {
-        this.isListConflict.set(true);
-      } else {
+      if (response.result) {
         this.dialogRef.close();
       }
     })
 
 
   }
-
-
-
-
-
-
-
 
   onClose() {
     this.dialogRef.close();

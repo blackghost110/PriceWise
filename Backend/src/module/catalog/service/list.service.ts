@@ -1,26 +1,30 @@
 import {
-  ConflictException,
-  ForbiddenException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {ListEntity} from "../model/list.entity";
 import { ILike, Repository} from "typeorm";
-import { CreateStoreDto } from '../model/dto/create-store.dto';
-import { StoreEntity } from '../model/store.entity';
 import { Credential } from '../../../security/model/entity/credential.entity';
 import { CreateListDto } from '../model/dto/create-list.dto';
 import { ListResponse } from '../model/type/list.response';
-import { CredentialDeleteException } from '../../../security/security.exception';
-import { isNil } from 'lodash';
+import {
+  ListCreateConflictException,
+  ListCreateException,
+  ListDeleteException,
+  ListDeleteForbiddenException,
+  ListDeleteNotFoundException,
+  ListGetByUserException,
+  ListUpdateConflictException,
+  ListUpdateException,
+  ListUpdateForbiddenException,
+  ListUpdateNotFoundException,
+} from '../catalog.exception';
 
 
 @Injectable()
 export class ListService {
   constructor(
     @InjectRepository(ListEntity) private readonly listRepository: Repository<ListEntity>,
-    @InjectRepository(Credential) private readonly credentialRepository: Repository<Credential>,
   ) {}
 
   async createList(user: Credential, dto: CreateListDto) {
@@ -30,29 +34,41 @@ export class ListService {
       },
     });
     if (existingList) {
-      throw new ConflictException(
-        `Store named '${existingList.name}' already exists at this address`,
-      );
+      throw new ListCreateConflictException();
+    }
+    try {
+
+      const list = new ListEntity();
+      Object.assign(list, dto);
+      list.user = user;
+      return await this.listRepository.save(list);
+
+    } catch (e) {
+      throw new ListCreateException();
     }
 
-    const list = new ListEntity();
-    Object.assign(list, dto);
-    list.user = user;
-    return await this.listRepository.save(list);
+
   }
 
   async getListsByUser(user: Credential): Promise<ListResponse[]> {
-    return await this.listRepository.find({
-      where: {
-        user: {credential_id: user.credential_id},
-      },
-    });
+    try {
+
+      return await this.listRepository.find({
+        where: {
+          user: {credential_id: user.credential_id},
+        },
+      });
+
+    } catch (e) {
+      throw new ListGetByUserException();
+    }
+
   }
 
   async updateList(user: Credential, listId: number, dto: CreateListDto) {
     const list = await this.listRepository.findOne({ where: { listId }, relations: ['user']});
     if (!list) {
-      throw new NotFoundException(`list not found`,);
+      throw new ListUpdateNotFoundException();
     }
     const isExistingList = await this.listRepository.find({
       where: {
@@ -62,31 +78,36 @@ export class ListService {
       relations: ['user']
     })
     if (isExistingList.length > 0) {
-      throw new ConflictException(`List named '${dto.name}' already exists in this user`,);
+      throw new ListUpdateConflictException();
     }
 
     if (list.user.credential_id !== user.credential_id) {
-      throw new ForbiddenException(`you are not the owner of this list`,);
+      throw new ListUpdateForbiddenException();
     }
 
+    try {
 
-    Object.assign(list, dto);
-    return await this.listRepository.save(list);
+      Object.assign(list, dto);
+      return await this.listRepository.save(list);
+
+    } catch (e) {
+      throw new ListUpdateException();
+    }
+
   }
 
   async deleteList(listId: number, user: Credential): Promise<void> {
     try {
-
       const list = await this.listRepository.findOne({ where: { listId }, relations: ['user']});
       if (!list) {
-        throw new NotFoundException(`list not found`,);
+        throw new ListDeleteNotFoundException();
       }
       if (list.user.credential_id !== user.credential_id) {
-        throw new ForbiddenException(`you are not the owner of this list`,);
+        throw new ListDeleteForbiddenException();
       }
       await this.listRepository.remove(list);
     } catch (e) {
-      throw new CredentialDeleteException();
+      throw new ListDeleteException();
     }
   }
 }

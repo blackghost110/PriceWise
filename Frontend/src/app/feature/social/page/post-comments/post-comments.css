@@ -1,0 +1,58 @@
+
+/* Main Content */
+.main-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.content-container {
+  display: flex;
+  gap: 24px;
+}
+
+.main-section {
+  flex: 1;
+}
+.section-header {
+  margin-bottom: 10px;
+}
+
+
+.article-date {
+  color: #666;
+  font-size: 14px;
+  float: right;
+}
+
+/* Deal Cards */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 0 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.white-background ::ng-deep .mat-mdc-text-field-wrapper {
+  background-color: white;
+}
+.commentDate {
+  font-size: 12px;
+  color: #666;
+}
+.commentUsername {
+ color: darkslategrey;
+}
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+}
+.control-error {
+  color: #a94442;
+}

@@ -1,5 +1,5 @@
 import {ApiService} from '@shared/api/service/api.service';
-import {computed, effect, inject, Injectable, OnInit, signal} from '@angular/core';
+import {computed, inject, Injectable, OnInit, signal} from '@angular/core';
 import {TokenService} from '@shared/api/service/token.service';
 import {Router} from '@angular/router';
 import {SignInPayload} from './data/payload/sign-in.payload';
@@ -8,7 +8,6 @@ import {ApiResponse} from '@shared/api/data/api.response';
 import {SignUpPayload} from './data/payload/sign-up.payload';
 import {ApiURI} from '@shared/api/api-uri.enum';
 import {AppNode} from '@shared/route/node.enum';
-import {Token} from '@shared/api/type/token';
 import {HttpErrorResponse} from '@angular/common/http';
 
 @Injectable({
@@ -30,12 +29,6 @@ export class AuthService implements OnInit {
   }
 
   constructor() {
-    // effect(() => {
-    //   const token = this.tokenService.token();
-    //   if (!token.isEmpty && !this.currentUser()) {
-    //     this.me();
-    //   }
-    // });
 
   }
 
@@ -44,7 +37,7 @@ export class AuthService implements OnInit {
       tap((response: ApiResponse) => {
         if (response.result) {
           this.tokenService.setToken({...response.data, isEmpty: false});
-          this.router.navigate(['/store-list']);
+          this.router.navigate([AppNode.HOME]);
           console.log('login success')
         }
       }),
@@ -55,9 +48,10 @@ export class AuthService implements OnInit {
   public register(payload: SignUpPayload): Observable<ApiResponse> {
     return this.api.post(ApiURI.SIGN_UP, {...payload, socialLogin: false}).pipe(
       tap((response: ApiResponse) => {
-        //if success then goToDashboard and save token
         if (response.result) {
           this.tokenService.setToken({...response.data, isEmpty: false});
+          this.router.navigate([AppNode.HOME]);
+          console.log('register success')
         }
       })
     );
@@ -66,7 +60,7 @@ export class AuthService implements OnInit {
   public logOut(): void {
     this.tokenService.setToken({token: '', refreshToken: '', isEmpty: true});
     this.currentUser.set(null);
-    this.router.navigate([AppNode.SIGN_IN]);
+    this.router.navigate([AppNode.SIGN_IN_PAGE]);
   }
 
   public me() {

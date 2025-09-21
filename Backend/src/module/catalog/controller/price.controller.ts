@@ -1,9 +1,10 @@
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
-import {Body, Controller, Get, Param, Post} from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import {PriceService} from "../service/price.service";
 import {CreatePriceDto} from "../model/dto/create-price.dto";
 import { User } from "@common/config/decorator/user.decorator";
 import {Credential} from "../../../security/model/entity/credential.entity";
+import { UpdatePriceDto } from '../model/dto/update-price.dto';
 
 @ApiBearerAuth('access-token')
 @ApiTags('Price Controller')
@@ -27,12 +28,11 @@ export class PriceController {
         return await this.priceService.getProductLastPrice(productId);
     }
 
-    // @ApiBearerAuth('JWT-auth')
-    // @UseGuards(AuthGuard)
-    // @Put('price/:priceId')
-    // async updatePrice(@User() user: UserEntity ,@Body() updatePriceDto: UpdatePriceDto, @Param('priceId') priceId: number) {
-    //     return await this.priceService.updatePrice(user, updatePriceDto, priceId);
-    // }
+  @Put('price/:priceId')
+  async updatePrice(@User() user: Credential, @Body() updatePriceDto: UpdatePriceDto, @Param('priceId') priceId: number
+  ) {
+    return await this.priceService.updatePrice(user.credential_id, updatePriceDto, priceId);
+  }
 
 
 }

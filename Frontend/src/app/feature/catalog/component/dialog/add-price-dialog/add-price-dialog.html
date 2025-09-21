@@ -1,4 +1,4 @@
-<form [formGroup]="priceForm">
+<form [formGroup]="priceForm" style="max-width: 400px">
 
   <h2 mat-dialog-title>Ajouter un prix pour {{ product.name }}</h2>
   <mat-dialog-content>
@@ -24,8 +24,11 @@
       <mat-datepicker-toggle matIconSuffix [for]="picker" ></mat-datepicker-toggle>
       <mat-datepicker #picker ></mat-datepicker>
     </mat-form-field>
-    @if (isSameDate()) {
-      <p>Un prix existe deja à cette date, voulez-vous le modifier ?</p>
+<!--    @if (isSameDate()) {-->
+<!--      <p>Un prix existe deja à cette date, voulez-vous le modifier ?</p>-->
+<!--    }-->
+    @if (errorMessage()) {
+      <p class="control-error">{{ errorMessage() }}</p>
     }
 
 
@@ -36,7 +39,7 @@
 
     @if (isSameDate()) {
       <button matButton (click)="onChangeDate()">Annuler</button>
-      <button matButton >Modifier prix</button>
+      <button matButton (click)="onUpdatePrice()">Modifier prix</button>
     } @else {
       <button matButton (click)="onClose()">Fermer</button>
       <button matButton (click)="onAddPrice()">Ajouter prix</button>

@@ -1,37 +1,63 @@
 <app-header/>
 
-<div style="margin: 20px">
 @if (productDetail(); as product) {
+  <main class="main-content">
+
+        <div class="section-header">
+          <h2>Detail du produit : {{ product.name }} {{ product.brand }}
+            <button mat-button color="primary" [routerLink]="AppNode.PRODUCT_LIST_PAGE">
+              <mat-icon>arrow_back_ios_new</mat-icon>
+              Retour aux produits
+            </button>
+          </h2>
+          <article class="article-info">
+            <div>
+              <p>Quantité : {{product.quantity}}{{product.unit}}</p>
+              <p>Prix actuel : {{ product.prices[numberOfPrice() - 1].productPrice | currency: 'EUR' }} | {{ product.prices[numberOfPrice() - 1].grossPrice | currency: 'EUR' }}/{{product.unit === 'g' ? 'Kg' : 'L'}}</p>
+              <p>Nombre de prix enregistré : {{numberOfPrice()}}</p>
+            </div>
+
+            <div>
+              <p>{{product.storeName}} - {{product.storeCity}} {{product.storePostalCode}}</p>
+              <p>{{product.storeStreet}}, {{product.storeNumber}}</p>
+            </div>
+            <div class="button-add-price">
+              <button matButton (click)="onOpenDialogAddPrice(product)"><mat-icon>more_time</mat-icon>Ajouter prix</button>
+              <button matButton (click)="onOpenDialogAddToList(product)"><mat-icon>bookmark_add</mat-icon>Ajouter dans une liste</button>
+            </div>
+
+          </article>
+
+          <mat-form-field appearance="outline" class="white-background" style="margin-right: 14px">
+            <mat-label>Période</mat-label>
+            <mat-select required [(ngModel)]="timelineFilter">
+              <mat-option value="0">Tout</mat-option>
+              <mat-option value="1">1 mois</mat-option>
+              <mat-option value="6">6 mois</mat-option>
+              <mat-option value="12">1 an</mat-option>
+              <mat-option value="36">3 ans</mat-option>
+              <mat-option value="60">5 ans</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="white-background">
+            <mat-label>Type de prix</mat-label>
+            <mat-select required [(ngModel)]="priceTypeFilter">
+              <mat-option value="product">Prix produit</mat-option>
+              <mat-option value="gross">Prix brut</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button matFab extended style="float: right; margin-right: 50px" (click)="onOpenDialogSearchProduct()">
+            <mat-icon>balance</mat-icon>
+            Compare
+          </button>
+
+        </div>
 
 
-  <h2>Detail du produit : {{ product.name }} {{ product.brand }}</h2>
-  <h4> De {{product.storeName}} - {{product.storeCity}} {{product.storePostalCode}}</h4>
 
-  <mat-form-field appearance="outline" style="margin-right: 10px">
-    <mat-label>Période</mat-label>
-    <mat-select required [(ngModel)]="timelineFilter">
-      <mat-option value="0">Tout</mat-option>
-      <mat-option value="1">1 mois</mat-option>
-      <mat-option value="6">6 mois</mat-option>
-      <mat-option value="12">1 an</mat-option>
-      <mat-option value="36">3 ans</mat-option>
-      <mat-option value="60">5 ans</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline">
-    <mat-label>Type de prix</mat-label>
-    <mat-select required [(ngModel)]="priceTypeFilter">
-      <mat-option value="product">Prix produit</mat-option>
-      <mat-option value="gross">Prix brut</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <button matFab extended style="float: inline-end; margin-right: 50px" (click)="onOpenDialogSearchProduct()">
-    <mat-icon>balance</mat-icon>
-    Compare
-  </button>
-
+    </main>
   <div class="graph-container2">
     <canvas baseChart
             [data]="productChartData()"
@@ -39,10 +65,7 @@
             [type]="'line'">
     </canvas>
   </div>
-
 }
-
-</div>
 
 <app-footer/>
 

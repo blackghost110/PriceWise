@@ -1,11 +1,10 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {ApiService} from '@shared/api/service/api.service';
-import {StoreDto} from '@features/catalog/data/dto/store.dto';
 import {catchError, tap, throwError} from 'rxjs';
 import {ApiResponse} from '@shared/api/data/api.response';
-import {CreateStorePayload} from '@features/catalog/data/payload/create-store.payload';
 import {ListDto} from '@features/catalog/data/dto/list.dto';
 import {CreateListPayload} from '@features/catalog/data/payload/create-list.payload';
+import {ApiURI} from '@shared/api/api-uri.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +20,7 @@ export class ListService {
 
 
   getLists() {
-    return this.api.get(`list/user`)
+    return this.api.get(`${ApiURI.LIST_GET_ALL}`)
       .pipe(
         tap((response:ApiResponse) => {
           this._personalList.set(response.data);
@@ -33,17 +32,8 @@ export class ListService {
       )
   }
 
-  // getStore(storeId: number) {
-  //   return this.api.get(`store/${storeId}`).pipe(
-  //     tap((response:ApiResponse) => {
-  //       this._selectedStore.set(response.data);
-  //       console.log(response)
-  //     })
-  //   )
-  // }
-
   addList(payload: CreateListPayload) {
-    return this.api.post(`list`, payload).pipe(
+    return this.api.post(`${ApiURI.LIST_CREATE}`, payload).pipe(
       tap((response:ApiResponse) => {
         console.log(response)
         if (response.result) {
@@ -53,7 +43,7 @@ export class ListService {
     );
   }
   updateList(payload: CreateListPayload, listId: number) {
-    return this.api.put(`list/${listId}`, payload).pipe(
+    return this.api.put(`${ApiURI.LIST_UPDATE}/${listId}`, payload).pipe(
       tap((response:ApiResponse) => {
         console.log(response)
         if (response.result) {
@@ -63,7 +53,7 @@ export class ListService {
     );
   }
   deleteList(listId: number) {
-    return this.api.delete(`list/${listId}`).pipe(
+    return this.api.delete(`${ApiURI.LIST_DELETE}/${listId}`).pipe(
       tap((response:ApiResponse) => {
         console.log(response)
         if (response.result) {

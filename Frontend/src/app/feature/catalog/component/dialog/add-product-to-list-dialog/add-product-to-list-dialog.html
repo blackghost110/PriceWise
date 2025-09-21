@@ -1,0 +1,34 @@
+
+<form [formGroup]="productToListForm">
+
+  <h2 mat-dialog-title>Ajouter dans la liste</h2>
+  <mat-dialog-content>
+
+    <p>Veuillez remplir ce champs</p>
+
+    <mat-form-field appearance="outline" class="white-background">
+      <mat-label>Choisir une liste</mat-label>
+      <mat-select [(value)]="selectedList">
+        <mat-option value="0">Aucune</mat-option>
+        @for (list of personalList(); track list.listId){
+          <mat-option [value]="list.listId">{{list.name}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+  </mat-dialog-content>
+
+  @if (errorMessage()) {
+    <p class="control-error">{{ errorMessage() }}</p>
+  }
+
+  <mat-dialog-actions>
+    <button matButton (click)="onClose()">Fermer</button>
+    <button matButton (click)="onOpenDialogAddList()">Créer liste</button>
+    <button matButton (click)="onAddProductToList()">Ajouter produit</button>
+  </mat-dialog-actions>
+
+</form>
+
+
+

@@ -5,9 +5,9 @@ export class UpdatePriceDto {
 
     @ApiProperty()
     @IsOptional()
-    productPrice?: number;
+    productPrice: number;
 
     @ApiProperty()
     @IsOptional()
-    grossProductPrice?: number;
+    grossPrice: number;
 }

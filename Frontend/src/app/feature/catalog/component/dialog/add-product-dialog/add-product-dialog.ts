@@ -16,8 +16,10 @@ import {CreateProductPayload} from '@features/catalog/data/payload/create-produc
 import {ProductDto, ProductUnitType} from '@features/catalog/data/dto/product.dto';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ProductService} from '@features/catalog/service/product.service';
-import {debounceTime, distinctUntilChanged, map, startWith} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, startWith, tap} from 'rxjs';
 import {MatAutocomplete, MatAutocompleteTrigger} from '@angular/material/autocomplete';
+import {ErrorMessageService} from '@shared/api/service/error-message.service';
+import {ApiResponse} from '@shared/api/data/api.response';
 
 
 @Component({
@@ -48,7 +50,9 @@ export class AddProductDialog {
   dialogRef = inject(MatDialogRef<AddProductDialog>);
   data = inject(MAT_DIALOG_DATA);
 
+
   productService = inject(ProductService)
+  private errorMessageService = inject(ErrorMessageService)
 
 
   // injected data
@@ -57,8 +61,8 @@ export class AddProductDialog {
   filteredProducts = signal<ProductDto[]>([]);
   allProducts = signal<ProductDto[]>([]);
 
-  isProductConflict = signal(false)
 
+  errorMessage = signal<string | null>(null);
 
   constructor() {
     this.productService.getProducts(Number(this.store.storeId))
@@ -98,6 +102,7 @@ export class AddProductDialog {
       console.log('invalid form')
       return
     }
+    this.errorMessage.set(null);
 
     const formValue = this.productForm.value;
     const payload: CreateProductPayload = {
@@ -111,11 +116,15 @@ export class AddProductDialog {
     console.log('price payload :', payload)
 
     this.productService.addProduct(payload, Number(this.store.storeId)).pipe(
-      takeUntilDestroyed(this.destroyRef)
+      takeUntilDestroyed(this.destroyRef),
+      tap((apiResponse: ApiResponse) => {
+        if (!apiResponse.result) {
+          console.log('apiResponse details : ', apiResponse)
+          this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
+        }
+      }),
     ).subscribe(response => {
-      if (!response.result) {
-        this.isProductConflict.set(true);
-      } else {
+      if (response.result) {
         this.dialogRef.close();
       }
     })
@@ -128,16 +137,15 @@ export class AddProductDialog {
     const nameControl = this.productForm.get('name');
 
     if (nameControl) {
-      // Utiliser les reactive forms avec RxJS
       nameControl.valueChanges.pipe(
         startWith(''),
-        debounceTime(300), // Attendre 300ms après la dernière frappe
+        debounceTime(300),
         distinctUntilChanged(),
         map(value => this.filterProducts(value || '')),
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(filtered => {
         this.filteredProducts.set(filtered);
-        this.isProductConflict.set(false);
+        this.errorMessage.set(null);
       });
     }
   }
@@ -152,11 +160,10 @@ export class AddProductDialog {
     return this.allProducts().filter(product =>
       product.name.toLowerCase().includes(filterValue) ||
       product.brand?.toLowerCase().includes(filterValue)
-    ).slice(0, 5); // Limiter à 5 suggestions
+    ).slice(0, 5);
   }
 
   onProductSelected(selectedProduct: ProductDto) {
-    // Pré-remplir le formulaire avec les données du produit sélectionné
     this.productForm.patchValue({
       name: selectedProduct.name,
       brand: selectedProduct.brand || '',
@@ -164,13 +171,8 @@ export class AddProductDialog {
       quantity: selectedProduct.quantity
     });
 
-    // Vider les suggestions
     this.filteredProducts.set([]);
   }
-
-  // displayProduct(product: ProductDto): string {
-  //   return product ? `${product.name} - ${product.brand}` : '';
-  // }
 
   onClose() {
     this.dialogRef.close();

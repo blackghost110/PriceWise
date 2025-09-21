@@ -1,20 +1,25 @@
-import { ConflictException, Injectable, NotFoundException} from "@nestjs/common";
+import {Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {ProductEntity} from "../model/product.entity";
 import {CreateProductDto} from "../model/dto/create-product.dto";
-import {ListEntity} from "../model/list.entity";
 import {PriceEntity} from "../model/price.entity";
 import {Credential} from "../../../security/model/entity/credential.entity";
 import {StoreEntity} from "../model/store.entity";
-import { StoreProductsResponse } from '../model/type/store-products.response';
 import { AllProductsResponse } from '../model/type/all-products.response';
 import { ProductDetailResponse } from '../model/type/product-detail.response';
+import {
+  ProductCreateConflictException,
+  ProductCreateException,
+  ProductCreateNotFoundException,
+  ProductDetailNotFoundException,
+  ProductGetAllException,
+} from '../catalog.exception';
+import { GetAllProductsQueryDTO } from '../model/dto/get-all-products-query.dto';
 
 @Injectable()
 export class ProductService {
     constructor(@InjectRepository(ProductEntity) private readonly productRepository: Repository<ProductEntity>,
-                @InjectRepository(ListEntity) private readonly listRepository: Repository<ListEntity>,
                 @InjectRepository(PriceEntity) private readonly priceRepository: Repository<PriceEntity>,
                 @InjectRepository(StoreEntity) private readonly storeRepository: Repository<StoreEntity>,) {}
 
@@ -22,7 +27,7 @@ export class ProductService {
 
         const store = await this.storeRepository.findOne({ where: { storeId: storeId }})
         if (!store) {
-            throw new NotFoundException('Store not found');
+          throw new ProductCreateNotFoundException();
         }
 
         const existingProduct = await this.productRepository.findOne({
@@ -35,8 +40,10 @@ export class ProductService {
             }
         })
         if (existingProduct) {
-            throw new ConflictException(`Product named '${existingProduct.name}' already exists in this store`);
+          throw new ProductCreateConflictException();
         }
+
+      try {
 
         const product = new ProductEntity();
         Object.assign(product, createProductDto)
@@ -50,53 +57,62 @@ export class ProductService {
         product.prices = [price];
 
         return await this.productRepository.save(product)
+
+      } catch (e) {
+        throw new ProductCreateException();
+      }
+
     }
 
-    async findAll(): Promise<ProductEntity[]> {
-        return await this.productRepository.find()
+  async getAllProducts(query: GetAllProductsQueryDTO): Promise<AllProductsResponse[]> {
+    try {
+      const subQuery = this.priceRepository
+        .createQueryBuilder('price2')
+        .select('MAX(price2.priceDate)', 'maxDate')
+        .where('price2.productId = product.productId')
+        .getQuery();
+
+      const queryBuilder = this.productRepository
+        .createQueryBuilder('product')
+        .leftJoinAndSelect('product.store', 'store')
+        .leftJoinAndSelect(
+          'product.prices',
+          'price',
+          `price.priceDate = (${subQuery})`
+        )
+        .orderBy('price.created', 'DESC');
+
+        if (query.storeName) {
+          queryBuilder.andWhere('store.name ILIKE :storeName', { storeName : `%${query.storeName}%` })
+        }
+        if (query.storePostalCode){
+          queryBuilder.andWhere('store.postalCode LIKE :storePostalCode', { storePostalCode : query.storePostalCode })
+        }
+
+
+      const products = await queryBuilder.getMany();
+
+      // return products
+
+      return products.map((product) => ({
+        productId: product.productId,
+        name: product.name,
+        brand: product.brand,
+        unit: product.unit,
+        quantity: product.quantity,
+        productPrice: product.prices[0].productPrice,
+        grossPrice: product.prices[0].grossPrice,
+        priceDate: product.prices[0].priceDate,
+        storeName: product.store.name,
+        storeStreet: product.store.street,
+        storeNumber: product.store.number,
+        storePostalCode: product.store.postalCode,
+        storeCity: product.store.city
+      }));
+    } catch (e) {
+      throw new ProductGetAllException();
     }
 
-
-  async getAllProducts(): Promise<AllProductsResponse[]> {
-
-    const subQuery = this.priceRepository
-      .createQueryBuilder('price2')
-      .select('MAX(price2.priceDate)', 'maxDate')
-      .where('price2.productId = product.productId')
-      .getQuery();
-
-    const queryBuilder = this.productRepository
-      .createQueryBuilder('product')
-      .leftJoinAndSelect('product.store', 'store')
-      .leftJoinAndSelect(
-        'product.prices',
-        'price',
-        `price.priceDate = (${subQuery})`
-      )
-      .orderBy('price.created', 'DESC')
-      .getMany();
-
-
-
-    const products = await queryBuilder;
-
-    // return products
-
-    return products.map((product) => ({
-      productId: product.productId,
-      name: product.name,
-      brand: product.brand,
-      unit: product.unit,
-      quantity: product.quantity,
-      productPrice: product.prices[0].productPrice,
-      grossPrice: product.prices[0].grossPrice,
-      priceDate: product.prices[0].priceDate,
-      storeName: product.store.name,
-      storeStreet: product.store.street,
-      storeNumber: product.store.number,
-      storePostalCode: product.store.postalCode,
-      storeCity: product.store.city
-    }));
   }
 
   async getProductDetails(productId: number): Promise<ProductDetailResponse> {
@@ -106,7 +122,7 @@ export class ProductService {
         order: {prices: { priceDate: 'ASC'} }
       })
     if (!product) {
-      throw new NotFoundException('Product not found');
+      throw new ProductDetailNotFoundException();
     }
 
     return {
