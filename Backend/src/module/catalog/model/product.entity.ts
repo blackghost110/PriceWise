@@ -27,10 +27,10 @@ export class ProductEntity extends BaseEntity {
     @Column()
     quantity: number;
 
-    @OneToMany(() => PriceEntity, (price) => price.product, { cascade: true })
+    @OneToMany(() => PriceEntity, (price) => price.product, { cascade: true , onDelete: "CASCADE" })
     prices: PriceEntity[];
 
-    @ManyToOne(() => StoreEntity, (store) => store.products)
+    @ManyToOne(() => StoreEntity, (store) => store.products, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'storeId'})
     store: StoreEntity;
 }

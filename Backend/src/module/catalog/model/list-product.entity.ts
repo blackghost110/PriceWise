@@ -15,7 +15,7 @@ export class ListProductEntity extends BaseEntity {
     @JoinColumn({ name: 'listId'})
     list: ListEntity;
 
-    @ManyToOne(() => ProductEntity)
+    @ManyToOne(() => ProductEntity, { onDelete: "CASCADE" })
     @JoinColumn({ name: 'productId'})
     product: ProductEntity;
 }

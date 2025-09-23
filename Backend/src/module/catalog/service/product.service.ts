@@ -110,6 +110,7 @@ export class ProductService {
         storeCity: product.store.city
       }));
     } catch (e) {
+      console.log('Error Log :', e);
       throw new ProductGetAllException();
     }
 

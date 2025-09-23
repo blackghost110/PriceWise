@@ -24,6 +24,6 @@ export class StoreEntity extends BaseEntity {
     @Column()
     city: string;
 
-    @OneToMany(() => ProductEntity, (product) => product.store)
+    @OneToMany(() => ProductEntity, (product) => product.store, { cascade: true , onDelete: "CASCADE" })
     products: ProductEntity[];
 }

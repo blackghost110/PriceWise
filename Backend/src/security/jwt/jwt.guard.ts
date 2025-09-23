@@ -16,17 +16,10 @@ export class JwtGuard implements CanActivate {
                 private readonly securityService: SecurityService,
                 private reflector: Reflector) { // permet de recuperer les metadonées
     }
-    /*
-        cette methode permet de savoir si l'acces a une route est autorisé ou non
-        on recupere la metadonée de la route et on regarde s'il contient @Public (accessible sans necessite d'authentification)
-        si oui true, si non on bascule vers validateToken (verifier le jeton d'authentification)
-     */
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY,[context.getHandler(), context.getClass()]);
         return isPublic ? true : this.validateToken(context.switchToHttp().getRequest());
     }
-
-
     private validateToken(request: any): Observable<boolean> {
         // le champ 'authorization'/ token existe il dans le header
         if (!isNil(request.headers['authorization'])) {

@@ -49,8 +49,7 @@ export class AuthService implements OnInit {
     return this.api.post(ApiURI.SIGN_UP, {...payload, socialLogin: false}).pipe(
       tap((response: ApiResponse) => {
         if (response.result) {
-          this.tokenService.setToken({...response.data, isEmpty: false});
-          this.router.navigate([AppNode.HOME]);
+          this.router.navigate([AppNode.SIGN_IN_PAGE]);
           console.log('register success')
         }
       })

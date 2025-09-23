@@ -8,12 +8,17 @@ export enum AppNode {
   SIGN_IN_PAGE = `/${AppNode.AUTH}/${AppNode.SIGN_IN}`,
   SIGN_UP_PAGE = `/${AppNode.AUTH}/${AppNode.SIGN_UP}`,
 
-
-
   // Home ----------
-  HOME = '/home',
+  HOME = 'home',
 
+  // Forum ----------
+  FORUM = 'forum',
 
+  DASHBOARD = 'dashboard',
+  POST = 'post/:postId',
+
+  DASHBOARD_PAGE = `/${AppNode.FORUM}/${AppNode.DASHBOARD}`,
+  POST_PAGE = `/${AppNode.FORUM}/${AppNode.POST}`,
 
   // Catalog ----------
   CATALOG = 'catalog',
@@ -32,14 +37,6 @@ export enum AppNode {
 
 
 
-  // Forum ----------
-  FORUM = '/forum',
-
-  DASHBOARD = 'dashboard',
-  POST = 'post/:postId',
-
-  DASHBOARD_PAGE = `/${AppNode.FORUM}/${AppNode.DASHBOARD}`,
-  POST_PAGE = `/${AppNode.FORUM}/${AppNode.POST}`,
 
 
   // miscellaneous ----------

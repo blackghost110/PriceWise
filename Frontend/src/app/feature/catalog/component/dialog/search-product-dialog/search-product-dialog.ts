@@ -58,9 +58,7 @@ export class SearchProductDialog implements OnInit {
     const search = this.searchTerm().toLowerCase().trim();
     const rawProducts = this.products();
 
-    console.log('before', rawProducts);
     let products = rawProducts?.filter(product => !this.selectedProducts().map(product => product.productId).includes(product.productId))
-    console.log('after', products);
 
     if (!search || !products) {
       return products;

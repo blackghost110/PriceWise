@@ -1,4 +1,9 @@
-import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import {Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
 import {CreateProductDto} from "../model/dto/create-product.dto";
 import {ProductService} from "../service/product.service";
@@ -13,6 +18,10 @@ export class ProductController {
     constructor(private readonly productService: ProductService) {}
 
     @Post('product/:storeId')
+    @ApiOperation({
+      summary: 'Créer un nouveau produit',
+      description: 'Permet de créer un nouveau produit dans un magasin spécifique',
+    })
     async createProduct(
         @User() user: Credential,
         @Param('storeId') storeId: number,
@@ -21,11 +30,19 @@ export class ProductController {
     }
 
     @Get('products')
+    @ApiOperation({
+      summary: 'Obtenir tous les produits',
+      description: 'Récupère une liste de produits avec possibilité de filtrage',
+    })
     async getAllProducts(@Query() query: GetAllProductsQueryDTO){
         return this.productService.getAllProducts(query);
     }
 
   @Get('product/:productId')
+  @ApiOperation({
+    summary: 'Obtenir les détails d\'un produit',
+    description: 'Récupère les informations détaillées d\'un produit par son ID',
+  })
   async getProductDetails(@Param('productId') productId: number) {
     return this.productService.getProductDetails(productId);
   }

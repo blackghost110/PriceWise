@@ -16,5 +16,4 @@ export class Token {
     @JoinColumn({name: 'credential_id'})
     credential: Credential
 
-
 }

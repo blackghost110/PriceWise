@@ -13,7 +13,6 @@ export enum ApiCodeResponse {
   COMMON_SUCCESS = 'api.success.common',
 
   // SOCIAL API EXCEPTIONS --------------------------------------------//
-
   // Post Service Exception Codes
   POST_CREATE_EXCEPTION = 'api.post.error.create-exception',
   POST_GET_ALL_EXCEPTION = 'api.post.error.get-all-exception',
