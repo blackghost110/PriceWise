@@ -5,6 +5,7 @@ import {MatIcon, MatIconModule} from '@angular/material/icon';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatButton} from '@angular/material/button';
 import {AppNode} from '@shared/route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 
 @Component({
   selector: 'app-header',
@@ -37,4 +38,5 @@ export class Header implements OnInit {
   }
 
   protected readonly AppNode = AppNode;
+  readonly AppRoutes = AppRoutes;
 }

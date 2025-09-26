@@ -21,6 +21,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {RouterLink} from '@angular/router';
 import {PostDto} from '@features/social/data/dto/post.dto';
 import {AppNode} from '@shared/route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 @Component({
   selector: 'app-forum',
   imports: [
@@ -61,6 +62,7 @@ export class Forum implements OnInit {
   searchTerm = signal('');
 
   displayedColumns: string[] = ['title', 'postalCode','commentCount', 'user' ];
+  readonly AppRoutes = AppRoutes;
 
   ngOnInit() {
     this.postService.getPosts().subscribe();
@@ -108,9 +110,9 @@ export class Forum implements OnInit {
   })
 
 
-  getPostDetailUrl(postId: string): string {
-    return AppNode.POST_PAGE.replace(':postId', postId);
-  }
+  // getPostDetailUrl(postId: string): string {
+  //   return AppRoutes.POST_PAGE.replace(':postId', postId);
+  // }
 
   onSearchChange(searchValue: string) {
     this.searchTerm.set(searchValue);

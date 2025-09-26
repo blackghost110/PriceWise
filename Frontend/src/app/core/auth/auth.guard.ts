@@ -1,7 +1,7 @@
 import {inject} from '@angular/core';
 import {CanActivateFn, Router, UrlTree} from '@angular/router';
 import {AuthService} from '@core/auth/auth.service';
-import {AppNode} from '@shared/route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 
 
 export const authGuard: CanActivateFn = async (route, state): Promise<boolean | UrlTree> => {
@@ -14,7 +14,7 @@ export const authGuard: CanActivateFn = async (route, state): Promise<boolean | 
     return true;
   }
 
-  return router.createUrlTree([AppNode.AUTH]);
+  return router.createUrlTree([AppRoutes.SIGN_IN_PAGE]);
 };
 
 export const publicGuard: CanActivateFn = async (): Promise<boolean | UrlTree> => {
@@ -24,7 +24,7 @@ export const publicGuard: CanActivateFn = async (): Promise<boolean | UrlTree> =
   const isAuth = await authService.checkUser();
 
   if (isAuth) {
-    return router.createUrlTree([AppNode.CATALOG]);
+    return router.createUrlTree([AppRoutes.HOME_PAGE]);
   }
 
   return true;

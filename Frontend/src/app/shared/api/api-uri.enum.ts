@@ -33,6 +33,6 @@ export enum ApiURI {
   STORE_GET='store',
   STORE_GET_ALL='store',
   STORE_GET_TWO='store/last',
-  
+
 
 }

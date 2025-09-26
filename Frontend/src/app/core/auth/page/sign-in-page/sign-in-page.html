@@ -30,7 +30,7 @@
           <p class="control-error">{{ errorMessage() }}</p>
         }
 
-        <a [routerLink]="AppNode.SIGN_UP_PAGE" class="form-link">Nouveau sur PriceWise ? Créer un compte</a>
+        <a [routerLink]="AppRoutes.SIGN_UP_PAGE" class="form-link">Nouveau sur PriceWise ? Créer un compte</a>
 
         <button class="submit-button" matButton type="submit" [disabled]="form.invalid || isLoading()" (click)="onLogin()">
           @if (isLoading()) {

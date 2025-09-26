@@ -1,45 +1,25 @@
 export enum AppNode {
-  // Authentication ----------
+  // Authentication routes
   AUTH = 'auth',
-
   SIGN_IN = 'sign-in',
   SIGN_UP = 'sign-up',
 
-  SIGN_IN_PAGE = `/${AppNode.AUTH}/${AppNode.SIGN_IN}`,
-  SIGN_UP_PAGE = `/${AppNode.AUTH}/${AppNode.SIGN_UP}`,
-
-  // Home ----------
+  // Home routes
   HOME = 'home',
 
-  // Forum ----------
-  FORUM = 'forum',
-
-  DASHBOARD = 'dashboard',
-  POST = 'post/:postId',
-
-  DASHBOARD_PAGE = `/${AppNode.FORUM}/${AppNode.DASHBOARD}`,
-  POST_PAGE = `/${AppNode.FORUM}/${AppNode.POST}`,
-
-  // Catalog ----------
+  // Catalog routes
   CATALOG = 'catalog',
-
   STORE_LIST = 'store-list',
-  STORE_LIST_PRODUCTS = 'store-list/:storeId/products',
+  STORE_PRODUCTS = ':storeId/products', // Changé pour éviter la duplication
   PRODUCT_LIST = 'product-list',
   PERSONAL_LIST = 'personal-list',
-  PRODUCT_DETAIL = 'product-detail/:productId',
+  PRODUCT_DETAIL = ':productId', // Simplifié
 
-  STORE_LIST_PAGE = `/${AppNode.CATALOG}/${AppNode.STORE_LIST}`,
-  STORE_LIST_PRODUCTS_PAGE = `/${AppNode.CATALOG}/${AppNode.STORE_LIST_PRODUCTS}`,
-  PRODUCT_LIST_PAGE = `/${AppNode.CATALOG}/${AppNode.PRODUCT_LIST}`,
-  PERSONAL_LIST_PAGE = `/${AppNode.CATALOG}/${AppNode.PERSONAL_LIST}`,
-  PRODUCT_DETAIL_PAGE = `/${AppNode.CATALOG}/${AppNode.PRODUCT_DETAIL}`,
+  // Forum routes
+  FORUM = 'forum',
+  DASHBOARD = 'dashboard',
+  POST = ':postId', // Simplifié
 
-
-
-
-
-  // miscellaneous ----------
+  // Fallback
   FALL_BACK = '**',
-
 }

@@ -1,6 +1,6 @@
 import {Component, DestroyRef, inject, signal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router, RouterLink} from '@angular/router';
+import { RouterLink} from '@angular/router';
 import {AuthService} from '@core/auth/auth.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {finalize, tap} from 'rxjs';
@@ -9,6 +9,7 @@ import {ApiResponse} from '@shared/api/data/api.response';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
 import {SignUpPayload} from '@core/auth/data/payload/sign-up.payload';
 import {AppNode} from '@shared/route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 
 @Component({
   selector: 'app-sign-up-page',
@@ -25,6 +26,7 @@ export class SignUpPage {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private errorMessageService = inject(ErrorMessageService)
+  readonly AppRoutes = AppRoutes;
 
   errorMessage = signal<string | null>(null);
   isLoading = signal(false);
@@ -45,6 +47,7 @@ export class SignUpPage {
       validators: [Validators.required, Validators.minLength(6)]
     })
   });
+
 
   get isEnteredEmailValid() {
     return this.form.controls.email.touched &&

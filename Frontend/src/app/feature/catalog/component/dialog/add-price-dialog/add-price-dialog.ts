@@ -95,7 +95,6 @@ export class AddPriceDialog {
         takeUntilDestroyed(this.destroyRef),
         tap((apiResponse: ApiResponse) => {
           if (!apiResponse.result) {
-            console.log('apiResponse details : ', apiResponse)
             this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code, apiResponse.data))
             this.isSameDate.set(true);
             this.updatePriceId.set(apiResponse.data.priceId)
@@ -127,7 +126,6 @@ export class AddPriceDialog {
       takeUntilDestroyed(this.destroyRef),
       tap((apiResponse: ApiResponse) => {
         if (!apiResponse.result) {
-          console.log('apiResponse details : ', apiResponse);
           this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code, apiResponse.data));
         } else {
           this.onClose();

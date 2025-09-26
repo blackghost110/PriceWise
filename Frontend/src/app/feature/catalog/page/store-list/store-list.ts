@@ -11,6 +11,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {AddStoreDialog} from '@features/catalog/component/dialog/add-store-dialog/add-store-dialog';
 import {MatIcon} from '@angular/material/icon';
 import {AppNode} from '@shared/route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 
 @Component({
   selector: 'app-store-list',
@@ -36,7 +37,7 @@ export class StoreList implements OnInit{
   private router = inject(Router)
   private destroyRef = inject(DestroyRef);
   private storeService = inject(StoreService);
-
+  readonly AppRoutes = AppRoutes;
 
 
   stores = this.storeService.storeList
@@ -46,6 +47,7 @@ export class StoreList implements OnInit{
   isLoading = signal(false);
 
   searchTerm = signal('');
+
 
 
   ngOnInit() {
@@ -92,7 +94,7 @@ export class StoreList implements OnInit{
   }
 
   onNavigateToStore(store: StoreDto) {
-    const route = AppNode.STORE_LIST_PRODUCTS_PAGE.replace(':storeId', store.storeId);
+    const route = AppRoutes.storeProductsPage(store.storeId);
     this.router.navigateByUrl(route, { state: { store } });
   }
 

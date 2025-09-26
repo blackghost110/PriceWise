@@ -20,4 +20,5 @@ li {
 }
 .img {
   height: 45px;
+  cursor: pointer;
 }

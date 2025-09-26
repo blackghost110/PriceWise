@@ -18,7 +18,8 @@ class ConfigManager {
             password: this.getValue(ConfigKey.DB_PASSWORD),
             database: this.getValue(ConfigKey.DB_DATABASE),
             entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
-            synchronize: (this.getValue(ConfigKey.DB_SYNC)=== 'true') // METTRE CELA EN FALSE UNE FOIS EN PRODUCTION, permet de synchro les shemas vers la DB
+            synchronize: (this.getValue(ConfigKey.DB_SYNC)=== 'true'), // METTRE CELA EN FALSE UNE FOIS EN PRODUCTION, permet de synchro les shemas vers la DB
+            dropSchema: false,
         }
     }
     getValue(key: ConfigKey, throwOnMissing = true): string {

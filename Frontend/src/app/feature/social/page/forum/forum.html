@@ -26,7 +26,7 @@
       <table mat-table [dataSource]="dataSource" class="product-table">
         <ng-container matColumnDef="title" >
           <th mat-header-cell *matHeaderCellDef> Sujet </th>
-          <td mat-cell *matCellDef="let post" [routerLink]="getPostDetailUrl(post.postId)" style="cursor: pointer"> {{post.title}} </td>
+          <td mat-cell *matCellDef="let post" [routerLink]="AppRoutes.postPage(post.postId)" style="cursor: pointer"> {{post.title}} </td>
         </ng-container>
 
         <ng-container matColumnDef="postalCode">

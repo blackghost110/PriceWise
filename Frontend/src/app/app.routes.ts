@@ -5,10 +5,10 @@ import {authGuard, publicGuard} from '@core/auth/auth.guard';
 
 
 export const routes: Routes = [
-
   {
     path: '',
-    redirectTo: AppNode.AUTH, pathMatch: 'full'
+    redirectTo: `/${AppNode.AUTH}`,
+    pathMatch: 'full'
   },
   {
     path: AppNode.AUTH,
@@ -34,5 +34,4 @@ export const routes: Routes = [
     path: AppNode.FALL_BACK,
     component: GlobalFallBackPage
   }
-
 ];

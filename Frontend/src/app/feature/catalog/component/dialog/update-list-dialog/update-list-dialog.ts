@@ -75,7 +75,6 @@ export class UpdateListDialog {
       takeUntilDestroyed(this.destroyRef),
       tap((apiResponse: ApiResponse) => {
         if (!apiResponse.result) {
-          console.log('apiResponse details : ', apiResponse)
           this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
         }
       }),

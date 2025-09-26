@@ -9,9 +9,7 @@ export class ListProductEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     listProductId: number;
 
-    @ManyToOne(() => ListEntity, (list) => list.listProducts, {
-      onDelete: "CASCADE",
-    })
+    @ManyToOne(() => ListEntity, (list) => list.listProducts, { onDelete: "CASCADE" })
     @JoinColumn({ name: 'listId'})
     list: ListEntity;
 

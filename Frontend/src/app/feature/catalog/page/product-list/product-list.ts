@@ -21,6 +21,7 @@ import {
 import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
 import {MatPaginator} from '@angular/material/paginator';
 import {AppNode} from '@shared/route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 
 
 @Component({
@@ -70,6 +71,7 @@ export class ProductList implements OnInit {
   searchTerm = signal('');
   storeNameFilter = signal('');
   storePostalCodeFilter = signal('');
+  readonly AppRoutes = AppRoutes;
 
 
   constructor() {
@@ -150,9 +152,9 @@ export class ProductList implements OnInit {
   }
 
 
-  getProductDetailUrl(productId: string): string {
-    return AppNode.PRODUCT_DETAIL_PAGE.replace(':productId', productId);
-  }
+  // getProductDetailUrl(productId: string): string {
+  //   return AppRoutes.PRODUCT_DETAIL_PAGE.replace(':productId', productId);
+  // }
 
   onStoreNameChange(value: string) {
     this.storeNameFilter.set(value);

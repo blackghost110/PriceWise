@@ -9,6 +9,7 @@ import {SignUpPayload} from './data/payload/sign-up.payload';
 import {ApiURI} from '@shared/api/api-uri.enum';
 import {AppNode} from '@shared/route/node.enum';
 import {HttpErrorResponse} from '@angular/common/http';
+import { AppRoutes } from "@app/shared/route/app-routes.enum";
 
 @Injectable({
   providedIn: 'root'
@@ -49,7 +50,7 @@ export class AuthService implements OnInit {
     return this.api.post(ApiURI.SIGN_UP, {...payload, socialLogin: false}).pipe(
       tap((response: ApiResponse) => {
         if (response.result) {
-          this.router.navigate([AppNode.SIGN_IN_PAGE]);
+          this.router.navigate([AppRoutes.SIGN_IN_PAGE]);
           console.log('register success')
         }
       })
@@ -59,7 +60,7 @@ export class AuthService implements OnInit {
   public logOut(): void {
     this.tokenService.setToken({token: '', refreshToken: '', isEmpty: true});
     this.currentUser.set(null);
-    this.router.navigate([AppNode.SIGN_IN_PAGE]);
+    this.router.navigate([AppRoutes.SIGN_IN_PAGE]);
   }
 
   public me() {

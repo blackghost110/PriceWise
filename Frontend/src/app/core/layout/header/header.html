@@ -1,28 +1,28 @@
 <header class="header">
   <nav class="header-container">
-    <div>
+    <div [routerLink]="AppRoutes.HOME_PAGE">
       <img src="/image/logo_modif.png" alt="logo" class="img">
     </div>
 
 
     <ul>
 
-      <button mat-button style="color: #484848" [routerLink]="AppNode.HOME">
+      <button mat-button style="color: #484848" [routerLink]="AppRoutes.HOME_PAGE">
         Accueil
         <mat-icon>home</mat-icon>
       </button>
 
-      <button mat-button style="color: #484848" [routerLink]="AppNode.STORE_LIST_PAGE">
+      <button mat-button style="color: #484848" [routerLink]="AppRoutes.STORE_LIST_PAGE">
         Catalogue
         <mat-icon>storefront</mat-icon>
       </button>
 
-      <button mat-button [routerLink]="AppNode.PERSONAL_LIST_PAGE" style="color: #484848">
+      <button mat-button [routerLink]="AppRoutes.PERSONAL_LIST_PAGE" style="color: #484848">
         Liste
         <mat-icon>bookmarks</mat-icon>
       </button>
 
-      <button mat-button [routerLink]="AppNode.FORUM" style="color: #484848">
+      <button mat-button [routerLink]="AppRoutes.DASHBOARD_PAGE" style="color: #484848">
         Forum
         <mat-icon>forum</mat-icon>
       </button>

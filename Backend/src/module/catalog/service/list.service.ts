@@ -24,7 +24,8 @@ import {
 @Injectable()
 export class ListService {
   constructor(
-    @InjectRepository(ListEntity) private readonly listRepository: Repository<ListEntity>,
+    @InjectRepository(ListEntity)
+    private readonly listRepository: Repository<ListEntity>,
   ) {}
 
   async createList(user: Credential, dto: CreateListDto) {
@@ -37,46 +38,42 @@ export class ListService {
       throw new ListCreateConflictException();
     }
     try {
-
       const list = new ListEntity();
       Object.assign(list, dto);
       list.user = user;
       return await this.listRepository.save(list);
-
     } catch (e) {
       throw new ListCreateException();
     }
-
-
   }
 
   async getListsByUser(user: Credential): Promise<ListResponse[]> {
     try {
-
       return await this.listRepository.find({
         where: {
-          user: {credential_id: user.credential_id},
+          user: { credential_id: user.credential_id },
         },
       });
-
     } catch (e) {
       throw new ListGetByUserException();
     }
-
   }
 
   async updateList(user: Credential, listId: number, dto: CreateListDto) {
-    const list = await this.listRepository.findOne({ where: { listId }, relations: ['user']});
+    const list = await this.listRepository.findOne({
+      where: { listId },
+      relations: ['user'],
+    });
     if (!list) {
       throw new ListUpdateNotFoundException();
     }
     const isExistingList = await this.listRepository.find({
       where: {
         name: ILike(dto.name),
-        user: {credential_id: user.credential_id}
+        user: { credential_id: user.credential_id },
       },
-      relations: ['user']
-    })
+      relations: ['user'],
+    });
     if (isExistingList.length > 0) {
       throw new ListUpdateConflictException();
     }
@@ -86,28 +83,29 @@ export class ListService {
     }
 
     try {
-
       Object.assign(list, dto);
       return await this.listRepository.save(list);
-
     } catch (e) {
       throw new ListUpdateException();
     }
-
   }
 
   async deleteList(listId: number, user: Credential): Promise<void> {
+    const list = await this.listRepository.findOne({
+      where: { listId },
+      relations: ['user'],
+    });
+    if (!list) {
+      throw new ListDeleteNotFoundException();
+    }
+    if (list.user.credential_id !== user.credential_id) {
+      throw new ListDeleteForbiddenException();
+    }
     try {
-      const list = await this.listRepository.findOne({ where: { listId }, relations: ['user']});
-      if (!list) {
-        throw new ListDeleteNotFoundException();
-      }
-      if (list.user.credential_id !== user.credential_id) {
-        throw new ListDeleteForbiddenException();
-      }
       await this.listRepository.remove(list);
     } catch (e) {
       throw new ListDeleteException();
     }
   }
+
 }

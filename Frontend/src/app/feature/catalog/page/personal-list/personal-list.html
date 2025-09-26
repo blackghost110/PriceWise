@@ -82,7 +82,7 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="getProductDetailUrl(row.productId)"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="AppRoutes.productDetailPage(row.productId)"></tr>
 
         </table>
         <mat-paginator [pageSizeOptions]="[5, 10, 20]"

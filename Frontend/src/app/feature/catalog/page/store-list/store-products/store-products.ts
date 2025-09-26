@@ -31,6 +31,7 @@ import {
 } from '@features/catalog/component/dialog/add-product-to-list-dialog/add-product-to-list-dialog';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {AppNode} from '@shared/route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 
 @Component({
   selector: 'app-store-products',
@@ -89,6 +90,7 @@ export class StoreProducts implements OnInit {
   errorMessage = signal<string | null>(null);
 
   searchTerm = signal('');
+  readonly AppRoutes = AppRoutes;
 
 
   constructor() {
@@ -146,9 +148,9 @@ export class StoreProducts implements OnInit {
   })
 
 
-  getProductDetailUrl(productId: string): string {
-    return AppNode.PRODUCT_DETAIL_PAGE.replace(':productId', productId);
-  }
+  // getProductDetailUrl(productId: string): string {
+  //   return AppRoutes.PRODUCT_DETAIL_PAGE.replace(':productId', productId);
+  // }
 
   onSearchChange(searchValue: string) {
     this.searchTerm.set(searchValue);

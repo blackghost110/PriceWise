@@ -8,6 +8,7 @@ import {ApiResponse} from '@shared/api/data/api.response';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
 import {MatButton} from '@angular/material/button';
 import {AppNode} from '@shared/route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 
 @Component({
   selector: 'app-sign-in-page',
@@ -24,9 +25,12 @@ export class SignInPage implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private errorMessageService = inject(ErrorMessageService)
+  readonly AppRoutes = AppRoutes;
 
   errorMessage = signal<string | null>(null);
   isLoading = signal(false);
+
+
 
 
 

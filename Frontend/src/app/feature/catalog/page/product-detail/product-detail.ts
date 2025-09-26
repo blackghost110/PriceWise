@@ -21,6 +21,7 @@ import {
   AddProductToListDialog
 } from '@features/catalog/component/dialog/add-product-to-list-dialog/add-product-to-list-dialog';
 import {AppNode} from '@shared/route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 
 @Component({
   selector: 'app-product-detail',
@@ -45,6 +46,7 @@ export class ProductDetail implements OnInit{
 
 
   numberOfPrice = signal(0);
+  readonly AppRoutes = AppRoutes;
 
   ngOnInit() {
 

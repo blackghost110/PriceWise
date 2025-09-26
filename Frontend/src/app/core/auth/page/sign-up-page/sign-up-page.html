@@ -48,7 +48,7 @@
           <p class="control-error">Les mots de passe ne correspondent pas</p>
         }
 
-        <a [routerLink]="AppNode.SIGN_IN_PAGE" class="form-link">Vous avez déjà un compte? Se connecter</a>
+        <a [routerLink]="AppRoutes.SIGN_IN_PAGE" class="form-link">Vous avez déjà un compte? Se connecter</a>
 
         <button class="submit-button" matButton type="submit" [disabled]="form.invalid || isLoading()" (click)="onRegister()">
           @if (isLoading()) {

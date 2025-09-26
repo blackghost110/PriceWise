@@ -16,6 +16,7 @@ import {tap} from 'rxjs';
 import {ApiResponse} from '@shared/api/data/api.response';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
 import {AppNode} from '@shared/route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 
 @Component({
   selector: 'app-post-comments',
@@ -49,6 +50,7 @@ export class PostComments implements OnInit {
 
   commentList = this.commentService.commentList;
   postInfo = this.postService.postInfo;
+  readonly AppRoutes = AppRoutes;
 
 
   ngOnInit() {
@@ -70,7 +72,6 @@ export class PostComments implements OnInit {
       this.commentService.addComment(payload, +this.postId()).pipe(
         tap((apiResponse: ApiResponse) => {
           if (!apiResponse.result) {
-            console.log('apiResponse details : ', apiResponse)
             this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
           }
         })

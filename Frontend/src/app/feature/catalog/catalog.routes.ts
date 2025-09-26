@@ -4,31 +4,31 @@ import {AppNode} from '@shared/route/node.enum';
 export const catalogRoutes: Routes = [
   {
     path: '',
-    redirectTo: 'store-list',
+    redirectTo: AppNode.STORE_LIST,
     pathMatch: 'full'
   },
   {
-    path: 'store-list',
+    path: AppNode.STORE_LIST,
     loadComponent: () => import('./page/store-list/store-list').then(c => c.StoreList)
   },
   {
-    path: 'store-list/:storeId/products',
+    path: `${AppNode.STORE_LIST}/${AppNode.STORE_PRODUCTS}`, // 'store-list/:storeId/products'
     loadComponent: () => import('./page/store-list/store-products/store-products').then(c => c.StoreProducts)
   },
   {
-    path: 'product-list',
+    path: AppNode.PRODUCT_LIST,
     loadComponent: () => import('./page/product-list/product-list').then(c => c.ProductList)
   },
   {
-    path: 'personal-list',
+    path: AppNode.PERSONAL_LIST,
     loadComponent: () => import('./page/personal-list/personal-list').then(c => c.PersonalList)
   },
   {
-    path: 'product-detail/:productId',
+    path: `product-detail/${AppNode.PRODUCT_DETAIL}`, // 'product-detail/:productId'
     loadComponent: () => import('./page/product-detail/product-detail').then(c => c.ProductDetail)
   },
   {
     path: AppNode.FALL_BACK,
     loadComponent: () => import('./page/catalog-fallback-page/catalog-fallback-page').then(c => c.CatalogFallbackPage)
   }
-]
+];

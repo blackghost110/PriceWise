@@ -9,7 +9,7 @@ import {ApiURI} from '../api-uri.enum';
 import {ApiResponse} from '../data/api.response';
 import {Token} from '../type/token';
 import {AddTokenHeaderFn, HttpInterceptorCommonErrorHandlerFn, HttpInterceptorHandlerFn} from '../type/types';
-import {AppNode} from '../../route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 
 const baseURL:string = environment.apiURL;
 const publicRoute: string[] = [
@@ -40,7 +40,7 @@ export const HttpInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
 
 // function for navigate to public part ... this is called many times in the flow
 const redirectToPublic: (router: Router) => Observable<any> = (router: Router) => {
-  router.navigate([AppNode.SIGN_IN]).then();
+  router.navigate([AppRoutes.SIGN_IN_PAGE]).then();
   return EMPTY;
 }
 

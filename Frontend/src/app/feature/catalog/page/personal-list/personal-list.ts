@@ -28,6 +28,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {ListProductDto} from '@features/catalog/data/dto/list-product.dto';
 import {RouterLink} from '@angular/router';
 import {AppNode} from '@shared/route/node.enum';
+import {AppRoutes} from '@shared/route/app-routes.enum';
 
 @Component({
   selector: 'app-personal-list',
@@ -142,9 +143,9 @@ export class PersonalList implements OnInit{
 
 
 
-  getProductDetailUrl(productId: string): string {
-    return AppNode.PRODUCT_DETAIL_PAGE.replace(':productId', productId);
-  }
+  // getProductDetailUrl(productId: string): string {
+  //   return AppRoutes.PRODUCT_DETAIL_PAGE.replace(':productId', productId);
+  // }
 
   onOpenDialogAddList() {
     const dialogRef = this.dialog.open(AddListDialog);
@@ -176,4 +177,5 @@ export class PersonalList implements OnInit{
     this.searchTerm.set('')
   }
 
+  readonly AppRoutes = AppRoutes;
 }

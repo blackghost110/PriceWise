@@ -34,8 +34,6 @@ export class CommentService {
     } catch (e) {
       throw new CommentCreateException();
     }
-
-
   }
 
   async getCommentsByPostId(postId: number) {

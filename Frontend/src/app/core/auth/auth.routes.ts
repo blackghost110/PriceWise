@@ -18,9 +18,8 @@ export const authRoutes: Routes = [
   {
     path: AppNode.FALL_BACK,
     loadComponent: () => import('./page/security-fallback-page/security-fallback-page').then(c => c.SecurityFallbackPage)
-  },
-
-]
+  }
+];
 
 
 
