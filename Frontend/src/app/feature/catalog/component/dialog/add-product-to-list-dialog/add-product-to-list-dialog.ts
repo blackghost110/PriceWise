@@ -39,14 +39,15 @@ import {ApiResponse} from '@shared/api/data/api.response';
 })
 export class AddProductToListDialog implements OnInit {
 
-  dialog = inject(MatDialog);
-  destroyRef = inject(DestroyRef);
-  dialogRef = inject(MatDialogRef<AddProductToListDialog>);
-  data = inject(MAT_DIALOG_DATA);
+  private dialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
+  private dialogRef = inject(MatDialogRef<AddProductToListDialog>);
+  private data = inject(MAT_DIALOG_DATA);
 
-  listService = inject(ListService);
-  listProductService = inject(ListProductService);
   private errorMessageService = inject(ErrorMessageService)
+
+  private listService = inject(ListService);
+  private listProductService = inject(ListProductService);
 
 
 

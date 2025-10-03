@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { StoreEntity } from '../model/store.entity';
@@ -7,13 +7,18 @@ import { CreateStoreDto } from '../model/dto/create-store.dto';
 import { StoreProductsResponse } from '../model/type/store-products.response';
 import { PriceEntity } from '../model/price.entity';
 import {
+  ListDeleteException,
+  ListDeleteNotFoundException,
   StoreCreateConflictException,
   StoreCreateException,
   StoreFindAllException,
   StoreFindTwoException,
   StoreGetProductsException,
   StoreInfoException,
+  StoreUpdateException,
+  StoreUpdateNotFoundException,
 } from '../catalog.exception';
+import { UpdateStoreDto } from '../model/dto/update-store.dto';
 
 @Injectable()
 export class StoreService {
@@ -114,4 +119,41 @@ export class StoreService {
     }
 
   }
+
+  // ----- verifier cette fonction CORRIGER LES EXCEPTIONS
+  async deleteStore(storeId: number): Promise<void> {
+    const store = await this.storeRepository.findOne({
+      where: { storeId } });
+    if (!store) {
+      throw new ListDeleteNotFoundException();
+    }
+    try {
+      await this.storeRepository.remove(store);
+    } catch (e) {
+      throw new ListDeleteException();
+    }
+  }
+
+  async updateStore(dto: UpdateStoreDto, storeId: number) {
+    // Vérification que le store existe
+    const store = await this.storeRepository.findOne({ where: { storeId } });
+    if (!store) {
+      throw new StoreUpdateNotFoundException();
+    }
+
+    try {
+      // Mise à jour des champs
+      store.name = dto.name;
+      store.street = dto.street;
+      store.number = dto.number;
+      store.postalCode = dto.postalCode;
+      store.city = dto.city;
+
+      return await this.storeRepository.save(store);
+
+    } catch (e) {
+      throw new StoreUpdateException();
+    }
+  }
+
 }

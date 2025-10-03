@@ -4,7 +4,7 @@ import {AuthService} from '@core/auth/auth.service';
 import {AppRoutes} from '@shared/route/app-routes.enum';
 
 
-export const authGuard: CanActivateFn = async (route, state): Promise<boolean | UrlTree> => {
+export const authGuard: CanActivateFn = async (): Promise<boolean | UrlTree> => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -24,6 +24,18 @@ export const publicGuard: CanActivateFn = async (): Promise<boolean | UrlTree> =
   const isAuth = await authService.checkUser();
 
   if (isAuth) {
+    return router.createUrlTree([AppRoutes.HOME_PAGE]);
+  }
+
+  return true;
+};
+
+export const adminGuard: CanActivateFn = async (): Promise<boolean | UrlTree> => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+
+  if (!authService.isAdmin()){
     return router.createUrlTree([AppRoutes.HOME_PAGE]);
   }
 

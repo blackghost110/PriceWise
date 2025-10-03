@@ -27,6 +27,7 @@ export class Header implements OnInit {
   authService = inject(AuthService)
 
   currentUser = this.authService.currentUser;
+  isAdmin = this.authService.isAdmin;
 
   ngOnInit(){
     this.authService.me()
@@ -36,6 +37,7 @@ export class Header implements OnInit {
   onLogout() {
     this.authService.logOut()
   }
+
 
   protected readonly AppNode = AppNode;
   readonly AppRoutes = AppRoutes;

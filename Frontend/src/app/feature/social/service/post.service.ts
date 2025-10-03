@@ -5,6 +5,7 @@ import {ApiResponse} from '@shared/api/data/api.response';
 import {PostDto} from '@features/social/data/dto/post.dto';
 import {CreatePostPayload} from '@features/social/data/payload/create-post.payload';
 import {ApiURI} from '@shared/api/api-uri.enum';
+import {SnackbarService} from '@shared/service/snackbar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import {ApiURI} from '@shared/api/api-uri.enum';
 export class PostService {
 
   private readonly api = inject(ApiService)
+  private snackbar = inject(SnackbarService)
 
 
   private _postList = signal<PostDto[] | null>(null)
@@ -29,6 +31,7 @@ export class PostService {
         console.log(response)
         if (response.result) {
           this.getPosts().subscribe()
+          this.snackbar.show('Discussion ajoutée avec succès')
         }
       })
     );

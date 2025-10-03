@@ -18,9 +18,8 @@ import {MatButton} from '@angular/material/button';
 import {MatDialog} from '@angular/material/dialog';
 import {AddPostDialog} from '@features/social/component/add-post-dialog/add-post-dialog';
 import {MatPaginator} from '@angular/material/paginator';
-import {RouterLink} from '@angular/router';
+import {RouterLink, RouterLinkActive} from '@angular/router';
 import {PostDto} from '@features/social/data/dto/post.dto';
-import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
 @Component({
   selector: 'app-forum',
@@ -44,7 +43,8 @@ import {AppRoutes} from '@shared/route/app-routes.enum';
     MatSuffix,
     MatButton,
     MatPaginator,
-    RouterLink
+    RouterLink,
+    RouterLinkActive
   ],
   templateUrl: './forum.html',
   styleUrl: './forum.css'

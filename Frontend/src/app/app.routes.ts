@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import {AppNode} from '@shared/route/node.enum';
 import {GlobalFallBackPage} from '@shared/route/global-fall-back-page/global-fall-back-page';
-import {authGuard, publicGuard} from '@core/auth/auth.guard';
+import {adminGuard, authGuard, publicGuard} from '@core/auth/auth.guard';
 
 
 export const routes: Routes = [
@@ -12,22 +12,27 @@ export const routes: Routes = [
   },
   {
     path: AppNode.AUTH,
-    loadChildren: () => import('./core/auth/auth.routes').then(r => r.authRoutes),
+    loadChildren: () => import('@core/auth/auth.routes').then(r => r.authRoutes),
     canActivate: [publicGuard]
   },
   {
+    path: AppNode.ADMIN,
+    loadComponent: () => import('@features/admin/page/admin-dashboard-page/admin-dashboard-page').then(c => c.AdminDashboardPage),
+    canActivate: [adminGuard]
+  },
+  {
     path: AppNode.HOME,
-    loadComponent: () => import('./core/layout/home/home').then(c => c.Home),
+    loadComponent: () => import('@core/layout/home/home').then(c => c.Home),
     canActivate: [authGuard]
   },
   {
     path: AppNode.CATALOG,
-    loadChildren: () => import('./feature/catalog/catalog.routes').then(r => r.catalogRoutes),
+    loadChildren: () => import('@features/catalog/catalog.routes').then(r => r.catalogRoutes),
     canActivate: [authGuard]
   },
   {
     path: AppNode.FORUM,
-    loadChildren: () => import('./feature/social/social.routes').then(r => r.socialRoutes),
+    loadChildren: () => import('@features/social/social.routes').then(r => r.socialRoutes),
     canActivate: [authGuard]
   },
   {

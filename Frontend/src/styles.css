@@ -5,3 +5,11 @@ body { margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   background: whitesmoke;
 }
+.mat-mdc-snack-bar-container .custom-snackbar {
+  --mdc-snackbar-supporting-text-color: #42f548 !important;
+}
+
+
+.custom-snackbar .mat-mdc-snack-bar-label {
+  color: #42f548 !important;
+}

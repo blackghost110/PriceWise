@@ -27,7 +27,6 @@ import {
 import {MatPaginator} from '@angular/material/paginator';
 import {ListProductDto} from '@features/catalog/data/dto/list-product.dto';
 import {RouterLink} from '@angular/router';
-import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
 
 @Component({
@@ -81,14 +80,20 @@ export class PersonalList implements OnInit{
   personalList = this.listService.personalList
   listProducts = this.listProductService.listProducts
 
-  selectedList = signal('0');
+  selectedList = signal(0);
   searchTerm = signal('');
 
 
   constructor() {
     effect(() => {
-      this.listProductService.getListProducts(Number(this.selectedList())).subscribe()
+      this.listProductService.getListProducts(+this.selectedList()).subscribe()
     })
+    effect(() => {
+      const lists = this.personalList();
+      if (lists && lists.length > 0) {
+        this.selectedList.set(lists[0].listId)
+      }
+    });
 
     //  mettre à jour le dataSource
     effect(() => {
@@ -100,9 +105,9 @@ export class PersonalList implements OnInit{
 
     //  connecter le paginator
     effect(() => {
-      const pag = this.paginator();
-      if (pag) {
-        this.dataSource.paginator = pag;
+      const page = this.paginator();
+      if (page) {
+        this.dataSource.paginator = page;
       }
     });
 
@@ -163,8 +168,8 @@ export class PersonalList implements OnInit{
       cancelCaption: 'Annuler'
     }).subscribe((result) => {
       if (result) {
-        console.log('Suppression de la liste')
         this.listService.deleteList(Number(this.selectedList())).subscribe()
+        location.reload();
       }
     })
   }

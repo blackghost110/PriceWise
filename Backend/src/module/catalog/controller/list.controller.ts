@@ -12,6 +12,7 @@ import {ListService} from "../service/list.service";
 import { User } from '@common/config/decorator/user.decorator';
 import { Credential } from '../../../security/model/entity/credential.entity';
 import { CreateListDto } from '../model/dto/create-list.dto';
+import { UpdateListDto } from '../model/dto/update-list.dto';
 
 @ApiBearerAuth('access-token')
 @ApiTags('List Controller')
@@ -32,7 +33,7 @@ export class ListController {
   }
 
   @Put(':listId')
-  async updateList(@User() user: Credential, @Param('listId') listId: number, @Body() dto: CreateListDto){
+  async updateList(@User() user: Credential, @Param('listId') listId: number, @Body() dto: UpdateListDto){
     return await this.listService.updateList(user, listId, dto)
   }
 

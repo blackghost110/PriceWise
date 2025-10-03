@@ -10,6 +10,7 @@ import {ApiURI} from '@shared/api/api-uri.enum';
 import {AppNode} from '@shared/route/node.enum';
 import {HttpErrorResponse} from '@angular/common/http';
 import { AppRoutes } from "@app/shared/route/app-routes.enum";
+import {UserDto} from '@core/auth/data/dto/user.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +22,9 @@ export class AuthService implements OnInit {
   private readonly tokenService = inject(TokenService);
   private readonly router = inject(Router);
 
-  currentUser = signal(null);
-  isAuthenticated = computed(() => !!this.currentUser());
+  currentUser = signal<UserDto | null>(null);
+  isAdmin = computed(() => this.currentUser()?.isAdmin ?? false);
+  // isAuthenticated = computed(() => !!this.currentUser());
 
   ngOnInit() {
     console.log('authService init')
@@ -67,7 +69,7 @@ export class AuthService implements OnInit {
     this.api.get(ApiURI.ME).pipe(
       tap((response: ApiResponse) => {
         if (response.result) {
-          this.currentUser.set(response.data.username);
+          this.currentUser.set(response.data);
         }
       })).subscribe();
   }
@@ -82,7 +84,7 @@ export class AuthService implements OnInit {
     try {
       const response = await firstValueFrom(this.api.get(ApiURI.ME));
       if (response.result && response.data) {
-        this.currentUser.set(response.data.username);
+        this.currentUser.set(response.data);
         return true;
       }
     } catch (error) {

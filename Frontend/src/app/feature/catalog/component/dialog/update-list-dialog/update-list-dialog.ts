@@ -87,13 +87,6 @@ export class UpdateListDialog {
 
   }
 
-
-
-
-
-
-
-
   onClose() {
     this.dialogRef.close();
   }

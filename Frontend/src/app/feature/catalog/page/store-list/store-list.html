@@ -46,7 +46,22 @@
               <h3 class="title">{{ store.name }} - {{ store.city }} {{ store.postalCode }}</h3>
               <div class="street">
                 <span>{{ store.street }}, {{ store.number }}</span>
-                <button matButton="text" class="detail-button">Detail</button>
+                @if (isAdmin()) {
+                  <button matIconButton [matMenuTriggerFor]="ProductMenu" class="detail-button" (click)="$event.stopPropagation()">
+                    <mat-icon>settings</mat-icon>
+                  </button>
+                  <mat-menu #ProductMenu="matMenu">
+                    <button mat-menu-item (click)="onOpenDialogUpdateStore(store)" style="color: darkred">
+                      <mat-icon style="color: darkred">edit_square</mat-icon>
+                      Modifier ce magasin
+                    </button>
+                    <button mat-menu-item (click)="onOpenDialogDeleteStore(store)" style="color: darkred">
+                      <mat-icon style="color: darkred">delete</mat-icon>
+                      Supprimer ce magasin
+                    </button>
+                  </mat-menu>
+                }
+
               </div>
             </article>
           }
@@ -83,4 +98,5 @@
 
 </main>
 
+<app-footer/>
 

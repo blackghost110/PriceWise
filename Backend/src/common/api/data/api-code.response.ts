@@ -1,4 +1,7 @@
 export enum ApiCodeResponse {
+
+  COMMON_SUCCESS = 'api.success.common',
+
   // SECURITY API EXCEPTIONS --------------------------------------------//
 
   PAYLOAD_PARAM_IS_MISSING = 'api.error.payload-param-is-missing',
@@ -10,7 +13,9 @@ export enum ApiCodeResponse {
   SIGNUP_ERROR = 'api.security.error.signup',
   NO_TOKEN_FOUNDED = 'api.security.error.no-token-found',
   PAYLOAD_IS_NOT_VALID = 'api.error.payload-is-not-valid',
-  COMMON_SUCCESS = 'api.success.common',
+  USER_UPDATE_NOT_FOUND_EXCEPTION = 'api.security.error.user-update-not-found-exception', // new
+  USER_UPDATE_EXCEPTION = 'api.security.error.user-update-exception', // new
+
 
   // SOCIAL API EXCEPTIONS --------------------------------------------//
   // Post Service Exception Codes
@@ -56,6 +61,7 @@ export enum ApiCodeResponse {
   PRICE_UPDATE_NOT_FOUND_EXCEPTION = 'api.price.error.update-not-found-exception',
   PRICE_UPDATE_USER_NOT_FOUND_EXCEPTION = 'api.price.error.update-user-not-found-exception',
   PRICE_UPDATE_EXCEPTION = 'api.price.error.update-exception',
+  PRICE_GET_USER_COUNT_EXCEPTION = 'api.price.error.get-user-count-exception', // new
 
   // Product Service Exception Codes
   PRODUCT_CREATE_NOT_FOUND_EXCEPTION = 'api.product.error.create-not-found-exception',
@@ -63,6 +69,8 @@ export enum ApiCodeResponse {
   PRODUCT_CREATE_EXCEPTION = 'api.product.error.create-exception',
   PRODUCT_GET_ALL_EXCEPTION = 'api.product.error.get-all-exception',
   PRODUCT_DETAIL_NOT_FOUND_EXCEPTION = 'api.product.error.detail-not-found-exception',
+  PRODUCT_DELETE_NOT_FOUND_EXCEPTION = 'api.product.error.delete-not-found-exception',
+  PRODUCT_DELETE_EXCEPTION = 'api.product.error.delete-exception',
 
   // Store Service Exception Codes
   STORE_CREATE_CONFLICT_EXCEPTION = 'api.store.error.create-conflict-exception',
@@ -71,4 +79,7 @@ export enum ApiCodeResponse {
   STORE_FIND_TWO_EXCEPTION = 'api.store.error.find-two-exception',
   STORE_INFO_EXCEPTION = 'api.store.error.info-exception',
   STORE_GET_PRODUCTS_EXCEPTION = 'api.store.error.get-products-exception',
+  STORE_UPDATE_NOT_FOUND_EXCEPTION = 'api.store.error.update-not-found-exception', // new
+  STORE_UPDATE_EXCEPTION = 'api.store.error.update-exception', //new
+
 }

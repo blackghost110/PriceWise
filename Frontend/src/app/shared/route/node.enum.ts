@@ -4,6 +4,9 @@ export enum AppNode {
   SIGN_IN = 'sign-in',
   SIGN_UP = 'sign-up',
 
+  // Admin routes
+  ADMIN = 'admin',
+
   // Home routes
   HOME = 'home',
 
@@ -19,6 +22,7 @@ export enum AppNode {
   FORUM = 'forum',
   DASHBOARD = 'dashboard',
   POST = ':postId', // Simplifié
+  LEADERBOARD = 'leaderboard',
 
   // Fallback
   FALL_BACK = '**',

@@ -4,18 +4,15 @@ import {Header} from '@core/layout/header/header';
 import {Footer} from '@core/layout/footer/footer';
 import {ChartConfiguration} from 'chart.js';
 import { ProductService} from '@features/catalog/service/product.service';
-import {ProductDetailDto} from '@features/catalog/data/dto/product-detail.dto';
-import {PriceDto} from '@features/catalog/data/dto/price.dto';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatFormField, MatSuffix} from '@angular/material/form-field';
+import {MatFormField} from '@angular/material/form-field';
 import {MatLabel} from '@angular/material/form-field';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {MatButton, MatFabButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {SearchProductDialog} from '@features/catalog/component/dialog/search-product-dialog/search-product-dialog';
 import {MatDialog} from '@angular/material/dialog';
-import {RouterLink} from '@angular/router';
-import {CurrencyPipe} from '@angular/common';
+import {CurrencyPipe, Location} from '@angular/common';
 import {AddPriceDialog} from '@features/catalog/component/dialog/add-price-dialog/add-price-dialog';
 import {
   AddProductToListDialog
@@ -25,7 +22,7 @@ import {AppRoutes} from '@shared/route/app-routes.enum';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [BaseChartDirective, Header, Footer, FormsModule, MatFormField, MatLabel, MatOption, MatSelect, ReactiveFormsModule, MatFabButton, MatIcon, MatButton, RouterLink, CurrencyPipe],
+  imports: [BaseChartDirective, Header, Footer, FormsModule, MatFormField, MatLabel, MatOption, MatSelect, ReactiveFormsModule, MatFabButton, MatIcon, MatButton, CurrencyPipe],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.css'
 })
@@ -62,7 +59,7 @@ export class ProductDetail implements OnInit{
 
   }
 
-  constructor() {
+  constructor(public location: Location) {
     effect(() => {
       this.timelineFilter();
       this.quarterFilter();

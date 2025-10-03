@@ -5,6 +5,9 @@ export class AppRoutes {
   static readonly SIGN_IN_PAGE = `/${AppNode.AUTH}/${AppNode.SIGN_IN}`;
   static readonly SIGN_UP_PAGE = `/${AppNode.AUTH}/${AppNode.SIGN_UP}`;
 
+  // Admin pages
+  static readonly ADMIN_PAGE = `/${AppNode.ADMIN}`;
+
   // Home page
   static readonly HOME_PAGE = `/${AppNode.HOME}`;
 
@@ -15,6 +18,9 @@ export class AppRoutes {
 
   // Forum pages
   static readonly DASHBOARD_PAGE = `/${AppNode.FORUM}/${AppNode.DASHBOARD}`;
+  static readonly LEADERBOARD_PAGE = `/${AppNode.FORUM}/${AppNode.LEADERBOARD}`;
+
+
 
   // Méthodes helpers pour les routes avec paramètres
   static storeProductsPage(storeId: string): string {

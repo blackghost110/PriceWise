@@ -1,0 +1,27 @@
+<form [formGroup]="userForm">
+
+  <h2 mat-dialog-title>Modifier un utilisateur</h2>
+  <mat-dialog-content>
+
+    <p>Veuillez remplir ce champs</p>
+
+    <mat-form-field>
+      <mat-label>Role</mat-label>
+      <mat-select required formControlName="isAdmin" >
+        <mat-option [value]="true">Admin</mat-option>
+        <mat-option [value]="false">Utilisateur simple</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  </mat-dialog-content>
+
+  @if (errorMessage()) {
+    <p class="control-error">{{ errorMessage() }}</p>
+  }
+
+  <mat-dialog-actions>
+    <button matButton (click)="onClose()">Fermer</button>
+    <button matButton (click)="onUpdateList()">Modifier utilisateur</button>
+  </mat-dialog-actions>
+
+</form>

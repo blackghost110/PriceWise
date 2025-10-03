@@ -13,7 +13,11 @@ export const socialRoutes: Routes = [
   },
   {
     path: `post/${AppNode.POST}`, // 'post/:postId'
-    loadComponent: () => import('./page/post-comments/post-comments').then(c => c.PostComments)
+    loadComponent: () => import('@features/social/page/forum/post-comments/post-comments').then(c => c.PostComments)
+  },
+  {
+    path: AppNode.LEADERBOARD,
+    loadComponent: () => import('./page/leaderboard/leaderboard').then(c => c.Leaderboard)
   },
   {
     path: AppNode.FALL_BACK,

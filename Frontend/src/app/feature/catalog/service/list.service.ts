@@ -5,6 +5,7 @@ import {ApiResponse} from '@shared/api/data/api.response';
 import {ListDto} from '@features/catalog/data/dto/list.dto';
 import {CreateListPayload} from '@features/catalog/data/payload/create-list.payload';
 import {ApiURI} from '@shared/api/api-uri.enum';
+import {SnackbarService} from '@shared/service/snackbar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import {ApiURI} from '@shared/api/api-uri.enum';
 export class ListService {
 
   private readonly api = inject(ApiService)
+  private snackbar = inject(SnackbarService)
 
 
   private _personalList = signal<ListDto[] | null>(null)
@@ -38,6 +40,7 @@ export class ListService {
         console.log(response)
         if (response.result) {
           this.getLists().subscribe()
+            this.snackbar.show('Liste ajoutée avec succès');
         }
       })
     );
@@ -48,6 +51,7 @@ export class ListService {
         console.log(response)
         if (response.result) {
           this.getLists().subscribe()
+            this.snackbar.show('Liste mise à jour avec succès');
         }
       })
     );
@@ -58,6 +62,7 @@ export class ListService {
         console.log(response)
         if (response.result) {
           this.getLists().subscribe()
+            this.snackbar.show('Liste supprimée avec succès');
         }
       })
     );

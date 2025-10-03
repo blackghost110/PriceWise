@@ -12,6 +12,8 @@ import {
   ProductCreateConflictException,
   ProductCreateException,
   ProductCreateNotFoundException,
+  ProductDeleteException,
+  ProductDeleteNotFoundException,
   ProductDetailNotFoundException,
   ProductGetAllException,
 } from '../catalog.exception';
@@ -146,6 +148,20 @@ export class ProductService {
         priceDate: price.priceDate
       }))
     };
+  }
+
+  // Verifier les exceptions
+  async deleteProduct(productId: number): Promise<void> {
+    const product = await this.productRepository.findOne({
+      where: { productId } });
+    if (!product) {
+      throw new ProductDeleteNotFoundException();
+    }
+    try {
+      await this.productRepository.remove(product);
+    } catch (e) {
+      throw new ProductDeleteException();
+    }
   }
 
 

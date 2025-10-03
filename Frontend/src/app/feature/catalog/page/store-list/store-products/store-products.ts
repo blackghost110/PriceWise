@@ -3,8 +3,8 @@ import {Header} from "@core/layout/header/header";
 import { RouterLink} from '@angular/router';
 import {ProductDto} from '@features/catalog/data/dto/product.dto';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {CurrencyPipe, DatePipe} from '@angular/common';
-import {MatButton, MatIconButton, MatMiniFabButton} from '@angular/material/button';
+import {CurrencyPipe, DatePipe, Location} from '@angular/common';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {AddPriceDialog} from '@features/catalog/component/dialog/add-price-dialog/add-price-dialog';
 import {MatDialog} from '@angular/material/dialog';
 import {ProductService} from '@features/catalog/service/product.service';
@@ -32,6 +32,7 @@ import {
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
+import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
 
 @Component({
   selector: 'app-store-products',
@@ -69,11 +70,14 @@ import {AppRoutes} from '@shared/route/app-routes.enum';
 export class StoreProducts implements OnInit {
 
 
+
   private destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
   private productService = inject(ProductService);
   private storeService = inject(StoreService);
+  private dialogService = inject(DialogService);
   paginator = viewChild(MatPaginator);
+  protected readonly AppNode = AppNode;
 
   dataSource = new MatTableDataSource<ProductDto>([]);
   displayedColumns: string[] = ['name','quantity', 'price', 'lastPrice', 'action' ];
@@ -93,7 +97,8 @@ export class StoreProducts implements OnInit {
   readonly AppRoutes = AppRoutes;
 
 
-  constructor() {
+  constructor(public location: Location) {
+
     // Effect pour mettre à jour le dataSource quand les données changent
     effect(() => {
       const product = this.filteredProducts();
@@ -104,9 +109,9 @@ export class StoreProducts implements OnInit {
 
     // Effect pour connecter le paginator quand il est disponible
     effect(() => {
-      const pag = this.paginator();
-      if (pag) {
-        this.dataSource.paginator = pag;
+      const page = this.paginator();
+      if (page) {
+        this.dataSource.paginator = page;
       }
     });
   }
@@ -174,9 +179,23 @@ export class StoreProducts implements OnInit {
     });
   }
 
+  onOpenDialogDeleteProduct(product: ProductDto) {
+    this.dialogService.confirmDialog({
+      title: 'Êtes vous sûr ?',
+      message: 'En confirmant cette action, vous supprimerez le produit, ainsi que les prix de celui-ci',
+      confirmCaption: 'Supprimer',
+      cancelCaption: 'Annuler'
+    }).subscribe((result) => {
+      if (result) {
+        console.log('Suppression du produit')
+        this.productService.deleteProduct(+product.productId, +this.storeId()).subscribe()
+      }
+    })
+  }
+
   onClearSearch() {
     this.searchTerm.set('')
   }
 
-  protected readonly AppNode = AppNode;
+
 }

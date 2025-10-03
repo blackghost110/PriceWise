@@ -1,12 +1,26 @@
 <app-header/>
 
+<nav class="nav-bar">
+  <div class="nav-container">
+    <div class="nav-items">
+      <button [routerLink]="AppRoutes.DASHBOARD_PAGE" routerLinkActive="active" class="nav-item">
+        <mat-icon>forum</mat-icon>
+        <span>Forum</span>
+      </button>
+      <button [routerLink]="AppRoutes.LEADERBOARD_PAGE" class="nav-item">
+        <mat-icon>leaderboard</mat-icon>
+        <span>Classement</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
 
 <main class="main-content">
   <div class="content-container">
     <div class="main-section">
       <div class="section-header">
         <h2>Liste des discussion</h2>
-        <!--        <p>Selection de magasin disponible : 20</p>-->
 
         <mat-form-field appearance="outline" class="white-background" >
           <mat-label>Rechercher une discussion</mat-label>

@@ -23,7 +23,7 @@
         <mat-form-field appearance="outline" class="white-background">
           <mat-label>Choisir une liste</mat-label>
           <mat-select [(value)]="selectedList">
-            <mat-option value="0">Aucune</mat-option>
+<!--            <mat-option value="0">Aucune</mat-option>-->
             @for (list of personalList(); track list.listId){
               <mat-option [value]="list.listId">{{list.name}}</mat-option>
             }
@@ -39,7 +39,7 @@
             <mat-icon>add</mat-icon>
             <span>Ajouter</span>
           </button>
-          @if (selectedList() !== '0') {
+          @if (selectedList() !== 0) {
             <button mat-menu-item (click)="onOpenDialogUpdateList()">
               <mat-icon>edit_square</mat-icon>
               <span>Modifier</span>

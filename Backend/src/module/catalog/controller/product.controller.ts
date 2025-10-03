@@ -1,15 +1,24 @@
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import {Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import {CreateProductDto} from "../model/dto/create-product.dto";
 import {ProductService} from "../service/product.service";
 import {Credential} from "../../../security/model/entity/credential.entity";
 import { User } from "@common/config/decorator/user.decorator";
 import { GetAllProductsQueryDTO } from '../model/dto/get-all-products-query.dto';
+import { AdminGuard } from '@common/api/admin.guard';
 
 @ApiBearerAuth('access-token')
 @ApiTags('Product Controller')
@@ -45,6 +54,16 @@ export class ProductController {
   })
   async getProductDetails(@Param('productId') productId: number) {
     return this.productService.getProductDetails(productId);
+  }
+
+  @UseGuards(AdminGuard)
+  @Delete('product/:productId')
+  @ApiOperation({
+    summary: 'Supprimer un produit',
+    description: 'Suppression d\'un produit par son ID',
+  })
+  public deleteProduct(@Param('productId') productId: number) {
+    return this.productService.deleteProduct(productId);
   }
 
 }

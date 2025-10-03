@@ -3,6 +3,8 @@ export enum ApiURI {
   SIGN_UP='account/signup',
   ME='account/me',
   REFRESH_TOKEN = 'account/refresh',
+  ACCOUNT_GET_ALL = 'account/all',
+  ACCOUNT_UPDATE = 'account/:userId',
 
 
   COMMENT_CREATE='comment',
@@ -22,17 +24,22 @@ export enum ApiURI {
 
   PRICE_CREATE='price',
   PRICE_UPDATE='price',
+  PRICE_GET_USER_COUNT='price/users',
 
   PRODUCT_CREATE='product',
   PRODUCT_DETAIL='product',
   PRODUCT_GET_BY_STORE='store/:storeId/products',
   PRODUCT_MULTIPLE_DETAIL='product',
+  PRODUCT_DELETE='product',
+
   // -- x
 
   STORE_CREATE='store',
   STORE_GET='store',
   STORE_GET_ALL='store',
   STORE_GET_TWO='store/last',
+  STORE_UPDATE='store',
+  STORE_DELETE='store',
 
 
 }

@@ -36,3 +36,13 @@ export class TokenGenerationException extends ApiException {
         super(ApiCodeResponse.TOKEN_GEN_ERROR, 500);
     }
 }
+export class UserUpdateNotFoundException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.USER_UPDATE_NOT_FOUND_EXCEPTION, 404);
+  }
+}
+export class UserUpdateException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.USER_UPDATE_EXCEPTION, 500);
+  }
+}

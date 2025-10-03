@@ -3,6 +3,9 @@ import {CreatePricePayload} from '@features/catalog/data/payload/create-price.pa
 import {ApiService} from '@shared/api/service/api.service';
 import {UpdatePricePayload} from '@features/catalog/data/payload/update-price.payload';
 import {ApiURI} from '@shared/api/api-uri.enum';
+import {SnackbarService} from '@shared/service/snackbar.service';
+import {tap} from 'rxjs';
+import {ApiResponse} from '@shared/api/data/api.response';
 
 @Injectable({
   providedIn: 'root'
@@ -10,14 +13,27 @@ import {ApiURI} from '@shared/api/api-uri.enum';
 export class PriceService {
 
   private readonly api = inject(ApiService)
+  private snackbar = inject(SnackbarService)
 
 
   addPrice(payload: CreatePricePayload, productId: number) {
-    return this.api.post(`${ApiURI.PRICE_CREATE}/${productId}`, payload);
+    return this.api.post(`${ApiURI.PRICE_CREATE}/${productId}`, payload).pipe(
+      tap((response:ApiResponse) => {
+        if (response.result) {
+          this.snackbar.show('Prix ajouté avec succès');
+        }
+      })
+    );
   }
 
   updatePrice(payload: UpdatePricePayload, priceId: number) {
-    return this.api.put(`${ApiURI.PRICE_UPDATE}/${priceId}`, payload);
+    return this.api.put(`${ApiURI.PRICE_UPDATE}/${priceId}`, payload).pipe(
+      tap((response:ApiResponse) => {
+        if (response.result) {
+          this.snackbar.show('Prix modifié avec succès');
+        }
+      })
+    );
   }
 
 }

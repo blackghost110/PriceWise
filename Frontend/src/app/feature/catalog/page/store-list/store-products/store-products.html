@@ -5,7 +5,11 @@
     <div class="main-section">
       <div class="section-header">
         <h2>Liste des produits de {{ store()?.name }} - {{ store()?.city }}
-          <button mat-button [routerLink]="AppRoutes.STORE_LIST_PAGE">
+<!--          <button mat-button [routerLink]="AppRoutes.STORE_LIST_PAGE">-->
+<!--            <mat-icon>arrow_back_ios_new</mat-icon>-->
+<!--            Retour aux magasins-->
+<!--          </button>-->
+          <button mat-button (click)="location.back()">
             <mat-icon>arrow_back_ios_new</mat-icon>
             Retour aux magasins
           </button>
@@ -63,6 +67,10 @@
                 <button mat-menu-item (click)="onOpenDialogAddToList(product)">
                   <mat-icon>bookmark_add</mat-icon>
                   Ajouter dans une liste
+                </button>
+                <button mat-menu-item (click)="onOpenDialogDeleteProduct(product)" style="color: darkred">
+                  <mat-icon style="color: darkred">delete</mat-icon>
+                  Supprimer ce produit
                 </button>
               </mat-menu>
             </td>

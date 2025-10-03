@@ -169,6 +169,11 @@ export class PriceUpdateException extends ApiException {
     super(ApiCodeResponse.PRICE_UPDATE_EXCEPTION, 500);
   }
 }
+export class PriceGetUsersCountException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.PRICE_GET_USER_COUNT_EXCEPTION, 500);
+  }
+}
 
 // Product Service Exceptions ------------------------------------------------------//
 
@@ -200,6 +205,18 @@ export class ProductGetAllException extends ApiException {
 export class ProductDetailNotFoundException extends ApiException {
   constructor() {
     super(ApiCodeResponse.PRODUCT_DETAIL_NOT_FOUND_EXCEPTION, 404);
+  }
+}
+
+export class ProductDeleteNotFoundException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.PRODUCT_DELETE_NOT_FOUND_EXCEPTION, 404);
+  }
+}
+
+export class ProductDeleteException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.PRODUCT_DELETE_EXCEPTION, 500);
   }
 }
 
@@ -240,5 +257,17 @@ export class StoreInfoException extends ApiException {
 export class StoreGetProductsException extends ApiException {
   constructor() {
     super(ApiCodeResponse.STORE_GET_PRODUCTS_EXCEPTION, 500);
+  }
+}
+
+export class StoreUpdateNotFoundException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.STORE_UPDATE_NOT_FOUND_EXCEPTION, 404);
+  }
+}
+
+export class StoreUpdateException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.STORE_UPDATE_EXCEPTION, 500);
   }
 }

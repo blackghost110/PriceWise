@@ -14,11 +14,13 @@ import {
   PriceCreateUserNotFoundException,
   PriceGetLastPriceException,
   PriceGetPricesException,
+  PriceGetUsersCountException,
   PriceUpdateBadRequestException,
   PriceUpdateException,
   PriceUpdateNotFoundException,
   PriceUpdateUserNotFoundException,
 } from '../catalog.exception';
+import { UserPriceCountResponse } from '../model/type/user-price-count.response';
 
 @Injectable()
 export class PriceService {
@@ -145,6 +147,49 @@ export class PriceService {
 
     } catch (e) {
       throw new PriceUpdateException();
+    }
+  }
+
+
+  // async getUsersPriceCount(): Promise<UserPriceCountResponse[]>{
+  //   try {
+  //     return await this.credentialRepository
+  //       .createQueryBuilder('credential')
+  //       .leftJoin('credential.prices', 'price')
+  //       .select([
+  //         'user.credential_id AS "userId"',
+  //         'user.username AS username',
+  //         'COUNT(price.priceId) AS priceCount'
+  //       ])
+  //       .groupBy('user.credential_id, user.username')
+  //       .orderBy('priceCount', 'DESC')
+  //       .getRawMany();
+  //
+  //     // return result;
+  //   } catch (e) {
+  //     console.log('Error Log :', e);
+  //     throw new PriceGetUsersCountException();
+  //   }
+  // }
+
+  async getUsersPriceCount(): Promise<UserPriceCountResponse[]>{
+    try {
+      return await this.priceRepository
+        .createQueryBuilder('price')
+        .leftJoin('price.user', 'user')
+        .select([
+          'user.credential_id AS "userId"',
+          'user.username AS username',
+          'COUNT(price.priceId) AS priceCount'
+        ])
+        .groupBy('user.credential_id, user.username')
+        .orderBy('priceCount', 'DESC')
+        .getRawMany();
+
+      // return result;
+    } catch (e) {
+      console.log('Error Log :', e);
+      throw new PriceGetUsersCountException();
     }
   }
 

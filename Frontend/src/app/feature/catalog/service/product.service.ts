@@ -1,5 +1,5 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {catchError, forkJoin, map, Observable, tap} from 'rxjs';
+import { forkJoin, map, Observable, tap} from 'rxjs';
 import {ProductDto} from '@features/catalog/data/dto/product.dto';
 import {ApiService} from '@shared/api/service/api.service';
 import {ApiResponse} from '@shared/api/data/api.response';
@@ -8,6 +8,7 @@ import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
 import {ProductDetailDto} from '@features/catalog/data/dto/product-detail.dto';
 import {PriceDto} from '@features/catalog/data/dto/price.dto';
 import {ApiURI} from '@shared/api/api-uri.enum';
+import {SnackbarService} from '@shared/service/snackbar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ import {ApiURI} from '@shared/api/api-uri.enum';
 export class ProductService {
 
   private readonly api = inject(ApiService)
+  private snackbar = inject(SnackbarService)
 
 
   private _storeProducts = signal<ProductDto[] | null>(null)
@@ -103,19 +105,61 @@ export class ProductService {
       )
   }
 
-
-
-
-
   addProduct(payload: CreateProductPayload, storeId: number) {
     return this.api.post(`${ApiURI.PRODUCT_CREATE}/${storeId}`, payload).pipe(
       tap((response:ApiResponse) => {
         if (response.result) {
           this.getProducts(storeId).subscribe()
+            this.snackbar.show('Produit ajouté avec succès');
         }
       })
     );
   }
+
+  deleteProduct(productId: number, storeId: number) {
+    return this.api.delete(`${ApiURI.PRODUCT_DELETE}/${productId}`).pipe(
+      tap((response:ApiResponse) => {
+        console.log(response)
+        if (response.result) {
+          this.getProducts(storeId).subscribe()
+            this.snackbar.show('Produit supprimé avec succès');
+        }
+      })
+    );
+  }
+
+
+
+
+
+  private _comparisonProducts = signal<ProductDetailDto[]>([]);
+  comparisonProducts = this._comparisonProducts.asReadonly();
+// Nouvelles méthodes pour gérer les produits de comparaison
+
+  setComparisonProducts(products: ProductDetailDto[]) {
+    this._comparisonProducts.set(products);
+  }
+  clearComparisonProducts() {
+    this._comparisonProducts.set([]);
+  }
+
+// Méthode pour récupérer les détails de plusieurs produits
+
+
+  getMultipleProductDetails(productIds: string[]): Observable<ProductDetailDto[]> {
+    const requests = productIds.map(id =>
+      this.api.get(`${ApiURI.PRODUCT_MULTIPLE_DETAIL}/${id}`).pipe(
+        map((response: ApiResponse) => response.data as ProductDetailDto)
+      )
+    );
+
+    return forkJoin(requests);
+  }
+
+
+
+
+
 
 
   fillPriceGaps(prices: PriceDto[]): PriceDto[] {
@@ -124,7 +168,7 @@ export class ProductService {
     const normalizedPrices = prices.map(price => {
       const [year, month, day] = price.priceDate.split('-').map(Number);
       return {
-      ...price,
+        ...price,
         priceDate: new Date(year, month - 1, day),
       };
 
@@ -174,31 +218,6 @@ export class ProductService {
   }
 
 
-
-  // Après la déclaration de _selectedProducts
-  private _comparisonProducts = signal<ProductDetailDto[]>([]);
-  comparisonProducts = this._comparisonProducts.asReadonly();
-
-// Nouvelles méthodes pour gérer les produits de comparaison
-  setComparisonProducts(products: ProductDetailDto[]) {
-    this._comparisonProducts.set(products);
-  }
-
-  clearComparisonProducts() {
-    this._comparisonProducts.set([]);
-  }
-
-
-// Méthode pour récupérer les détails de plusieurs produits
-  getMultipleProductDetails(productIds: string[]): Observable<ProductDetailDto[]> {
-    const requests = productIds.map(id =>
-      this.api.get(`${ApiURI.PRODUCT_MULTIPLE_DETAIL}/${id}`).pipe(
-        map((response: ApiResponse) => response.data as ProductDetailDto)
-      )
-    );
-
-    return forkJoin(requests);
-  }
 
 }
 

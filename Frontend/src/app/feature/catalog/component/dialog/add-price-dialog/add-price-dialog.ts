@@ -98,7 +98,7 @@ export class AddPriceDialog {
             this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code, apiResponse.data))
             this.isSameDate.set(true);
             this.updatePriceId.set(apiResponse.data.priceId)
-            this.priceForm.get('priceDate')?.disable();
+            this.priceForm?.disable();
           } else {
             this.onClose()
           }
@@ -170,7 +170,7 @@ export class AddPriceDialog {
   onChangeDate() {
     this.isSameDate.set(false);
     this.errorMessage.set(null);
-    this.priceForm.get('priceDate')?.enable();
+    this.priceForm?.enable();
   }
 
 

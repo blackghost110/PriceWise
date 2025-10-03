@@ -5,6 +5,7 @@ import {ApiResponse} from '@shared/api/data/api.response';
 import {CreateCommentPayload} from '@features/social/data/payload/create-comment.payload';
 import {CommentDto} from '@features/social/data/dto/comment.dto';
 import {ApiURI} from '@shared/api/api-uri.enum';
+import {SnackbarService} from '@shared/service/snackbar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import {ApiURI} from '@shared/api/api-uri.enum';
 export class CommentService {
 
   private readonly api = inject(ApiService)
+  private snackbar = inject(SnackbarService)
 
 
   private _commentList = signal<CommentDto[] | null>(null)
@@ -25,6 +27,7 @@ export class CommentService {
         console.log(response)
         if (response.result) {
           this.getComments(postId).subscribe()
+          this.snackbar.show('Commentaire ajouté avec succès')
         }
       })
     );

@@ -7,6 +7,13 @@
 
     <ul>
 
+      @if (isAdmin()) {
+        <button mat-button style="color: darkred" [routerLink]="AppRoutes.ADMIN_PAGE">
+          Admin
+          <mat-icon>security</mat-icon>
+        </button>
+      }
+
       <button mat-button style="color: #484848" [routerLink]="AppRoutes.HOME_PAGE">
         Accueil
         <mat-icon>home</mat-icon>
@@ -23,12 +30,12 @@
       </button>
 
       <button mat-button [routerLink]="AppRoutes.DASHBOARD_PAGE" style="color: #484848">
-        Forum
+        Social
         <mat-icon>forum</mat-icon>
       </button>
 
       <button mat-button [matMenuTriggerFor]="currentUserMenu" style="color: #484848">
-        {{ currentUser() }}
+        {{ currentUser()?.username }}
         <mat-icon>settings</mat-icon>
       </button>
       <mat-menu #currentUserMenu="matMenu">

@@ -20,6 +20,9 @@ export class Credential extends BaseEntity {
     @Column({nullable: true})
     password: string;
 
+    @Column({ default: false })
+    isAdmin: boolean;
+
     @OneToMany(() => ListEntity, (list) => list.user)
     lists: ListEntity[];
 

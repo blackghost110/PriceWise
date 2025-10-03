@@ -1,0 +1,48 @@
+<form [formGroup]="storeForm">
+
+  <h2 mat-dialog-title>Modifier un magasin</h2>
+  <mat-dialog-content>
+    <p>Veuillez remplir ces champs</p>
+    <p>Veuillez encoder ces données exactement de la même manière qu'elles le sont sur Google Maps, en respectant la capitalisation et la ponctuation.</p>
+
+    <mat-form-field>
+      <mat-label>Nom</mat-label>
+      <input matInput placeholder="Ex. Delhaize" formControlName="name"/>
+    </mat-form-field>
+    <br>
+
+    <span class="mat-form-field-wrapper">
+    <mat-form-field>
+      <mat-label>Rue</mat-label>
+      <input matInput placeholder="Ex. Bd des Gérardchamps" formControlName="street"/>
+    </mat-form-field>
+</span>
+    <mat-form-field>
+      <mat-label>Numéro</mat-label>
+      <input matInput placeholder="Ex. 118" formControlName="number"/>
+    </mat-form-field>
+
+
+    <span class="mat-form-field-wrapper">
+    <mat-form-field>
+      <mat-label>Code postal</mat-label>
+      <input matInput placeholder="Ex. 4800" formControlName="postalCode"/>
+    </mat-form-field>
+      </span>
+    <mat-form-field>
+      <mat-label>Ville</mat-label>
+      <input matInput placeholder="Ex. Verviers" formControlName="city"/>
+    </mat-form-field>
+
+  </mat-dialog-content>
+
+  @if (errorMessage()) {
+    <p class="control-error">{{ errorMessage() }}</p>
+  }
+
+  <mat-dialog-actions>
+    <button matButton (click)="onClose()">Fermer</button>
+    <button matButton (click)="onUpdateStore()">Modifier magasin</button>
+  </mat-dialog-actions>
+
+</form>
