@@ -13,15 +13,15 @@ export enum AppNode {
   // Catalog routes
   CATALOG = 'catalog',
   STORE_LIST = 'store-list',
-  STORE_PRODUCTS = ':storeId/products', // Changé pour éviter la duplication
+  STORE_PRODUCTS = ':storeId/products',
   PRODUCT_LIST = 'product-list',
   PERSONAL_LIST = 'personal-list',
-  PRODUCT_DETAIL = ':productId', // Simplifié
+  PRODUCT_DETAIL = ':productId',
 
   // Forum routes
   FORUM = 'forum',
   DASHBOARD = 'dashboard',
-  POST = ':postId', // Simplifié
+  POST = ':postId',
   LEADERBOARD = 'leaderboard',
 
   // Fallback
