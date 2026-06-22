@@ -1,0 +1,6 @@
+projectKey=PriceWise_Sonar
+serverUrl=http://localhost:9000
+serverVersion=26.5.0.122743
+dashboardUrl=http://localhost:9000/dashboard?id=PriceWise_Sonar
+ceTaskId=3ca7b8b7-901f-4cc0-b4be-df6dfe0d2f8a
+ceTaskUrl=http://localhost:9000/api/ce/task?id=3ca7b8b7-901f-4cc0-b4be-df6dfe0d2f8a

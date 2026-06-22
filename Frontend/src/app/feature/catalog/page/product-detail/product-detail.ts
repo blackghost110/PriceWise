@@ -140,7 +140,7 @@ export class ProductDetail implements OnInit{
     });
 
     // Trier les dates
-    const sortedDates = Array.from(allDates).sort();
+    const sortedDates = Array.from(allDates).sort((a, b) => a.localeCompare(b)); //VERIF si elle compare correctement
 
     // Appliquer le filtre de timeline
     const filteredDates = this.timelineFilter() === '0'
