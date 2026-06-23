@@ -6,8 +6,7 @@ export class ApiException extends HttpException {
         super(
             {
                 code: code,
-                data: data || null,
-                result: false
+                data: data ?? null
             }, status
         );
     }

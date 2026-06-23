@@ -10,14 +10,14 @@
       </div>
       @if (userList() !== null) {
         <table mat-table [dataSource]="userList()!" class="product-table">
-          <ng-container matColumnDef="username" >
+          <ng-container matColumnDef="displayName" >
             <th mat-header-cell *matHeaderCellDef> Nom </th>
-            <td mat-cell *matCellDef="let user" class="table-name">{{user.username}}</td>
+            <td mat-cell *matCellDef="let user" class="table-name">{{user.displayName}}</td>
           </ng-container>
 
           <ng-container matColumnDef="role">
             <th mat-header-cell *matHeaderCellDef>Admin role </th>
-            <td mat-cell *matCellDef="let user" [ngStyle]="{ color: user.isAdmin ? 'red' : 'blue' }">{{ user.isAdmin }}
+            <td mat-cell *matCellDef="let user" [ngStyle]="{ color: user.role === 'ADMIN' ? 'red' : 'blue' }">{{ user.role }}
             </td>
           </ng-container>
 

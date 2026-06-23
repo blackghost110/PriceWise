@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, signal} from '@angular/core';
+import {Component, DestroyRef, inject, signal, ChangeDetectionStrategy} from '@angular/core';
 import {MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
@@ -9,8 +9,8 @@ import {PostService} from '@features/social/service/post.service';
 import {CreatePostPayload} from '@features/social/data/payload/create-post.payload';
 import {RouterLink} from '@angular/router';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
-import {tap} from 'rxjs';
-import {ApiResponse} from '@shared/api/data/api.response';
+import {catchError, EMPTY} from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-add-post-dialog',
@@ -27,6 +27,7 @@ import {ApiResponse} from '@shared/api/data/api.response';
     RouterLink
   ],
   templateUrl: './add-post-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './add-post-dialog.css'
 })
 export class AddPostDialog {
@@ -72,17 +73,11 @@ export class AddPostDialog {
 
     this.postService.addPost(payload).pipe(
       takeUntilDestroyed(this.destroyRef),
-      tap((apiResponse: ApiResponse) => {
-      if (!apiResponse.result) {
-        console.log('apiResponse details : ', apiResponse)
-        this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
-      }
-    }),
-    ).subscribe(response => {
-      if (response.result) {
-        this.dialogRef.close();
-      }
-    })
+      catchError((err: HttpErrorResponse) => {
+        this.errorMessage.set(this.errorMessageService.getErrorMessage(err.error?.code, err.error?.data))
+        return EMPTY;
+      })
+    ).subscribe(() => this.dialogRef.close())
   }
 
   onClose() {

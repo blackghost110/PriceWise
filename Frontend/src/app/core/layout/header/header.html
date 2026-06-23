@@ -35,7 +35,7 @@
       </button>
 
       <button mat-button [matMenuTriggerFor]="currentUserMenu" style="color: #484848">
-        {{ currentUser()?.username }}
+        {{ currentUser()?.displayName }}
         <mat-icon>settings</mat-icon>
       </button>
       <mat-menu #currentUserMenu="matMenu">

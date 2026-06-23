@@ -2,5 +2,5 @@ export interface CommentDto {
   created: string;
   commentId: number;
   message: string;
-  user: { username: string;};
+  user: { displayName: string;};
 }

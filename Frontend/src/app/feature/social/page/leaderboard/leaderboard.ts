@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, ChangeDetectionStrategy} from '@angular/core';
 import {Footer} from '@core/layout/footer/footer';
 import {Header} from '@core/layout/header/header';
 import {
@@ -35,6 +35,7 @@ import {RouterLink, RouterLinkActive} from '@angular/router';
     RouterLink
   ],
   templateUrl: './leaderboard.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './leaderboard.css'
 })
 export class Leaderboard {
@@ -47,7 +48,7 @@ export class Leaderboard {
 
   userList = this.socialService.userList;
 
-  displayedColumns: string[] = ['username', 'score'];
+  displayedColumns: string[] = ['displayName', 'score'];
 
   ngOnInit() {
     this.socialService.getUsers().subscribe()

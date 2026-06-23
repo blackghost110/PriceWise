@@ -1,7 +1,6 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {ApiService} from '@shared/api/service/api.service';
-import {catchError, tap, throwError} from 'rxjs';
-import {ApiResponse} from '@shared/api/data/api.response';
+import {tap} from 'rxjs';
 import {PostDto} from '@features/social/data/dto/post.dto';
 import {CreatePostPayload} from '@features/social/data/payload/create-post.payload';
 import {ApiURI} from '@shared/api/api-uri.enum';
@@ -27,39 +26,24 @@ export class PostService {
 
   addPost(payload: CreatePostPayload) {
     return this.api.post(`${ApiURI.POST_CREATE}`, payload).pipe(
-      tap((response:ApiResponse) => {
-        console.log(response)
-        if (response.result) {
-          this.getPosts().subscribe()
-          this.snackbar.show('Discussion ajoutée avec succès')
-        }
+      tap(() => {
+        this.getPosts().subscribe()
+        this.snackbar.show('Discussion ajoutée avec succès')
       })
     );
   }
 
   getPosts() {
-    return this.api.get(`${ApiURI.POST_GET_ALL}`)
+    return this.api.get<PostDto[]>(`${ApiURI.POST_GET_ALL}`)
       .pipe(
-        tap((response: ApiResponse) => {
-          this._postList.set(response.data);
-          console.log(response)
-        }),
-        catchError(error => {
-          return throwError(() => new Error(error));
-        })
+        tap((posts) => this._postList.set(posts))
       )
   }
 
   getPost(postId: number) {
-    return this.api.get(`${ApiURI.POST_GET}/${postId}`)
+    return this.api.get<PostDto>(`${ApiURI.POST_GET}/${postId}`)
       .pipe(
-        tap((response: ApiResponse) => {
-          this._postInfo.set(response.data);
-          console.log(response)
-        }),
-        catchError(error => {
-          return throwError(() => new Error(error));
-        })
+        tap((post) => this._postInfo.set(post))
       )
   }
 

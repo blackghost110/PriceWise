@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {Footer} from '@core/layout/footer/footer';
 import { NgStyle} from '@angular/common';
@@ -45,6 +45,7 @@ import {UpdateUserDialog} from '@features/admin/component/dialog/update-user-dia
     NgStyle
   ],
   templateUrl: './admin-dashboard-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './admin-dashboard-page.css'
 })
 export class AdminDashboardPage implements OnInit{
@@ -58,7 +59,7 @@ export class AdminDashboardPage implements OnInit{
 
   userList = this.adminService.userList
 
-  displayedColumns: string[] = ['username', 'role', 'actions'];
+  displayedColumns: string[] = ['displayName', 'role', 'actions'];
 
     ngOnInit() {
     this.adminService.getUsers().subscribe()

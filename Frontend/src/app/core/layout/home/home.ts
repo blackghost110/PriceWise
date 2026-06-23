@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {Footer} from '@core/layout/footer/footer';
 import {MatButton, MatFabButton} from '@angular/material/button';
@@ -16,6 +16,7 @@ import {AppRoutes} from '@shared/route/app-routes.enum';
     RouterLink
   ],
   templateUrl: './home.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './home.css'
 })
 export class Home {

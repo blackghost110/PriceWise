@@ -13,7 +13,11 @@
           <article class="article-info">
             <div>
               <p>Quantité : {{product.quantity}}{{product.unit}}</p>
-              <p>Prix actuel : {{ product.prices[numberOfPrice() - 1].productPrice | currency: 'EUR' }} | {{ product.prices[numberOfPrice() - 1].grossPrice | currency: 'EUR' }}/{{product.unit === 'g' ? 'Kg' : 'L'}}</p>
+              @if (numberOfPrice() > 0) {
+                <p>Prix actuel : {{ product.prices[numberOfPrice() - 1].productPrice | currency: 'EUR' }} | {{ product.prices[numberOfPrice() - 1].grossPrice | currency: 'EUR' }}/{{grossPriceUnitLabel(product.unit)}}</p>
+              } @else {
+                <p>Prix actuel : Aucun prix enregistré</p>
+              }
               <p>Nombre de prix enregistré : {{numberOfPrice()}}</p>
             </div>
 

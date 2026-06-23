@@ -22,6 +22,13 @@ class ConfigManager {
             dropSchema: false,
         }
     }
+    public getFirebaseConfig(): { projectId: string; clientEmail: string; privateKey: string } { // credentials du service account firebase-admin
+        return {
+            projectId: this.getValue(ConfigKey.FIREBASE_PROJECT_ID),
+            clientEmail: this.getValue(ConfigKey.FIREBASE_CLIENT_EMAIL),
+            privateKey: this.getValue(ConfigKey.FIREBASE_PRIVATE_KEY).replace(/\\n/g, '\n'),
+        }
+    }
     getValue(key: ConfigKey, throwOnMissing = true): string {
         const value = this.env[key];
         if (!value && throwOnMissing) {

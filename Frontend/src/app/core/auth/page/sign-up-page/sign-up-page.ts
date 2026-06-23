@@ -1,13 +1,9 @@
-import {Component, DestroyRef, inject, signal} from '@angular/core';
+import {Component, inject, signal, ChangeDetectionStrategy} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { RouterLink} from '@angular/router';
 import {AuthService} from '@core/auth/auth.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {finalize, tap} from 'rxjs';
 import {MatButton} from '@angular/material/button';
-import {ApiResponse} from '@shared/api/data/api.response';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
-import {SignUpPayload} from '@core/auth/data/payload/sign-up.payload';
 import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
 
@@ -19,12 +15,12 @@ import {AppRoutes} from '@shared/route/app-routes.enum';
     MatButton
   ],
   templateUrl: './sign-up-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './sign-up-page.css'
 })
 export class SignUpPage {
 
   private authService = inject(AuthService);
-  private destroyRef = inject(DestroyRef);
   private errorMessageService = inject(ErrorMessageService)
   readonly AppRoutes = AppRoutes;
 
@@ -37,7 +33,7 @@ export class SignUpPage {
     email: new FormControl('', {
       validators: [Validators.email, Validators.required]
     }),
-    username: new FormControl('', {
+    displayName: new FormControl('', {
       validators: [Validators.required, Validators.minLength(3)]
     }),
     password: new FormControl('', {
@@ -59,10 +55,10 @@ export class SignUpPage {
       this.form.controls.password.dirty &&
       this.form.controls.password.invalid
   }
-  get isEnteredUsernameValid() {
-    return this.form.controls.username.touched &&
-      this.form.controls.username.dirty &&
-      this.form.controls.username.invalid
+  get isEnteredDisplayNameValid() {
+    return this.form.controls.displayName.touched &&
+      this.form.controls.displayName.dirty &&
+      this.form.controls.displayName.invalid
   }
   get isPasswordMismatch() {
     const password = this.form.get('password')?.value;
@@ -73,7 +69,7 @@ export class SignUpPage {
       password && repeatPassword;
   }
 
-  onRegister() {
+  async onRegister() {
 
       if (this.form.invalid || this.isPasswordMismatch) {
         this.form.markAllAsTouched();
@@ -82,28 +78,28 @@ export class SignUpPage {
       this.errorMessage.set(null);
       this.isLoading.set(true);
 
-    const formValue = this.form.value;
-    const payload: SignUpPayload = {
-      username: formValue.username!,
-      password: formValue.password!,
-      mail: formValue.email!
-    }
+    const {email, displayName, password} = this.form.value;
 
-      this.authService.register(payload).pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap((apiResponse: ApiResponse) => {
-          if (!apiResponse.result) {
-            console.log('apiResponse details : ', apiResponse)
-            this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
-          }
-        }),
-        finalize(() => this.isLoading.set(false))
-      ).subscribe({
-        error: (error: Error) => {
-          console.error('Login error:', error);
-          this.errorMessage.set(error.message);
-        }
-      })
+    try {
+      await this.authService.registerWithEmail(email!, password!, displayName!);
+    } catch (err: any) {
+      this.errorMessage.set(this.errorMessageService.getErrorMessage(err.code));
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  async onRegisterWithGoogle() {
+    this.errorMessage.set(null);
+    this.isLoading.set(true);
+
+    try {
+      await this.authService.loginWithGoogle();
+    } catch (err: any) {
+      this.errorMessage.set(this.errorMessageService.getErrorMessage(err.code));
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   protected readonly AppNode = AppNode;

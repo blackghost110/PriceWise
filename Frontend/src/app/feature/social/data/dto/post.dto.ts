@@ -4,6 +4,6 @@ export interface PostDto {
   title: string;
   message: string;
   postalCode: string;
-  user: { username: string;};
+  user: { displayName: string;};
   commentCount: number;
 }

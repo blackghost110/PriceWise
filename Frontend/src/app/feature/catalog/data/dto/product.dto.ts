@@ -16,3 +16,16 @@ export enum ProductUnitType {
   ML = 'ml',
   PIECE = 'p'
 }
+
+export function grossPriceUnitLabel(unit: string): string {
+  switch (unit) {
+    case ProductUnitType.G:
+      return 'Kg';
+    case ProductUnitType.ML:
+      return 'L';
+    case ProductUnitType.PIECE:
+      return 'P';
+    default:
+      return unit;
+  }
+}

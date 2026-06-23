@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, signal} from '@angular/core';
+import {Component, DestroyRef, inject, signal, ChangeDetectionStrategy} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -16,8 +16,8 @@ import {PriceService} from '@features/catalog/service/price.service';
 import {CreatePricePayload} from '@features/catalog/data/payload/create-price.payload';
 import {ProductDto} from '@features/catalog/data/dto/product.dto';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
-import {tap} from 'rxjs';
-import {ApiResponse} from '@shared/api/data/api.response';
+import {catchError, EMPTY} from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
 import {UpdatePricePayload} from '@features/catalog/data/payload/update-price.payload';
 
 @Component({
@@ -39,6 +39,7 @@ import {UpdatePricePayload} from '@features/catalog/data/payload/update-price.pa
     MatHint,
   ],
   templateUrl: './add-price-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './add-price-dialog.css'
 })
 export class AddPriceDialog {
@@ -84,7 +85,6 @@ export class AddPriceDialog {
 
 
       const formValue = this.priceForm.value;
-      console.log('price date avant payload : ', formValue.priceDate);
       const payload: CreatePricePayload = {
         productPrice: Number(formValue.productPrice),
         grossPrice: Number(formValue.grossPrice),
@@ -93,17 +93,14 @@ export class AddPriceDialog {
 
       this.priceService.addPrice(payload, this.product.productId).pipe(
         takeUntilDestroyed(this.destroyRef),
-        tap((apiResponse: ApiResponse) => {
-          if (!apiResponse.result) {
-            this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code, apiResponse.data))
-            this.isSameDate.set(true);
-            this.updatePriceId.set(apiResponse.data.priceId)
-            this.priceForm?.disable();
-          } else {
-            this.onClose()
-          }
-        }),
-      ).subscribe();
+        catchError((err: HttpErrorResponse) => {
+          this.errorMessage.set(this.errorMessageService.getErrorMessage(err.error?.code, err.error?.data))
+          this.isSameDate.set(true);
+          this.updatePriceId.set(err.error?.data?.priceId ?? 0)
+          this.priceForm?.disable();
+          return EMPTY;
+        })
+      ).subscribe(() => this.dialogRef.close(true));
   }
 
   onUpdatePrice() {
@@ -124,14 +121,11 @@ export class AddPriceDialog {
 
     this.priceService.updatePrice(payload, priceId).pipe(
       takeUntilDestroyed(this.destroyRef),
-      tap((apiResponse: ApiResponse) => {
-        if (!apiResponse.result) {
-          this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code, apiResponse.data));
-        } else {
-          this.onClose();
-        }
+      catchError((err: HttpErrorResponse) => {
+        this.errorMessage.set(this.errorMessageService.getErrorMessage(err.error?.code, err.error?.data));
+        return EMPTY;
       })
-    ).subscribe();
+    ).subscribe(() => this.dialogRef.close(true));
   }
 
 
@@ -151,14 +145,6 @@ export class AddPriceDialog {
     return inputDate <= today;
   }
 
-  private isSameDay(date1: Date, date2: Date): boolean {
-    const d1 = new Date(date1);
-    const d2 = new Date(date2);
-
-    return d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate();
-  }
   private formatDateToLocal(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');

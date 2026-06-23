@@ -1,8 +1,7 @@
 import {inject, Injectable, signal} from '@angular/core';
-import { forkJoin, map, Observable, tap} from 'rxjs';
+import { forkJoin, Observable, tap} from 'rxjs';
 import {ProductDto} from '@features/catalog/data/dto/product.dto';
 import {ApiService} from '@shared/api/service/api.service';
-import {ApiResponse} from '@shared/api/data/api.response';
 import {CreateProductPayload} from '@features/catalog/data/payload/create-product.payload';
 import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
 import {ProductDetailDto} from '@features/catalog/data/dto/product-detail.dto';
@@ -25,19 +24,7 @@ export class ProductService {
   private _allProducts = signal<ProductsAllDto []| null>(null)
   allProducts = this._allProducts.asReadonly()
 
-  private _productDetail = signal<ProductDetailDto >({
-    productId: 0,
-    name: '',
-    brand: '',
-    unit: '',
-    quantity: 0,
-    storeName: '',
-    storeStreet: '',
-    storeNumber: '',
-    storePostalCode: '',
-    storeCity: '',
-    prices: []
-  });
+  private _productDetail = signal<ProductDetailDto | null>(null);
   productDetail = this._productDetail.asReadonly()
 
   private _selectedProducts = signal<ProductsAllDto[]>([])
@@ -60,23 +47,17 @@ export class ProductService {
 
 
   getProductDetail(productId: string) {
-    return this.api.get(`${ApiURI.PRODUCT_DETAIL}/${productId}`)
+    return this.api.get<ProductDetailDto>(`${ApiURI.PRODUCT_DETAIL}/${productId}`)
       .pipe(
-        tap((response:ApiResponse) => {
-          this._productDetail.set(response.data);
-          console.log(response)
-        })
+        tap((product) => this._productDetail.set(product))
       )
   }
 
   getProducts(storeId: number) {
     const endpoint = ApiURI.PRODUCT_GET_BY_STORE.replace(':storeId', storeId.toString());
-    return this.api.get(endpoint)
+    return this.api.get<ProductDto[]>(endpoint)
       .pipe(
-        tap((response:ApiResponse) => {
-          this._storeProducts.set(response.data);
-          console.log(response)
-        })
+        tap((products) => this._storeProducts.set(products))
       )
   }
 
@@ -96,34 +77,26 @@ export class ProductService {
       url += `?${params.toString()}`;
     }
 
-    return this.api.get(url)
+    return this.api.get<ProductsAllDto[]>(url)
       .pipe(
-        tap((response: ApiResponse) => {
-          this._allProducts.set(response.data);
-          console.log(response)
-        })
+        tap((products) => this._allProducts.set(products))
       )
   }
 
   addProduct(payload: CreateProductPayload, storeId: number) {
     return this.api.post(`${ApiURI.PRODUCT_CREATE}/${storeId}`, payload).pipe(
-      tap((response:ApiResponse) => {
-        if (response.result) {
-          this.getProducts(storeId).subscribe()
-            this.snackbar.show('Produit ajouté avec succès');
-        }
+      tap(() => {
+        this.getProducts(storeId).subscribe()
+        this.snackbar.show('Produit ajouté avec succès');
       })
     );
   }
 
   deleteProduct(productId: number, storeId: number) {
     return this.api.delete(`${ApiURI.PRODUCT_DELETE}/${productId}`).pipe(
-      tap((response:ApiResponse) => {
-        console.log(response)
-        if (response.result) {
-          this.getProducts(storeId).subscribe()
-            this.snackbar.show('Produit supprimé avec succès');
-        }
+      tap(() => {
+        this.getProducts(storeId).subscribe()
+        this.snackbar.show('Produit supprimé avec succès');
       })
     );
   }
@@ -148,9 +121,7 @@ export class ProductService {
 
   getMultipleProductDetails(productIds: string[]): Observable<ProductDetailDto[]> {
     const requests = productIds.map(id =>
-      this.api.get(`${ApiURI.PRODUCT_MULTIPLE_DETAIL}/${id}`).pipe(
-        map((response: ApiResponse) => response.data as ProductDetailDto)
-      )
+      this.api.get<ProductDetailDto>(`${ApiURI.PRODUCT_MULTIPLE_DETAIL}/${id}`)
     );
 
     return forkJoin(requests);
@@ -164,17 +135,6 @@ export class ProductService {
 
   fillPriceGaps(prices: PriceDto[]): PriceDto[] {
     if (prices.length === 0) return [];
-
-    const normalizedPrices = prices.map(price => {
-      const [year, month, day] = price.priceDate.split('-').map(Number);
-      return {
-        ...price,
-        priceDate: new Date(year, month - 1, day),
-      };
-
-    })
-
-
 
     // Trier les prix par date (les dates sont des strings du backend)
     const sortedPrices = [...prices].sort((a, b) =>

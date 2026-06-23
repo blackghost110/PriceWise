@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, signal} from '@angular/core';
+import {Component, DestroyRef, inject, signal, ChangeDetectionStrategy} from '@angular/core';
 import {MatButton} from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -14,8 +14,8 @@ import {ListService} from '@features/catalog/service/list.service';
 import {CreateListPayload} from '@features/catalog/data/payload/create-list.payload';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
-import {tap} from 'rxjs';
-import {ApiResponse} from '@shared/api/data/api.response';
+import {catchError, EMPTY} from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-update-list-dialog',
@@ -30,6 +30,7 @@ import {ApiResponse} from '@shared/api/data/api.response';
         ReactiveFormsModule
     ],
   templateUrl: './update-list-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './update-list-dialog.css'
 })
 export class UpdateListDialog {
@@ -73,16 +74,11 @@ export class UpdateListDialog {
 
     this.listService.updateList(payload, this.listId).pipe(
       takeUntilDestroyed(this.destroyRef),
-      tap((apiResponse: ApiResponse) => {
-        if (!apiResponse.result) {
-          this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
-        }
-      }),
-    ).subscribe(response => {
-      if (response.result) {
-        this.dialogRef.close();
-      }
-    })
+      catchError((err: HttpErrorResponse) => {
+        this.errorMessage.set(this.errorMessageService.getErrorMessage(err.error?.code, err.error?.data))
+        return EMPTY;
+      })
+    ).subscribe(() => this.dialogRef.close())
 
 
   }

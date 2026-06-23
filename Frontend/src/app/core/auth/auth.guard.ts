@@ -34,6 +34,9 @@ export const adminGuard: CanActivateFn = async (): Promise<boolean | UrlTree> =>
   const authService = inject(AuthService);
   const router = inject(Router);
 
+  // Must resolve the Firebase auth state first, otherwise currentUser/isAdmin
+  // can still be empty on a hard page reload (race with Firebase rehydration).
+  await authService.checkUser();
 
   if (!authService.isAdmin()){
     return router.createUrlTree([AppRoutes.HOME_PAGE]);

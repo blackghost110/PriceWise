@@ -1,7 +1,6 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {ApiService} from '@shared/api/service/api.service';
-import {catchError, tap, throwError} from 'rxjs';
-import {ApiResponse} from '@shared/api/data/api.response';
+import {tap} from 'rxjs';
 import {CreateCommentPayload} from '@features/social/data/payload/create-comment.payload';
 import {CommentDto} from '@features/social/data/dto/comment.dto';
 import {ApiURI} from '@shared/api/api-uri.enum';
@@ -23,26 +22,17 @@ export class CommentService {
 
   addComment(payload: CreateCommentPayload, postId: number) {
     return this.api.post(`${ApiURI.COMMENT_CREATE}/${postId}`, payload).pipe(
-      tap((response:ApiResponse) => {
-        console.log(response)
-        if (response.result) {
-          this.getComments(postId).subscribe()
-          this.snackbar.show('Commentaire ajouté avec succès')
-        }
+      tap(() => {
+        this.getComments(postId).subscribe()
+        this.snackbar.show('Commentaire ajouté avec succès')
       })
     );
   }
 
   getComments(postId: number) {
-    return this.api.get(`${ApiURI.COMMENT_GET_ALL}/${postId}`)
+    return this.api.get<CommentDto[]>(`${ApiURI.COMMENT_GET_ALL}/${postId}`)
       .pipe(
-        tap((response: ApiResponse) => {
-          this._commentList.set(response.data);
-          console.log(response)
-        }),
-        catchError(error => {
-          return throwError(() => new Error(error));
-        })
+        tap((comments) => this._commentList.set(comments))
       )
   }
 

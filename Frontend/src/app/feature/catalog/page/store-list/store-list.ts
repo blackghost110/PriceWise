@@ -1,4 +1,4 @@
-import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, DestroyRef, inject, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {StoreDto} from '@features/catalog/data/dto/store.dto';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
@@ -37,6 +37,7 @@ import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
     Footer,
   ],
   templateUrl: './store-list.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './store-list.css'
 })
 export class StoreList implements OnInit{

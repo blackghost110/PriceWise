@@ -1,4 +1,4 @@
-import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, DestroyRef, inject, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -30,6 +30,7 @@ import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
     MatIconButton
   ],
   templateUrl: './search-product-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './search-product-dialog.css'
 })
 export class SearchProductDialog implements OnInit {

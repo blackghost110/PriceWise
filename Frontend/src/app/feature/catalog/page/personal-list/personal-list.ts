@@ -1,4 +1,4 @@
-import {Component, computed, effect, inject, OnInit, signal, viewChild} from '@angular/core';
+import {Component, computed, effect, inject, OnInit, signal, viewChild, ChangeDetectionStrategy} from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {Footer} from '@core/layout/footer/footer';
 import {CurrencyPipe, DatePipe} from '@angular/common';
@@ -28,6 +28,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {ListProductDto} from '@features/catalog/data/dto/list-product.dto';
 import {RouterLink} from '@angular/router';
 import {AppRoutes} from '@shared/route/app-routes.enum';
+import {grossPriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 
 @Component({
   selector: 'app-personal-list',
@@ -63,6 +64,7 @@ import {AppRoutes} from '@shared/route/app-routes.enum';
     RouterLink
   ],
   templateUrl: './personal-list.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './personal-list.css'
 })
 export class PersonalList implements OnInit{
@@ -183,4 +185,5 @@ export class PersonalList implements OnInit{
   }
 
   readonly AppRoutes = AppRoutes;
+  readonly grossPriceUnitLabel = grossPriceUnitLabel;
 }

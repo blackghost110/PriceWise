@@ -51,7 +51,7 @@ export class ListService {
     try {
       return await this.listRepository.find({
         where: {
-          user: { credential_id: user.credential_id },
+          user: { credentialId: user.credentialId },
         },
       });
     } catch (e) {
@@ -70,7 +70,7 @@ export class ListService {
     const isExistingList = await this.listRepository.find({
       where: {
         name: ILike(dto.name),
-        user: { credential_id: user.credential_id },
+        user: { credentialId: user.credentialId },
       },
       relations: ['user'],
     });
@@ -78,7 +78,7 @@ export class ListService {
       throw new ListUpdateConflictException();
     }
 
-    if (list.user.credential_id !== user.credential_id) {
+    if (list.user.credentialId !== user.credentialId) {
       throw new ListUpdateForbiddenException();
     }
 
@@ -98,7 +98,7 @@ export class ListService {
     if (!list) {
       throw new ListDeleteNotFoundException();
     }
-    if (list.user.credential_id !== user.credential_id) {
+    if (list.user.credentialId !== user.credentialId) {
       throw new ListDeleteForbiddenException();
     }
     try {

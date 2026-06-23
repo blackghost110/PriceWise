@@ -1,5 +1,10 @@
 export interface UserDto {
-  credential_id: string;
-  username: string;
-  isAdmin: boolean;
+  credentialId: string;
+  displayName: string;
+  email: string;
+  role: string;
+  level: number;
+  xp: number;
+  activeBadge: string | null;
+  warningCount: number;
 }

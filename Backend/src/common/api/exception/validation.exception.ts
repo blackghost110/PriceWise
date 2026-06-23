@@ -8,7 +8,6 @@ export class ValidationException extends HttpException {
             code: ApiCodeResponse.PAYLOAD_IS_NOT_VALID,
             data: errors.map((e) => Object.values(e.constraints ?? {})).flat(),
             // validationErrorToApiCodeResponse(e)).flat(),
-            result: false
         }, 499);
     }
 }

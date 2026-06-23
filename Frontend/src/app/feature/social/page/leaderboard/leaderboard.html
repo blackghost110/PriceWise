@@ -26,9 +26,9 @@
       </div>
       @if (userList() !== null) {
         <table mat-table [dataSource]="userList()!" class="product-table">
-          <ng-container matColumnDef="username" >
+          <ng-container matColumnDef="displayName" >
             <th mat-header-cell *matHeaderCellDef> Nom </th>
-            <td mat-cell *matCellDef="let user" class="table-name">{{user.username}}</td>
+            <td mat-cell *matCellDef="let user" class="table-name">{{user.displayName}}</td>
           </ng-container>
 
           <ng-container matColumnDef="score">

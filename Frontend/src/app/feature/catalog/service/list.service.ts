@@ -1,7 +1,6 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {ApiService} from '@shared/api/service/api.service';
-import {catchError, tap, throwError} from 'rxjs';
-import {ApiResponse} from '@shared/api/data/api.response';
+import {tap} from 'rxjs';
 import {ListDto} from '@features/catalog/data/dto/list.dto';
 import {CreateListPayload} from '@features/catalog/data/payload/create-list.payload';
 import {ApiURI} from '@shared/api/api-uri.enum';
@@ -22,48 +21,33 @@ export class ListService {
 
 
   getLists() {
-    return this.api.get(`${ApiURI.LIST_GET_ALL}`)
+    return this.api.get<ListDto[]>(`${ApiURI.LIST_GET_ALL}`)
       .pipe(
-        tap((response:ApiResponse) => {
-          this._personalList.set(response.data);
-          console.log(response)
-        }),
-        catchError(error => {
-          return throwError(() => new Error(error));
-        })
+        tap((lists) => this._personalList.set(lists))
       )
   }
 
   addList(payload: CreateListPayload) {
     return this.api.post(`${ApiURI.LIST_CREATE}`, payload).pipe(
-      tap((response:ApiResponse) => {
-        console.log(response)
-        if (response.result) {
-          this.getLists().subscribe()
-            this.snackbar.show('Liste ajoutée avec succès');
-        }
+      tap(() => {
+        this.getLists().subscribe()
+        this.snackbar.show('Liste ajoutée avec succès');
       })
     );
   }
   updateList(payload: CreateListPayload, listId: number) {
     return this.api.put(`${ApiURI.LIST_UPDATE}/${listId}`, payload).pipe(
-      tap((response:ApiResponse) => {
-        console.log(response)
-        if (response.result) {
-          this.getLists().subscribe()
-            this.snackbar.show('Liste mise à jour avec succès');
-        }
+      tap(() => {
+        this.getLists().subscribe()
+        this.snackbar.show('Liste mise à jour avec succès');
       })
     );
   }
   deleteList(listId: number) {
     return this.api.delete(`${ApiURI.LIST_DELETE}/${listId}`).pipe(
-      tap((response:ApiResponse) => {
-        console.log(response)
-        if (response.result) {
-          this.getLists().subscribe()
-            this.snackbar.show('Liste supprimée avec succès');
-        }
+      tap(() => {
+        this.getLists().subscribe()
+        this.snackbar.show('Liste supprimée avec succès');
       })
     );
   }

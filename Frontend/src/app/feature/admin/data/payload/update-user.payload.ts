@@ -1,3 +1,3 @@
 export interface UpdateUserPayload {
-  isAdmin: boolean;
+  role: string;
 }

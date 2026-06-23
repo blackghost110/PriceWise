@@ -1,4 +1,4 @@
-import {Component, computed, DestroyRef, effect, inject, input, OnInit, signal, viewChild} from '@angular/core';
+import {Component, computed, DestroyRef, effect, inject, input, OnInit, signal, viewChild, ChangeDetectionStrategy} from '@angular/core';
 import {Header} from "@core/layout/header/header";
 import { RouterLink} from '@angular/router';
 import {ProductDto} from '@features/catalog/data/dto/product.dto';
@@ -32,6 +32,7 @@ import {
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
+import {grossPriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
 
 @Component({
@@ -65,6 +66,7 @@ import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
     MatMenuItem,
   ],
   templateUrl: './store-products.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './store-products.css'
 })
 export class StoreProducts implements OnInit {
@@ -78,6 +80,7 @@ export class StoreProducts implements OnInit {
   private dialogService = inject(DialogService);
   paginator = viewChild(MatPaginator);
   protected readonly AppNode = AppNode;
+  protected readonly grossPriceUnitLabel = grossPriceUnitLabel;
 
   dataSource = new MatTableDataSource<ProductDto>([]);
   displayedColumns: string[] = ['name','quantity', 'price', 'lastPrice', 'action' ];

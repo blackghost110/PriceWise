@@ -1,4 +1,4 @@
-import {Component, inject, input, OnInit, signal} from '@angular/core';
+import {Component, inject, input, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {Footer} from '@core/layout/footer/footer';
 import {MatFormField} from '@angular/material/form-field';
@@ -12,9 +12,9 @@ import {MatIcon} from '@angular/material/icon';
 import {RouterLink} from '@angular/router';
 import {CreateCommentPayload} from '@features/social/data/payload/create-comment.payload';
 import {PostService} from '@features/social/service/post.service';
-import {tap} from 'rxjs';
-import {ApiResponse} from '@shared/api/data/api.response';
+import {catchError, EMPTY} from 'rxjs';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
+import {HttpErrorResponse} from '@angular/common/http';
 import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
 
@@ -33,6 +33,7 @@ import {AppRoutes} from '@shared/route/app-routes.enum';
     RouterLink
   ],
   templateUrl: './post-comments.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './post-comments.css'
 })
 export class PostComments implements OnInit {
@@ -70,21 +71,15 @@ export class PostComments implements OnInit {
       };
 
       this.commentService.addComment(payload, +this.postId()).pipe(
-        tap((apiResponse: ApiResponse) => {
-          if (!apiResponse.result) {
-            this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
-          }
+        catchError((err: HttpErrorResponse) => {
+          this.errorMessage.set(this.errorMessageService.getErrorMessage(err.error?.code, err.error?.data))
+          return EMPTY;
         })
       )
-        .subscribe({
-        next: () => {
+        .subscribe(() => {
           this.commentText.set('');
           this.isExpanded = false;
-        },
-        error: (error) => {
-          console.error('Erreur lors de l\'ajout du commentaire:', error);
-        }
-      });
+        });
 
   }
 

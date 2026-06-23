@@ -1,5 +1,5 @@
 export interface UserCountDto {
-  userId: number;
-  username: string;
+  userId: string;
+  displayName: string;
   count: number;
 }

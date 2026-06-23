@@ -18,7 +18,7 @@ export class PriceController {
     @Body() dto: CreatePriceDto,
     @Param('productId') productId: number,
   ) {
-    return await this.priceService.createPrice(user.credential_id, dto, productId,);
+    return await this.priceService.createPrice(user.credentialId, dto, productId,);
   }
 
   @Get('prices/:productId')
@@ -42,6 +42,6 @@ export class PriceController {
     @Body() updatePriceDto: UpdatePriceDto,
     @Param('priceId') priceId: number,
   ) {
-    return await this.priceService.updatePrice(user.credential_id, updatePriceDto, priceId,);
+    return await this.priceService.updatePrice(user.credentialId, updatePriceDto, priceId,);
   }
 }

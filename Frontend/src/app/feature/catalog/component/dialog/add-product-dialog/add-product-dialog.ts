@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, signal} from '@angular/core';
+import {Component, DestroyRef, inject, signal, ChangeDetectionStrategy} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -16,10 +16,10 @@ import {CreateProductPayload} from '@features/catalog/data/payload/create-produc
 import {ProductDto, ProductUnitType} from '@features/catalog/data/dto/product.dto';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ProductService} from '@features/catalog/service/product.service';
-import {debounceTime, distinctUntilChanged, map, startWith, tap} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, startWith, catchError, EMPTY} from 'rxjs';
 import {MatAutocomplete, MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
-import {ApiResponse} from '@shared/api/data/api.response';
+import {HttpErrorResponse} from '@angular/common/http';
 
 
 @Component({
@@ -42,6 +42,7 @@ import {ApiResponse} from '@shared/api/data/api.response';
     MatAutocomplete
   ],
   templateUrl: './add-product-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './add-product-dialog.css'
 })
 export class AddProductDialog {
@@ -67,7 +68,7 @@ export class AddProductDialog {
   constructor() {
     this.productService.getProducts(Number(this.store.storeId))
       .subscribe(products => {
-        this.allProducts.set(products.data)
+        this.allProducts.set(products)
         this.filteredProducts.set([])
       })
 
@@ -117,17 +118,11 @@ export class AddProductDialog {
 
     this.productService.addProduct(payload, Number(this.store.storeId)).pipe(
       takeUntilDestroyed(this.destroyRef),
-      tap((apiResponse: ApiResponse) => {
-        if (!apiResponse.result) {
-          console.log('apiResponse details : ', apiResponse)
-          this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
-        }
-      }),
-    ).subscribe(response => {
-      if (response.result) {
-        this.dialogRef.close();
-      }
-    })
+      catchError((err: HttpErrorResponse) => {
+        this.errorMessage.set(this.errorMessageService.getErrorMessage(err.error?.code, err.error?.data))
+        return EMPTY;
+      })
+    ).subscribe(() => this.dialogRef.close())
 
 
 

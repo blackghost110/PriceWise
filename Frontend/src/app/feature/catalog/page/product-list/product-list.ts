@@ -1,4 +1,4 @@
-import {Component, computed, DestroyRef, effect, inject, OnInit, signal, viewChild} from '@angular/core';
+import {Component, computed, DestroyRef, effect, inject, OnInit, signal, viewChild, ChangeDetectionStrategy} from '@angular/core';
 import {CurrencyPipe, DatePipe} from '@angular/common';
 import {Footer} from '@core/layout/footer/footer';
 import {Header} from '@core/layout/header/header';
@@ -22,6 +22,7 @@ import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
 import {MatPaginator} from '@angular/material/paginator';
 import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
+import {grossPriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 
 
 @Component({
@@ -53,6 +54,7 @@ import {AppRoutes} from '@shared/route/app-routes.enum';
 
   ],
   templateUrl: './product-list.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './product-list.css'
 })
 export class ProductList implements OnInit {
@@ -184,4 +186,5 @@ export class ProductList implements OnInit {
   }
 
   protected readonly AppNode = AppNode;
+  protected readonly grossPriceUnitLabel = grossPriceUnitLabel;
 }

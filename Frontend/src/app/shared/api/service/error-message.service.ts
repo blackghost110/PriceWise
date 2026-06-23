@@ -14,6 +14,18 @@ export class ErrorMessageService {
     ['api.security.error.no-token-found', 'Vous devez être connecté pour accéder à cette ressource'],
     ['api.security.error.signup', 'Une erreur est survenue lors de l\'inscription'],
 
+    // Erreurs Firebase Authentication (auth.service.ts / pages sign-in / sign-up)
+    ['auth/invalid-credential', 'E-mail ou mot de passe incorrect'],
+    ['auth/invalid-email', 'Adresse e-mail invalide'],
+    ['auth/user-not-found', 'Aucun compte ne correspond à cet e-mail'],
+    ['auth/wrong-password', 'E-mail ou mot de passe incorrect'],
+    ['auth/email-already-in-use', 'Un compte existe déjà avec cet e-mail'],
+    ['auth/weak-password', 'Le mot de passe doit contenir au moins 6 caractères'],
+    ['auth/too-many-requests', 'Trop de tentatives, veuillez réessayer plus tard'],
+    ['auth/popup-closed-by-user', 'Connexion annulée'],
+    ['auth/cancelled-popup-request', 'Connexion annulée'],
+    ['auth/network-request-failed', 'Problème de connexion réseau, veuillez réessayer'],
+
     // Erreurs de validation
     ['api.error.payload-is-not-valid', 'Les données fournies ne sont pas valides'],
     ['api.error.payload-param-is-missing', 'Des informations requises sont manquantes'],

@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsIn, IsNotEmpty } from 'class-validator';
 
 export class UpdateUserPayload {
 
-  @ApiProperty()
+  @ApiProperty({ enum: ['USER', 'ADMIN'] })
   @IsNotEmpty()
-  isAdmin: boolean
+  @IsIn(['USER', 'ADMIN'])
+  role: string
 
 }

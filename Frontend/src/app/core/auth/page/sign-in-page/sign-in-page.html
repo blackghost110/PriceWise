@@ -10,8 +10,8 @@
 
 
         <div class="form-group">
-          <input class="form-input" type="text" name="username" placeholder="Nom d'utilisateur"
-                 formControlName="username">
+          <input class="form-input" type="email" name="email" placeholder="E-mail"
+                 formControlName="email">
           <span class="input-underline"></span>
         </div>
 
@@ -20,7 +20,7 @@
                  formControlName="password">
           <span class="input-underline"></span>
         </div>
-        @if (isEnteredUsernameValid) {
+        @if (isEnteredEmailValid) {
           <p class="control-error">Veuillez entrer un email valide</p>
         }
         @if (isEnteredPasswordValid) {
@@ -38,6 +38,10 @@
           } @else {
             <span>Se connecter</span>
           }
+        </button>
+
+        <button class="submit-button" matButton type="button" [disabled]="isLoading()" (click)="onLoginWithGoogle()">
+          <span>Se connecter avec Google</span>
         </button>
       </form>
 

@@ -1,4 +1,4 @@
-import {Component, computed, effect, inject, OnInit, signal, viewChild} from '@angular/core';
+import {Component, computed, effect, inject, OnInit, signal, viewChild, ChangeDetectionStrategy} from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {Footer} from '@core/layout/footer/footer';
 import {PostService} from '@features/social/service/post.service';
@@ -47,6 +47,7 @@ import {AppRoutes} from '@shared/route/app-routes.enum';
     RouterLinkActive
   ],
   templateUrl: './forum.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './forum.css'
 })
 export class Forum implements OnInit {
@@ -101,7 +102,7 @@ export class Forum implements OnInit {
       const searchableText = [
         product.title,
         product.postalCode,
-        product.user.username,
+        product.user.displayName,
       ].join(' ').toLowerCase();
 
       return searchTerms.every(term => searchableText.includes(term));

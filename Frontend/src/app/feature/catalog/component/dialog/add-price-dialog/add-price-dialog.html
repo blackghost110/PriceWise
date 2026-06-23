@@ -24,9 +24,6 @@
       <mat-datepicker-toggle matIconSuffix [for]="picker" ></mat-datepicker-toggle>
       <mat-datepicker #picker ></mat-datepicker>
     </mat-form-field>
-<!--    @if (isSameDate()) {-->
-<!--      <p>Un prix existe deja à cette date, voulez-vous le modifier ?</p>-->
-<!--    }-->
     @if (errorMessage()) {
       <p class="control-error">{{ errorMessage() }}</p>
     }

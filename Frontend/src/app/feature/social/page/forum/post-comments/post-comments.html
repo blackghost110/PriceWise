@@ -14,9 +14,9 @@
 
 
       <article class="card" style="padding: 10px">
-        <p class="article-date">Publié le {{postInfo()?.created | date: 'medium'}}</p>
+        <p class="article-date">Publié le {{$safeNavigationMigration(postInfo()?.created) | date: 'medium'}}</p>
         <h1>{{postInfo()?.title}}</h1>
-        <p>{{ postInfo()?.user!.username }}</p>
+        <p>{{ postInfo()?.user!.displayName }}</p>
         <p>{{postInfo()?.message}}</p>
       </article>
     </div>
@@ -52,7 +52,7 @@
         @for (comment of commentList(); track comment.commentId) {
           <article class="card" >
             <div class="comment-header">
-              <p class="commentUsername">{{comment.user.username}}</p>
+              <p class="commentUsername">{{comment.user.displayName}}</p>
               <p class="commentDate">{{comment.created | date: "medium"}}</p>
             </div>
 

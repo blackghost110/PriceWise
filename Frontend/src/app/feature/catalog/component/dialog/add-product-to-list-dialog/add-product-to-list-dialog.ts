@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
 import {
   MAT_DIALOG_DATA, MatDialog,
   MatDialogActions,
@@ -18,8 +18,8 @@ import {CreateListProductPayload} from '@features/catalog/data/payload/create-li
 import {ListProductService} from '@features/catalog/service/list-product.service';
 import {AddListDialog} from '@features/catalog/component/dialog/add-list-dialog/add-list-dialog';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
-import {tap} from 'rxjs';
-import {ApiResponse} from '@shared/api/data/api.response';
+import {catchError, EMPTY} from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-add-product-to-list-dialog',
@@ -35,6 +35,7 @@ import {ApiResponse} from '@shared/api/data/api.response';
     ReactiveFormsModule
   ],
   templateUrl: './add-product-to-list-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './add-product-to-list-dialog.css'
 })
 export class AddProductToListDialog implements OnInit {
@@ -88,19 +89,11 @@ export class AddProductToListDialog implements OnInit {
 
     this.listProductService.addProductToList(payload).pipe(
       takeUntilDestroyed(this.destroyRef),
-      tap((apiResponse: ApiResponse) => {
-        if (!apiResponse.result) {
-          console.log('apiResponse details : ', apiResponse)
-          this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
-        }
-      }),
-    ).subscribe({
-      next: (response) => {
-        if (response.result) {
-          this.dialogRef.close(true); // Passer true pour indiquer le succès
-        }
-      }
-    });
+      catchError((err: HttpErrorResponse) => {
+        this.errorMessage.set(this.errorMessageService.getErrorMessage(err.error?.code, err.error?.data))
+        return EMPTY;
+      })
+    ).subscribe(() => this.dialogRef.close(true));
 
   }
 

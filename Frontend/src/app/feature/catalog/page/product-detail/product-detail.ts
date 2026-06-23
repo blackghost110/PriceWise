@@ -1,4 +1,4 @@
-import {Component, effect, inject, input, OnInit, signal} from '@angular/core';
+import {Component, computed, effect, inject, input, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
 import {BaseChartDirective} from 'ng2-charts';
 import {Header} from '@core/layout/header/header';
 import {Footer} from '@core/layout/footer/footer';
@@ -19,17 +19,21 @@ import {
 } from '@features/catalog/component/dialog/add-product-to-list-dialog/add-product-to-list-dialog';
 import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
+import {grossPriceUnitLabel} from '@features/catalog/data/dto/product.dto';
+import {SnackbarService} from '@shared/service/snackbar.service';
 
 @Component({
   selector: 'app-product-detail',
   imports: [BaseChartDirective, Header, Footer, FormsModule, MatFormField, MatLabel, MatOption, MatSelect, ReactiveFormsModule, MatFabButton, MatIcon, MatButton, CurrencyPipe],
   templateUrl: './product-detail.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './product-detail.css'
 })
 export class ProductDetail implements OnInit{
 
   productService = inject(ProductService);
   dialog = inject(MatDialog);
+  snackbar = inject(SnackbarService);
 
   // dynamic url
   productId = input.required<string>();
@@ -38,11 +42,9 @@ export class ProductDetail implements OnInit{
   comparisonProducts = this.productService.comparisonProducts;
 
   timelineFilter = signal('0');
-  quarterFilter = signal('all');
   priceTypeFilter = signal('product'); // product ou gross
 
-
-  numberOfPrice = signal(0);
+  numberOfPrice = computed(() => this.productDetail()?.prices.length ?? 0);
   readonly AppRoutes = AppRoutes;
 
   ngOnInit() {
@@ -50,10 +52,12 @@ export class ProductDetail implements OnInit{
     this.productService.clearSelectedProducts();
     this.productService.clearComparisonProducts();
     this.productService.getProductDetail(this.productId()).subscribe({
-      next: () => {
-        this.productService.setComparisonProducts([this.productDetail()]);
-        this.numberOfPrice.set(this.productDetail().prices.length);
-
+      next: (product) => {
+        this.productService.setComparisonProducts([product]);
+      },
+      error: () => {
+        this.snackbar.show('Ce produit n\'existe pas ou n\'est plus disponible');
+        this.location.back();
       }
     })
 
@@ -62,7 +66,6 @@ export class ProductDetail implements OnInit{
   constructor(public location: Location) {
     effect(() => {
       this.timelineFilter();
-      this.quarterFilter();
       this.priceTypeFilter();
       this.comparisonProducts();
       this.updateGraphComparison();
@@ -142,10 +145,10 @@ export class ProductDetail implements OnInit{
     // Trier les dates
     const sortedDates = Array.from(allDates).sort((a, b) => a.localeCompare(b)); //VERIF si elle compare correctement
 
-    // Appliquer le filtre de timeline
+    // Appliquer le filtre de timeline (on garde les N derniers jours, pas les premiers)
     const filteredDates = this.timelineFilter() === '0'
       ? sortedDates
-      : sortedDates.slice(+this.timelineFilter() * 30);
+      : sortedDates.slice(-(+this.timelineFilter() * 30));
 
     // Créer les datasets pour chaque produit
     const datasets = processedProducts.map((product, index) => {
@@ -159,10 +162,11 @@ export class ProductDetail implements OnInit{
         const price = priceMap.get(date);
         if (!price) return null;
 
+        // priceId === 0 signale un trou comblé par fillPriceGaps, pas un vrai prix à 0€
         if (this.priceTypeFilter() === 'product') {
-          return price.productPrice === 0 ? null : price.productPrice;
+          return price.priceId === 0 ? null : price.productPrice;
         } else {
-          return price.grossPrice === 0 ? null : price.grossPrice;
+          return price.priceId === 0 ? null : price.grossPrice;
         }
       });
 
@@ -194,7 +198,11 @@ export class ProductDetail implements OnInit{
     const dialogRef = this.dialog.open(AddPriceDialog, {
       data: {product: product}
     });
-    dialogRef.afterClosed().subscribe(() => { window.location.reload(); });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        window.location.reload();
+      }
+    });
   }
 
   private getColorForIndex(index: number): string {
@@ -203,16 +211,9 @@ export class ProductDetail implements OnInit{
   }
 
   onOpenDialogSearchProduct() {
-    const dialogRef = this.dialog.open(SearchProductDialog, {
+    this.dialog.open(SearchProductDialog, {
       disableClose: true,
-      data: {selectedProduct : this.productDetail()}
-    });
-
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.compare) {
-        console.log('Comparaison activée avec', this.comparisonProducts().length, 'produits');
-      }
+      data: {selectedProduct: this.productDetail()!}
     });
   }
 
@@ -224,6 +225,7 @@ export class ProductDetail implements OnInit{
 
 
   protected readonly AppNode = AppNode;
+  protected readonly grossPriceUnitLabel = grossPriceUnitLabel;
 }
 
 

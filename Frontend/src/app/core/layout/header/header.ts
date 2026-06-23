@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, ChangeDetectionStrategy} from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '@core/auth/auth.service';
 import {MatIcon, MatIconModule} from '@angular/material/icon';
@@ -19,20 +19,17 @@ import {AppRoutes} from '@shared/route/app-routes.enum';
     MatIconModule
   ],
   templateUrl: './header.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './header.css'
 })
-export class Header implements OnInit {
+export class Header {
 
   router = inject(Router)
   authService = inject(AuthService)
 
+  // currentUser is populated reactively by AuthService (Firebase auth state), no manual fetch needed here
   currentUser = this.authService.currentUser;
   isAdmin = this.authService.isAdmin;
-
-  ngOnInit(){
-    this.authService.me()
-  }
-
 
   onLogout() {
     this.authService.logOut()

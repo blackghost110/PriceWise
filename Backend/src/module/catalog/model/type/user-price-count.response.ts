@@ -1,5 +1,5 @@
 export class UserPriceCountResponse {
   userId: string;
-  username: string;
+  displayName: string;
   priceCount: number;
 }

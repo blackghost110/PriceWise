@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {Footer} from '@core/layout/footer/footer';
 
@@ -9,6 +9,7 @@ import {Footer} from '@core/layout/footer/footer';
     Footer
   ],
   templateUrl: './catalog-fallback-page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './catalog-fallback-page.css'
 })
 export class CatalogFallbackPage {

@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, signal} from '@angular/core';
+import {Component, DestroyRef, inject, signal, ChangeDetectionStrategy} from '@angular/core';
 import {MatButton} from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -12,8 +12,8 @@ import { MatLabel} from "@angular/material/input";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {tap} from 'rxjs';
-import {ApiResponse} from '@shared/api/data/api.response';
+import {catchError, EMPTY} from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
 import {UpdateListDialog} from '@features/catalog/component/dialog/update-list-dialog/update-list-dialog';
 import {UserDto} from '@core/auth/data/dto/user.dto';
 import {UpdateUserPayload} from '@features/admin/data/payload/update-user.payload';
@@ -35,6 +35,7 @@ import {MatOption, MatSelect} from '@angular/material/select';
     MatOption
   ],
   templateUrl: './update-user-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './update-user-dialog.css'
 })
 export class UpdateUserDialog {
@@ -54,7 +55,8 @@ export class UpdateUserDialog {
 
 
   userForm = new FormGroup({
-    isAdmin: new FormControl<boolean>(this.user.isAdmin, {
+    role: new FormControl<string>(this.user.role, {
+      nonNullable: true,
       validators: [Validators.required]
     }),
   })
@@ -72,21 +74,16 @@ export class UpdateUserDialog {
 
     const formValue = this.userForm.value;
     const payload: UpdateUserPayload = {
-      isAdmin: formValue.isAdmin!,
+      role: formValue.role!,
     }
 
-    this.adminService.updateUser(payload, +this.user.credential_id).pipe(
+    this.adminService.updateUser(payload, this.user.credentialId).pipe(
       takeUntilDestroyed(this.destroyRef),
-      tap((apiResponse: ApiResponse) => {
-        if (!apiResponse.result) {
-          this.errorMessage.set(this.errorMessageService.getErrorMessage(apiResponse.code))
-        }
-      }),
-    ).subscribe(response => {
-      if (response.result) {
-        this.dialogRef.close();
-      }
-    })
+      catchError((err: HttpErrorResponse) => {
+        this.errorMessage.set(this.errorMessageService.getErrorMessage(err.error?.code, err.error?.data))
+        return EMPTY;
+      })
+    ).subscribe(() => this.dialogRef.close())
 
 
   }

@@ -5,7 +5,6 @@ import {UpdatePricePayload} from '@features/catalog/data/payload/update-price.pa
 import {ApiURI} from '@shared/api/api-uri.enum';
 import {SnackbarService} from '@shared/service/snackbar.service';
 import {tap} from 'rxjs';
-import {ApiResponse} from '@shared/api/data/api.response';
 
 @Injectable({
   providedIn: 'root'
@@ -18,20 +17,16 @@ export class PriceService {
 
   addPrice(payload: CreatePricePayload, productId: number) {
     return this.api.post(`${ApiURI.PRICE_CREATE}/${productId}`, payload).pipe(
-      tap((response:ApiResponse) => {
-        if (response.result) {
-          this.snackbar.show('Prix ajouté avec succès');
-        }
+      tap(() => {
+        this.snackbar.show('Prix ajouté avec succès');
       })
     );
   }
 
   updatePrice(payload: UpdatePricePayload, priceId: number) {
     return this.api.put(`${ApiURI.PRICE_UPDATE}/${priceId}`, payload).pipe(
-      tap((response:ApiResponse) => {
-        if (response.result) {
-          this.snackbar.show('Prix modifié avec succès');
-        }
+      tap(() => {
+        this.snackbar.show('Prix modifié avec succès');
       })
     );
   }

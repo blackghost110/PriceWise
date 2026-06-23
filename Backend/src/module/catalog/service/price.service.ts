@@ -29,7 +29,7 @@ export class PriceService {
                 @InjectRepository(ProductEntity) private readonly productRepository: Repository<ProductEntity>,) {}
 
     async createPrice(userId: string , createPriceDto: CreatePriceDto, productId: number) {
-        const user = await this.credentialRepository.findOne({ where: { credential_id: userId }})
+        const user = await this.credentialRepository.findOne({ where: { credentialId: userId }})
         if (!user) {
           throw new PriceCreateUserNotFoundException();
         }
@@ -112,7 +112,7 @@ export class PriceService {
 
   async updatePrice(userId: string, updatePriceDto: UpdatePriceDto, priceId: number) {
     // Vérification de l'utilisateur
-    const user = await this.credentialRepository.findOne({ where: { credential_id: userId }});
+    const user = await this.credentialRepository.findOne({ where: { credentialId: userId }});
     if (!user) {
       throw new PriceUpdateUserNotFoundException();
     }
@@ -151,38 +151,17 @@ export class PriceService {
   }
 
 
-  // async getUsersPriceCount(): Promise<UserPriceCountResponse[]>{
-  //   try {
-  //     return await this.credentialRepository
-  //       .createQueryBuilder('credential')
-  //       .leftJoin('credential.prices', 'price')
-  //       .select([
-  //         'user.credential_id AS "userId"',
-  //         'user.username AS username',
-  //         'COUNT(price.priceId) AS priceCount'
-  //       ])
-  //       .groupBy('user.credential_id, user.username')
-  //       .orderBy('priceCount', 'DESC')
-  //       .getRawMany();
-  //
-  //     // return result;
-  //   } catch (e) {
-  //     console.log('Error Log :', e);
-  //     throw new PriceGetUsersCountException();
-  //   }
-  // }
-
   async getUsersPriceCount(): Promise<UserPriceCountResponse[]>{
     try {
       return await this.priceRepository
         .createQueryBuilder('price')
         .leftJoin('price.user', 'user')
         .select([
-          'user.credential_id AS "userId"',
-          'user.username AS username',
+          'user.credentialId AS "userId"',
+          'user.displayName AS "displayName"',
           'COUNT(price.priceId) AS priceCount'
         ])
-        .groupBy('user.credential_id, user.username')
+        .groupBy('user.credentialId, user.displayName')
         .orderBy('priceCount', 'DESC')
         .getRawMany();
 
