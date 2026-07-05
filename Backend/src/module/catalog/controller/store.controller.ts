@@ -14,6 +14,8 @@ import {StoreService} from "../service/store.service";
 import { StoreProductsResponse} from "../model/type/store-products.response";
 import { AdminGuard } from '@common/api/admin.guard';
 import { UpdateStoreDto } from '../model/dto/update-store.dto';
+import { User } from "@common/config/decorator/user.decorator";
+import { Credential } from "../../../security/model/entity/credential.entity";
 
 @ApiBearerAuth('access-token')
 @ApiTags('Store Controller')
@@ -22,8 +24,8 @@ export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
   @Post()
-  async createStore(@Body() createStoreDto: CreateStoreDto) {
-    return await this.storeService.createStore(createStoreDto);
+  async createStore(@User() user: Credential, @Body() createStoreDto: CreateStoreDto) {
+    return await this.storeService.createStore(createStoreDto, user);
   }
 
 
@@ -50,15 +52,15 @@ export class StoreController {
 
   @UseGuards(AdminGuard)
   @Delete(':storeId')
-  public deleteList(@Param('storeId') storeId: number) {
-    return this.storeService.deleteStore(storeId);
+  public deleteList(@User() user: Credential, @Param('storeId') storeId: number) {
+    return this.storeService.deleteStore(storeId, user.credentialId);
   }
 
   @UseGuards(AdminGuard)
   @Put(':storeId')
-  async updateStore(@Body() dto: UpdateStoreDto, @Param('storeId') storeId: number
+  async updateStore(@User() user: Credential, @Body() dto: UpdateStoreDto, @Param('storeId') storeId: number
   ) {
-    return await this.storeService.updateStore(dto, storeId);
+    return await this.storeService.updateStore(dto, storeId, user.credentialId);
   }
 
 

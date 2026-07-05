@@ -30,5 +30,5 @@ export class CreateProductDto {
     @ApiProperty()
     @IsNumber()
     @IsNotEmpty()
-    initialGrossPrice: number;
+    initialReferencePrice: number;
 }

@@ -166,7 +166,7 @@ export class ProductService {
         filledPrices.push({
           priceId: 0, // ou -1 pour indiquer que c'est un prix fictif
           productPrice: 0, // ou null si votre interface le permet
-          grossPrice: 0,
+          referencePrice: 0,
           priceDate: dateStr // Convertir en Date comme attendu par l'interface --------------
         });
       }

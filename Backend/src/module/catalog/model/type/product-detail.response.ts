@@ -4,6 +4,7 @@ export class ProductDetailResponse {
   brand: string;
   unit: string;
   quantity: number;
+  credentialId: string;
 
   storeName: string;
   storeStreet: string;
@@ -14,7 +15,7 @@ export class ProductDetailResponse {
   prices: {
     priceId: number;
     productPrice: number;
-    grossPrice: number;
+    referencePrice: number;
     priceDate: Date;
   }[];
 

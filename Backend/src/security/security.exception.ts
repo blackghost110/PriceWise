@@ -31,3 +31,13 @@ export class UserUpdateException extends ApiException {
     super(ApiCodeResponse.USER_UPDATE_EXCEPTION, 500);
   }
 }
+export class DisplayNameTakenException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.ACCOUNT_DISPLAY_NAME_TAKEN_EXCEPTION, 409);
+  }
+}
+export class DisplayNameUpdateException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.ACCOUNT_DISPLAY_NAME_UPDATE_EXCEPTION, 500);
+  }
+}

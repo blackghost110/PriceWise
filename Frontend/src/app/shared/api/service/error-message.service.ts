@@ -92,6 +92,16 @@ export class ErrorMessageService {
     ['api.store.error.info-exception', 'Impossible de charger les informations du magasin. Veuillez réessayer.'],
     ['api.store.error.get-products-exception', 'Impossible de charger les produits du magasin. Veuillez réessayer.'],
 
+    // ERREURS ACCOUNT (Profil)
+    ['api.account.error.display-name-taken-exception', 'Ce nom est déjà utilisé'],
+    ['api.account.error.display-name-update-exception', 'Impossible de modifier le nom d\'affichage. Veuillez réessayer.'],
+
+    // ERREURS BADGE (Gamification)
+    ['api.badge.error.overview-exception', 'Impossible de charger vos badges. Veuillez réessayer.'],
+    ['api.badge.error.set-active-not-unlocked-exception', 'Vous devez d\'abord débloquer ce badge pour l\'afficher'],
+    ['api.badge.error.set-active-exception', 'Impossible de mettre à jour le badge actif. Veuillez réessayer.'],
+    ['api.gamification.error.profile-exception', 'Impossible de charger votre profil de jeu. Veuillez réessayer.'],
+
     // Message par défaut
     ['default', 'Une erreur inattendue s\'est produite. Veuillez réessayer.']
   ]);
@@ -107,7 +117,7 @@ export class ErrorMessageService {
     if (data !== null && data !== undefined) {
       switch (code) {
         case 'api.price.error.create-conflict-exception':
-          return `Un prix existe déjà pour cette date : \nPrix: ${data.productPrice}€ \nPrix brut: ${data.grossPrice}€ \nVoulez-vous modifier le prix ?`;
+          return `Un prix existe déjà pour cette date : \nPrix: ${data.productPrice}€ \nPrix brut: ${data.referencePrice}€ \nVoulez-vous modifier le prix ?`;
 
 
         default:

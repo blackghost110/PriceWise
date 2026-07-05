@@ -7,3 +7,9 @@ input.arrow-display::-webkit-inner-spin-button {
   padding: 4px 10px;
   white-space: pre-line;
 }
+.suggestion-hint {
+  color: #3c763d;
+  font-size: 0.85em;
+  padding: 0 10px;
+  margin: 0 0 8px;
+}

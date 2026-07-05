@@ -8,7 +8,7 @@ export class ListProductResponse {
   unit: string;
   quantity: number;
   productPrice: number;
-  grossPrice: number;
+  referencePrice: number;
   priceDate: Date;
   storeName: string;
   storeStreet: string;

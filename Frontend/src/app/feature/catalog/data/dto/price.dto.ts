@@ -2,7 +2,7 @@ export interface PriceDto {
 
   priceId: number;
   productPrice: number;
-  grossPrice: number;
+  referencePrice: number;
   priceDate: string;
 
 }

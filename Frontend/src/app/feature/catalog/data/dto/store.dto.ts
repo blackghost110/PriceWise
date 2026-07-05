@@ -5,5 +5,6 @@ export interface StoreDto {
   number: string;
   postalCode: string;
   city: string;
+  credentialId: string;
   created: Date;
 }

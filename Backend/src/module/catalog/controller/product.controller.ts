@@ -62,8 +62,8 @@ export class ProductController {
     summary: 'Supprimer un produit',
     description: 'Suppression d\'un produit par son ID',
   })
-  public deleteProduct(@Param('productId') productId: number) {
-    return this.productService.deleteProduct(productId);
+  public deleteProduct(@User() user: Credential, @Param('productId') productId: number) {
+    return this.productService.deleteProduct(productId, user.credentialId);
   }
 
 }

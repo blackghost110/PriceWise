@@ -4,6 +4,7 @@ import { ILike, Repository } from 'typeorm';
 import { StoreEntity } from '../model/store.entity';
 import { ProductEntity } from '../model/product.entity';
 import { CreateStoreDto } from '../model/dto/create-store.dto';
+import { Credential } from '../../../security/model/entity/credential.entity';
 import { StoreProductsResponse } from '../model/type/store-products.response';
 import { PriceEntity } from '../model/price.entity';
 import {
@@ -19,6 +20,9 @@ import {
   StoreUpdateNotFoundException,
 } from '../catalog.exception';
 import { UpdateStoreDto } from '../model/dto/update-store.dto';
+import { XpService } from '../../gamification/service/xp.service';
+import { ActivityLogService } from '../../activity-log/service/activity-log.service';
+import { EntityType } from '../../activity-log/model/activity-log.entity';
 
 @Injectable()
 export class StoreService {
@@ -29,9 +33,11 @@ export class StoreService {
     private readonly productRepository: Repository<ProductEntity>,
     @InjectRepository(PriceEntity)
     private readonly priceRepository: Repository<PriceEntity>,
+    private readonly xpService: XpService,
+    private readonly activityLogService: ActivityLogService,
   ) {}
 
-  async createStore(createStoreDto: CreateStoreDto) {
+  async createStore(createStoreDto: CreateStoreDto, user: Credential) {
     const existingStore = await this.storeRepository.findOne({
       where: {
         name: ILike(createStoreDto.name),
@@ -48,7 +54,13 @@ export class StoreService {
     try {
       const store = new StoreEntity();
       Object.assign(store, createStoreDto);
-      return await this.storeRepository.save(store);
+      store.credentialId = user.credentialId;
+      const saved = await this.storeRepository.save(store);
+      // Attribuer +10 XP (best-effort, n'annule pas la création en cas d'erreur)
+      this.xpService.awardStoreXp(user.credentialId).catch(() => {});
+      // Journalisation (best-effort)
+      this.activityLogService.logAdd(EntityType.STORE, saved.storeId, user.credentialId).catch(() => {});
+      return saved;
     } catch (e) {
       throw new StoreCreateException();
     }
@@ -111,7 +123,7 @@ export class StoreService {
         unit: product.unit,
         quantity: product.quantity,
         productPrice: product.prices[0].productPrice,
-        grossPrice: product.prices[0].grossPrice,
+        referencePrice: product.prices[0].referencePrice,
         priceDate: product.prices[0].priceDate,
       }));
     } catch (e) {
@@ -121,7 +133,7 @@ export class StoreService {
   }
 
   // ----- verifier cette fonction CORRIGER LES EXCEPTIONS
-  async deleteStore(storeId: number): Promise<void> {
+  async deleteStore(storeId: number, credentialId: string): Promise<void> {
     const store = await this.storeRepository.findOne({
       where: { storeId } });
     if (!store) {
@@ -129,17 +141,21 @@ export class StoreService {
     }
     try {
       await this.storeRepository.remove(store);
+      // Journalisation (best-effort)
+      this.activityLogService.logDelete(EntityType.STORE, storeId, credentialId).catch(() => {});
     } catch (e) {
       throw new ListDeleteException();
     }
   }
 
-  async updateStore(dto: UpdateStoreDto, storeId: number) {
+  async updateStore(dto: UpdateStoreDto, storeId: number, credentialId: string) {
     // Vérification que le store existe
     const store = await this.storeRepository.findOne({ where: { storeId } });
     if (!store) {
       throw new StoreUpdateNotFoundException();
     }
+
+    const before = { ...store };
 
     try {
       // Mise à jour des champs
@@ -149,7 +165,10 @@ export class StoreService {
       store.postalCode = dto.postalCode;
       store.city = dto.city;
 
-      return await this.storeRepository.save(store);
+      const saved = await this.storeRepository.save(store);
+      // Journalisation (best-effort)
+      this.activityLogService.logUpdate(EntityType.STORE, storeId, credentialId, before, { ...saved }).catch(() => {});
+      return saved;
 
     } catch (e) {
       throw new StoreUpdateException();

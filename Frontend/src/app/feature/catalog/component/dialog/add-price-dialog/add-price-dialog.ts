@@ -14,9 +14,9 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/m
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PriceService} from '@features/catalog/service/price.service';
 import {CreatePricePayload} from '@features/catalog/data/payload/create-price.payload';
-import {ProductDto} from '@features/catalog/data/dto/product.dto';
+import {computeReferencePrice, ProductDto, referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
-import {catchError, EMPTY} from 'rxjs';
+import {catchError, debounceTime, distinctUntilChanged, EMPTY} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UpdatePricePayload} from '@features/catalog/data/payload/update-price.payload';
 
@@ -60,13 +60,16 @@ export class AddPriceDialog {
   isSameDate = signal(false)
   errorMessage = signal<string | null>(null);
 
+  suggestionHint = signal<string | null>(null);
+  private referenceManuallyEdited = signal(false);
+
 
 
   priceForm = new FormGroup({
     productPrice: new FormControl('', {
       validators: [Validators.required, Validators.min(0.01)]
     }),
-    grossPrice: new FormControl('', {
+    referencePrice: new FormControl('', {
       validators: [Validators.required, Validators.min(0.01)]
     }),
     priceDate: new FormControl( new Date(),{
@@ -74,6 +77,41 @@ export class AddPriceDialog {
       }
     )
   })
+
+  constructor() {
+    this.setupReferenceSuggestion();
+  }
+
+  private setupReferenceSuggestion() {
+    const referenceControl = this.priceForm.get('referencePrice');
+    const priceControl = this.priceForm.get('productPrice');
+
+    referenceControl?.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(value => {
+      this.referenceManuallyEdited.set(!!value);
+    });
+
+    priceControl?.valueChanges.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(productPrice => {
+      const suggested = computeReferencePrice(Number(productPrice), this.product.quantity, this.product.unit);
+
+      if (suggested === null) {
+        this.suggestionHint.set(null);
+        return;
+      }
+
+      const unitLabel = referencePriceUnitLabel(this.product.unit);
+      this.suggestionHint.set(`Suggéré d'après ${this.product.quantity}${this.product.unit} → ${suggested.toFixed(2)} €/${unitLabel}`);
+
+      if (!this.referenceManuallyEdited()) {
+        referenceControl?.setValue(suggested.toFixed(2), { emitEvent: false });
+      }
+    });
+  }
 
 
   onAddPrice() {
@@ -87,7 +125,7 @@ export class AddPriceDialog {
       const formValue = this.priceForm.value;
       const payload: CreatePricePayload = {
         productPrice: Number(formValue.productPrice),
-        grossPrice: Number(formValue.grossPrice),
+        referencePrice: Number(formValue.referencePrice),
         priceDate: this.formatDateToLocal(formValue.priceDate!)
       };
 
@@ -114,7 +152,7 @@ export class AddPriceDialog {
 
     const payload: UpdatePricePayload = {
       productPrice: Number(formValue.productPrice),
-      grossPrice: Number(formValue.grossPrice)
+      referencePrice: Number(formValue.referencePrice)
     };
 
     const priceId = this.updatePriceId();

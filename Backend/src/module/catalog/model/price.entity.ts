@@ -14,7 +14,7 @@ export class PriceEntity extends BaseEntity {
     productPrice: number;
 
     @Column({ type: 'numeric' })
-    grossPrice: number;
+    referencePrice: number;
 
     @Column({ type: 'date', default: () => 'CURRENT_DATE' })
     priceDate: Date;

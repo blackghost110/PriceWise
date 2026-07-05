@@ -12,10 +12,13 @@
     <br>
     <mat-form-field>
       <mat-label>Prix Brut</mat-label>
-      <input matInput type="number" placeholder="0.00" class="arrow-display" formControlName="grossPrice"/>
+      <input matInput type="number" placeholder="0.00" class="arrow-display" formControlName="referencePrice"/>
       <span matTextSuffix> €</span>
       <mat-hint align="start">Prix normalisé au €/Kg ou €/L </mat-hint>
     </mat-form-field>
+    @if (suggestionHint()) {
+      <p class="suggestion-hint">{{ suggestionHint() }}</p>
+    }
     <br>
     <br>
     <mat-form-field>

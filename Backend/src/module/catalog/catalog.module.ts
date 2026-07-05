@@ -18,9 +18,15 @@ import {SecurityController} from "../../security/security.controller";
 import {SecurityService} from "../../security/security.service";
 import { ListProductController } from './controller/list-product.controller';
 import { ListProductService } from './service/list-product.service';
+import { GamificationModule } from '../gamification/gamification.module';
+import { ActivityLogModule } from '../activity-log/activity-log.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([ListEntity, Credential, ProductEntity, StoreEntity, PriceEntity, ListProductEntity])],
+    imports: [
+      TypeOrmModule.forFeature([ListEntity, Credential, ProductEntity, StoreEntity, PriceEntity, ListProductEntity]),
+      GamificationModule,
+      ActivityLogModule,
+    ],
     controllers: [ListController, ProductController, StoreController, PriceController, SecurityController, ListProductController],
     providers: [ListService, ProductService, StoreService, PriceService, SecurityService, ListProductService],
 })

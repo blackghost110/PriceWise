@@ -36,6 +36,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: AppNode.PROFILE,
+    loadComponent: () => import('@features/account/page/profile/profile').then(c => c.Profile),
+    canActivate: [authGuard]
+  },
+  {
     path: AppNode.FALL_BACK,
     component: GlobalFallBackPage
   }

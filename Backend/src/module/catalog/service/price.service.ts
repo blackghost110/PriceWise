@@ -21,12 +21,19 @@ import {
   PriceUpdateUserNotFoundException,
 } from '../catalog.exception';
 import { UserPriceCountResponse } from '../model/type/user-price-count.response';
+import { XpService } from '../../gamification/service/xp.service';
+import { ActivityLogService } from '../../activity-log/service/activity-log.service';
+import { EntityType } from '../../activity-log/model/activity-log.entity';
 
 @Injectable()
 export class PriceService {
-    constructor(@InjectRepository(PriceEntity) private readonly priceRepository: Repository<PriceEntity>,
-                @InjectRepository(Credential) private readonly credentialRepository: Repository<Credential>,
-                @InjectRepository(ProductEntity) private readonly productRepository: Repository<ProductEntity>,) {}
+    constructor(
+      @InjectRepository(PriceEntity) private readonly priceRepository: Repository<PriceEntity>,
+      @InjectRepository(Credential) private readonly credentialRepository: Repository<Credential>,
+      @InjectRepository(ProductEntity) private readonly productRepository: Repository<ProductEntity>,
+      private readonly xpService: XpService,
+      private readonly activityLogService: ActivityLogService,
+    ) {}
 
     async createPrice(userId: string , createPriceDto: CreatePriceDto, productId: number) {
         const user = await this.credentialRepository.findOne({ where: { credentialId: userId }})
@@ -37,7 +44,7 @@ export class PriceService {
         if (!product) {
           throw new PriceCreateProductNotFoundException();
         }
-        if (createPriceDto.productPrice <= 0 || createPriceDto.grossPrice <= 0) {
+        if (createPriceDto.productPrice <= 0 || createPriceDto.referencePrice <= 0) {
           throw new PriceCreateBadRequestException();
         }
 
@@ -52,7 +59,7 @@ export class PriceService {
           throw new PriceCreateConflictException({
             priceId: existingPrice.priceId,
             productPrice: existingPrice.productPrice,
-            grossPrice: existingPrice.grossPrice
+            referencePrice: existingPrice.referencePrice
           });
         }
 
@@ -60,7 +67,7 @@ export class PriceService {
 
         const price = new PriceEntity();
         price.productPrice = createPriceDto.productPrice;
-        price.grossPrice = createPriceDto.grossPrice;
+        price.referencePrice = createPriceDto.referencePrice;
         price.product = product;
         price.user = user;
 
@@ -68,7 +75,12 @@ export class PriceService {
           price.priceDate = createPriceDto.priceDate;
         }
 
-        return await this.priceRepository.save(price);
+        const saved = await this.priceRepository.save(price);
+        // Attribuer +1 XP + vérification cercle hebdo (best-effort)
+        this.xpService.awardPriceXp(userId).catch(() => {});
+        // Journalisation (best-effort)
+        this.activityLogService.logAdd(EntityType.PRICE, saved.priceId, userId).catch(() => {});
+        return saved;
 
       } catch (e) {
         throw new PriceCreateException();
@@ -127,23 +139,28 @@ export class PriceService {
     if (updatePriceDto.productPrice !== undefined && updatePriceDto.productPrice <= 0) {
       throw new PriceUpdateBadRequestException();
     }
-    if (updatePriceDto.grossPrice !== undefined && updatePriceDto.grossPrice <= 0) {
+    if (updatePriceDto.referencePrice !== undefined && updatePriceDto.referencePrice <= 0) {
       throw new PriceUpdateBadRequestException();
     }
+
+    const before = { ...price };
 
     try {
       // Mise à jour seulement des champs fournis
       if (updatePriceDto.productPrice !== undefined) {
         price.productPrice = updatePriceDto.productPrice;
       }
-      if (updatePriceDto.grossPrice !== undefined) {
-        price.grossPrice = updatePriceDto.grossPrice;
+      if (updatePriceDto.referencePrice !== undefined) {
+        price.referencePrice = updatePriceDto.referencePrice;
       }
 
       // Mise à jour de l'utilisateur qui modifie
       price.user = user;
 
-      return await this.priceRepository.save(price);
+      const saved = await this.priceRepository.save(price);
+      // Journalisation (best-effort)
+      this.activityLogService.logUpdate(EntityType.PRICE, priceId, userId, before, { ...saved }).catch(() => {});
+      return saved;
 
     } catch (e) {
       throw new PriceUpdateException();

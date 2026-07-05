@@ -24,6 +24,9 @@ export enum AppNode {
   POST = ':postId',
   LEADERBOARD = 'leaderboard',
 
+  // Account routes
+  PROFILE = 'profile',
+
   // Fallback
   FALL_BACK = '**',
 }

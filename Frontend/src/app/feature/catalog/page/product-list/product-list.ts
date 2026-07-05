@@ -22,7 +22,7 @@ import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
 import {MatPaginator} from '@angular/material/paginator';
 import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
-import {grossPriceUnitLabel} from '@features/catalog/data/dto/product.dto';
+import {referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 
 
 @Component({
@@ -186,5 +186,5 @@ export class ProductList implements OnInit {
   }
 
   protected readonly AppNode = AppNode;
-  protected readonly grossPriceUnitLabel = grossPriceUnitLabel;
+  protected readonly referencePriceUnitLabel = referencePriceUnitLabel;
 }

@@ -1,5 +1,5 @@
 export interface CreatePricePayload {
   productPrice: number;
-  grossPrice: number;
+  referencePrice: number;
   priceDate: string;
 }

@@ -4,6 +4,6 @@ export interface PostDto {
   title: string;
   message: string;
   postalCode: string;
-  user: { displayName: string;};
+  user: { displayName: string; activeBadge: string | null; };
   commentCount: number;
 }

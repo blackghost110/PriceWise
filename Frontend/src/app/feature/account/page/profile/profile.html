@@ -1,0 +1,264 @@
+<app-header/>
+
+<main class="profile-page">
+  <div class="page-wrapper">
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         COLONNE GAUCHE — Carte profil
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="profile-card">
+
+      <!-- 1. Header dégradé vert -->
+      <div class="card-header">
+        <span class="profile-label">PROFIL</span>
+        <div class="deco-circle deco-1"></div>
+        <div class="deco-circle deco-2"></div>
+      </div>
+
+      <!-- Bouton crayon (édition) -->
+      <button mat-icon-button class="edit-btn"
+              matTooltip="Modifier le profil"
+              (click)="toggleEdit()">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <!-- Avatar (initiales) -->
+      <div class="avatar">{{ initials() }}</div>
+
+      <!-- 2. Corps de la carte -->
+      <div class="card-body">
+
+        @if (!isEditing()) {
+          <!-- Mode affichage -->
+          <p class="user-name">{{ currentUser()?.displayName }}</p>
+          @if (codename()) {
+            <p class="user-codename">{{ codename() }}</p>
+          }
+          <p class="user-email">{{ currentUser()?.email }}</p>
+        } @else {
+          <!-- Mode édition -->
+          <div class="edit-section">
+            <mat-form-field appearance="outline" class="edit-field">
+              <mat-label>Nom d'affichage</mat-label>
+              <input matInput [formControl]="displayNameControl">
+            </mat-form-field>
+
+            @switch (availability()) {
+              @case ('available') { <p class="control-success">Ce nom est disponible</p> }
+              @case ('taken')     { <p class="control-error">Ce nom est déjà utilisé</p> }
+            }
+            @if (displayNameError()) {
+              <p class="control-error">{{ displayNameError() }}</p>
+            }
+
+            <div class="edit-actions">
+              <button mat-button
+                      (click)="onCheckAvailability()"
+                      [disabled]="displayNameControl.invalid || availability() === 'checking'">
+                Vérifier
+              </button>
+              <button mat-button color="primary"
+                      (click)="onApplyDisplayName()"
+                      [disabled]="availability() !== 'available'">
+                Appliquer
+              </button>
+            </div>
+
+            <!-- Sélection du badge actif (= nom de code) -->
+            @if (unlockedCategories().length > 0) {
+              <mat-form-field appearance="outline" class="edit-field">
+                <mat-label>Badge actif (nom de code)</mat-label>
+                <mat-select [formControl]="activeBadgeControl">
+                  <mat-option [value]="null">Aucun</mat-option>
+                  @for (category of unlockedCategories(); track category.categoryName) {
+                    <mat-optgroup [label]="category.categoryName">
+                      @for (tier of category.tiers; track tier.badgeId) {
+                        <mat-option [value]="tier.tierName">{{ tier.tierName }}</mat-option>
+                      }
+                    </mat-optgroup>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              @if (activeBadgeError()) {
+                <p class="control-error">{{ activeBadgeError() }}</p>
+              }
+              <div class="edit-actions">
+                <button mat-button color="primary" (click)="onApplyActiveBadge()">
+                  Appliquer badge
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Séparateur -->
+        <div class="separator"></div>
+
+        <!-- 3. Cercle XP -->
+        <div class="xp-section">
+          <svg viewBox="0 0 144 144" width="144" height="144" class="xp-svg">
+            <defs>
+              <linearGradient id="xpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#43a047"/>
+                <stop offset="100%" stop-color="#a5d6a7"/>
+              </linearGradient>
+            </defs>
+            <!-- Anneau fond -->
+            <circle cx="72" cy="72" r="58" stroke="#e8f5e9" stroke-width="10" fill="none"/>
+            <!-- Anneau progression -->
+            <circle cx="72" cy="72" r="58"
+                    stroke="url(#xpGrad)"
+                    stroke-width="10"
+                    fill="none"
+                    stroke-linecap="round"
+                    transform="rotate(-90 72 72)"
+                    [attr.stroke-dasharray]="xpCircumference"
+                    [attr.stroke-dashoffset]="animated() ? xpOffset() : xpCircumference"
+                    class="xp-ring"/>
+            <!-- Texte centre -->
+            <text x="72" y="58" text-anchor="middle" class="svg-label">NIVEAU</text>
+            <text x="72" y="82" text-anchor="middle" class="svg-level">{{ profileStats()?.level ?? 1 }}</text>
+            <text x="72" y="99" text-anchor="middle" class="svg-xp">
+              {{ profileStats()?.xpIntoLevel ?? 0 }} / {{ profileStats()?.xpForNextLevel ?? 50 }} XP
+            </text>
+          </svg>
+        </div>
+
+        <!-- Séparateur -->
+        <div class="separator"></div>
+
+        <!-- 4. Bloc progression badges -->
+        <div class="progress-block">
+          <div class="progress-header">
+            <span class="progress-label">🏅 Badges débloqués</span>
+            <span class="progress-count">{{ unlockedCount() }}/{{ totalBadgeCount() }}</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill"
+                 [style.width.%]="animated() ? badgePct() : 0"></div>
+          </div>
+          <div class="progress-pct">{{ badgePct() }}% complété</div>
+        </div>
+
+        <!-- 5. Cercle hebdomadaire -->
+        <div class="weekly-block">
+          <div class="weekly-title">📅 CETTE SEMAINE</div>
+          <div class="weekly-inner">
+            <!-- SVG -->
+            <svg viewBox="0 0 80 80" width="80" height="80" class="weekly-svg">
+              <defs>
+                <linearGradient id="wkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#1976d2"/>
+                  <stop offset="100%" stop-color="#64b5f6"/>
+                </linearGradient>
+              </defs>
+              <circle cx="40" cy="40" r="32" stroke="#e3f2fd" stroke-width="8" fill="none"/>
+              <circle cx="40" cy="40" r="32"
+                      stroke="url(#wkGrad)"
+                      stroke-width="8"
+                      fill="none"
+                      stroke-linecap="round"
+                      transform="rotate(-90 40 40)"
+                      [attr.stroke-dasharray]="weeklyCircumference"
+                      [attr.stroke-dashoffset]="animated() ? weeklyOffset() : weeklyCircumference"
+                      class="weekly-ring"/>
+              <text x="40" y="37" text-anchor="middle" class="svg-weekly-count">{{ weeklyCount() }}</text>
+              <text x="40" y="50" text-anchor="middle" class="svg-weekly-max">/10</text>
+            </svg>
+
+            <!-- Infos droite -->
+            <div class="weekly-info">
+              @if (weeklyCompleted()) {
+                <p class="weekly-completed">✓ Cercle atteint ! +20 XP</p>
+              } @else {
+                <p class="weekly-contributions-count">{{ weeklyCount() }} contributions</p>
+                <p class="weekly-sub">cette semaine</p>
+              }
+              <!-- Pastilles jours -->
+              <div class="weekdays-row">
+                @for (active of weekDays(); track $index) {
+                  <div class="day-dot" [class.active]="active"></div>
+                }
+              </div>
+              <div class="weekdays-labels">
+                @for (label of dayLabels; track $index) {
+                  <span class="day-label">{{ label }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /card-body -->
+    </div><!-- /profile-card -->
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         COLONNE DROITE — Achievements
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="achievements-section">
+      <h2 class="achievements-title">Achievements</h2>
+      <p class="achievements-sub">Débloquez des succès en contribuant à la plateforme</p>
+
+      <div class="badges-grid">
+        @for (category of overview()?.categories ?? []; track category.categoryName) {
+          <div class="badge-card"
+               [ngClass]="getMetalClass(category)"
+               [class.badge-card-metal]="hasUnlockedTier(category)"
+               [class.expandable]="isExpandable(category)"
+               [class.expanded]="isExpanded(category)"
+               (click)="toggleExpand(category)">
+
+            <!-- Icône badge -->
+            <div class="badge-icon-wrap">
+              <img [src]="getBadgeImage(category)"
+                   [alt]="category.categoryName"
+                   class="badge-img"
+                   [class.locked-img]="!hasUnlockedTier(category)"/>
+            </div>
+
+            <!-- Nom catégorie -->
+            <p class="badge-name" [class.unlocked]="hasUnlockedTier(category)">
+              {{ category.categoryName }}
+            </p>
+
+            <!-- Barre de progression -->
+            <div class="badge-progress-area">
+              <div class="badge-progress-track">
+                <div class="badge-progress-fill"
+                     [class.locked]="!hasUnlockedTier(category)"
+                     [style.width.%]="getCategoryProgressPct(category)"></div>
+              </div>
+              <span class="badge-progress-text">{{ getCategoryProgressText(category) }}</span>
+            </div>
+
+            <!-- Tag palier -->
+            <div class="badge-tag" [class.unlocked]="hasUnlockedTier(category)">
+              <mat-icon class="tag-icon">new_label</mat-icon>
+              <span>{{ getNextTierName(category) }}</span>
+            </div>
+
+            <!-- Historique des paliers débloqués (dépliage) -->
+            @if (isExpandable(category) && isExpanded(category)) {
+              <div class="badge-history">
+                <span class="badge-history-title">Paliers débloqués</span>
+                <div class="badge-history-grid">
+                  @for (tier of getUnlockedTiers(category); track tier.badgeId) {
+                    <div class="history-item">
+                      <img [src]="getTierImage(category, tier)" [alt]="tier.tierName" class="history-img"/>
+                      <span class="history-label">{{ tier.tierName }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+    </div>
+
+  </div><!-- /page-wrapper -->
+</main>
+
+<app-footer/>

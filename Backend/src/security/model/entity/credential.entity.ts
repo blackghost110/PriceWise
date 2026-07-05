@@ -30,6 +30,15 @@ export class Credential extends BaseEntity {
     @Column({ default: 0 })
     warningCount: number;
 
+    // Nombre de cercles hebdomadaires validés (badge Inoxydable)
+    @Column({ default: 0 })
+    weeklyCircle: number;
+
+    // Clé de la semaine (date du lundi, ex. "2026-06-22") lors du dernier cercle hebdo validé.
+    // Permet d'éviter d'attribuer plusieurs fois les +20 XP dans la même semaine.
+    @Column({ type: 'varchar', nullable: true })
+    lastWeeklyCircleWeek: string | null;
+
     @OneToMany(() => ListEntity, (list) => list.user)
     lists: ListEntity[];
 

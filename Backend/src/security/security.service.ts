@@ -7,11 +7,15 @@ import { Builder } from 'builder-pattern';
 import * as admin from 'firebase-admin';
 import {
   CredentialDeleteException,
+  DisplayNameTakenException,
+  DisplayNameUpdateException,
   UserNotFoundException,
   UserUpdateException,
   UserUpdateNotFoundException,
 } from './security.exception';
 import { UpdateUserPayload } from './model/payload/update-user.payload';
+import { UpdateDisplayNamePayload } from './model/payload/update-display-name.payload';
+import { DisplayNameAvailableResponse } from './model/type/display-name-available.response';
 
 @Injectable()
 export class SecurityService {
@@ -78,5 +82,30 @@ export class SecurityService {
     }
   }
 
+  // displayName n'est pas unique en base (pas de contrainte SQL) : on vérifie au niveau applicatif
+  async isDisplayNameAvailable(displayName: string, currentUserId: string): Promise<DisplayNameAvailableResponse> {
+    const existing = await this.repository.findOneBy({ displayName });
+    const available = isNil(existing) || existing.credentialId === currentUserId;
+    return { available };
+  }
+
+  async updateDisplayName(userId: string, payload: UpdateDisplayNamePayload): Promise<Credential> {
+    const user = await this.repository.findOne({ where: { credentialId: userId } });
+    if (!user) {
+      throw new UserUpdateNotFoundException();
+    }
+
+    const existing = await this.repository.findOneBy({ displayName: payload.displayName });
+    if (!isNil(existing) && existing.credentialId !== userId) {
+      throw new DisplayNameTakenException();
+    }
+
+    try {
+      user.displayName = payload.displayName;
+      return await this.repository.save(user);
+    } catch (e) {
+      throw new DisplayNameUpdateException();
+    }
+  }
 
 }

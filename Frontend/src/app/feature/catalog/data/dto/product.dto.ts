@@ -6,7 +6,7 @@ export interface ProductDto {
   unit: ProductUnitType;
   quantity: number;
   productPrice: number;
-  grossPrice: number;
+  referencePrice: number;
   priceDate: Date;
 
 }
@@ -17,7 +17,7 @@ export enum ProductUnitType {
   PIECE = 'p'
 }
 
-export function grossPriceUnitLabel(unit: string): string {
+export function referencePriceUnitLabel(unit: string): string {
   switch (unit) {
     case ProductUnitType.G:
       return 'Kg';
@@ -28,4 +28,22 @@ export function grossPriceUnitLabel(unit: string): string {
     default:
       return unit;
   }
+}
+
+/**
+ * Calcule le prix normalisé (referencePrice) à partir du prix, de la quantité et de l'unité
+ * du produit. Les produits sont stockés en grammes / millilitres / pièces ; on normalise donc
+ * au kilo, au litre, ou à la pièce.
+ * Retourne `null` si le calcul n'est pas possible (valeurs manquantes ou invalides).
+ */
+export function computeReferencePrice(
+  productPrice: number | null | undefined,
+  quantity: number | null | undefined,
+  unit: string | null | undefined,
+): number | null {
+  const price = Number(productPrice);
+  const qty = Number(quantity);
+  if (!unit || !price || !qty || price <= 0 || qty <= 0) return null;
+  const factor = (unit === ProductUnitType.G || unit === ProductUnitType.ML) ? 1000 : 1;
+  return Math.round((price / qty) * factor * 100) / 100;
 }

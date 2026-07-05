@@ -93,7 +93,7 @@ export class ListProductService {
         unit: listProduct.product.unit,
         quantity: listProduct.product.quantity,
         productPrice: listProduct.product.prices[0].productPrice,
-        grossPrice: listProduct.product.prices[0].grossPrice,
+        referencePrice: listProduct.product.prices[0].referencePrice,
         priceDate: listProduct.product.prices[0].priceDate,
         storeName: listProduct.product.store.name,
         storeStreet: listProduct.product.store.street,

@@ -55,7 +55,12 @@
 
         <ng-container matColumnDef="user">
           <th mat-header-cell *matHeaderCellDef> Auteur </th>
-          <td mat-cell *matCellDef="let post"> {{post.user.displayName}} </td>
+          <td mat-cell *matCellDef="let post">
+            {{post.user.displayName}}
+            @if (post.user.activeBadge) {
+              <span class="author-badge">{{ post.user.activeBadge }}</span>
+            }
+          </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

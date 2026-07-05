@@ -13,10 +13,10 @@ import {MatHint, MatInput, MatLabel} from '@angular/material/input';
 import {MatFormField, MatSuffix} from '@angular/material/form-field';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {CreateProductPayload} from '@features/catalog/data/payload/create-product.payload';
-import {ProductDto, ProductUnitType} from '@features/catalog/data/dto/product.dto';
+import {computeReferencePrice, ProductDto, ProductUnitType, referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ProductService} from '@features/catalog/service/product.service';
-import {debounceTime, distinctUntilChanged, map, startWith, catchError, EMPTY} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, merge, startWith, catchError, EMPTY} from 'rxjs';
 import {MatAutocomplete, MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -65,6 +65,9 @@ export class AddProductDialog {
 
   errorMessage = signal<string | null>(null);
 
+  suggestionHint = signal<string | null>(null);
+  private referenceManuallyEdited = signal(false);
+
   constructor() {
     this.productService.getProducts(Number(this.store.storeId))
       .subscribe(products => {
@@ -73,6 +76,7 @@ export class AddProductDialog {
       })
 
     this.setupNameAutocomplete();
+    this.setupReferenceSuggestion();
   }
 
   productForm = new FormGroup({
@@ -90,7 +94,7 @@ export class AddProductDialog {
     productPrice: new FormControl<number| null>(null, {
       validators: [Validators.required, Validators.min(0.01)]
     }),
-    grossPrice: new FormControl<number| null>(null, {
+    referencePrice: new FormControl<number| null>(null, {
       validators: [Validators.required, Validators.min(0.01)]
     }),
   })
@@ -112,7 +116,7 @@ export class AddProductDialog {
       unit: formValue.unit!,
       quantity: formValue.quantity!,
       initialPrice: formValue.productPrice!,
-      initialGrossPrice: formValue.grossPrice!
+      initialReferencePrice: formValue.referencePrice!
     }
     console.log('price payload :', payload)
 
@@ -143,6 +147,47 @@ export class AddProductDialog {
         this.errorMessage.set(null);
       });
     }
+  }
+
+  private setupReferenceSuggestion() {
+    const productPriceControl = this.productForm.get('productPrice');
+    const quantityControl = this.productForm.get('quantity');
+    const unitControl = this.productForm.get('unit');
+    const referenceControl = this.productForm.get('referencePrice');
+
+    referenceControl?.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(value => {
+      this.referenceManuallyEdited.set(!!value);
+    });
+
+    if (!productPriceControl || !quantityControl || !unitControl || !referenceControl) {
+      return;
+    }
+
+    merge(
+      productPriceControl.valueChanges,
+      quantityControl.valueChanges,
+      unitControl.valueChanges
+    ).pipe(
+      debounceTime(400),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
+      const { productPrice, quantity, unit } = this.productForm.getRawValue();
+      const suggested = computeReferencePrice(productPrice, quantity, unit);
+
+      if (suggested === null) {
+        this.suggestionHint.set(null);
+        return;
+      }
+
+      const unitLabel = referencePriceUnitLabel(unit!);
+      this.suggestionHint.set(`Suggéré d'après ${quantity}${unit} → ${suggested.toFixed(2)} €/${unitLabel}`);
+
+      if (!this.referenceManuallyEdited()) {
+        referenceControl.setValue(suggested, { emitEvent: false });
+      }
+    });
   }
 
   private filterProducts(searchTerm: string): ProductDto[] {

@@ -15,6 +15,8 @@ export enum ApiCodeResponse {
   PAYLOAD_IS_NOT_VALID = 'api.error.payload-is-not-valid',
   USER_UPDATE_NOT_FOUND_EXCEPTION = 'api.security.error.user-update-not-found-exception', // new
   USER_UPDATE_EXCEPTION = 'api.security.error.user-update-exception', // new
+  ACCOUNT_DISPLAY_NAME_TAKEN_EXCEPTION = 'api.account.error.display-name-taken-exception',
+  ACCOUNT_DISPLAY_NAME_UPDATE_EXCEPTION = 'api.account.error.display-name-update-exception',
 
 
   // SOCIAL API EXCEPTIONS --------------------------------------------//
@@ -81,5 +83,16 @@ export enum ApiCodeResponse {
   STORE_GET_PRODUCTS_EXCEPTION = 'api.store.error.get-products-exception',
   STORE_UPDATE_NOT_FOUND_EXCEPTION = 'api.store.error.update-not-found-exception', // new
   STORE_UPDATE_EXCEPTION = 'api.store.error.update-exception', //new
+
+  // GAMIFICATION API EXCEPTIONS (Badges & XP) --------------------------------------------//
+
+  BADGE_OVERVIEW_EXCEPTION = 'api.badge.error.overview-exception',
+  BADGE_SET_ACTIVE_NOT_UNLOCKED_EXCEPTION = 'api.badge.error.set-active-not-unlocked-exception',
+  BADGE_SET_ACTIVE_EXCEPTION = 'api.badge.error.set-active-exception',
+  GAMIFICATION_PROFILE_EXCEPTION = 'api.gamification.error.profile-exception',
+
+  // ACTIVITY LOG API EXCEPTIONS --------------------------------------------//
+
+  ACTIVITY_LOG_GET_ALL_EXCEPTION = 'api.activity-log.error.get-all-exception',
 
 }

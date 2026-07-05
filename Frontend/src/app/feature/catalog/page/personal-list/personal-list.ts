@@ -28,7 +28,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {ListProductDto} from '@features/catalog/data/dto/list-product.dto';
 import {RouterLink} from '@angular/router';
 import {AppRoutes} from '@shared/route/app-routes.enum';
-import {grossPriceUnitLabel} from '@features/catalog/data/dto/product.dto';
+import {referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 
 @Component({
   selector: 'app-personal-list',
@@ -185,5 +185,5 @@ export class PersonalList implements OnInit{
   }
 
   readonly AppRoutes = AppRoutes;
-  readonly grossPriceUnitLabel = grossPriceUnitLabel;
+  readonly referencePriceUnitLabel = referencePriceUnitLabel;
 }

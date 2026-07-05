@@ -8,9 +8,11 @@ import {FirebaseAuthGuard} from "../security/firebase/firebase-auth.guard";
 import {SecurityModule} from "../security/security.module";
 import {CatalogModule} from "../module/catalog/catalog.module";
 import { SocialModule } from '../module/social/social.module';
+import { GamificationModule } from '../module/gamification/gamification.module';
+import { ActivityLogModule } from '../module/activity-log/activity-log.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(configManager.getTypeOrmConfig()), SecurityModule, CatalogModule, SocialModule],
+  imports: [TypeOrmModule.forRoot(configManager.getTypeOrmConfig()), SecurityModule, CatalogModule, SocialModule, GamificationModule, ActivityLogModule],
   controllers: [AppController],
   providers: [AppService, {provide: APP_GUARD, useClass: FirebaseAuthGuard}],
 })

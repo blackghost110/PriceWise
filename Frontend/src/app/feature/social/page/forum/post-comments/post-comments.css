@@ -56,3 +56,8 @@
 .control-error {
   color: #a94442;
 }
+.author-badge {
+  display: block;
+  color: #999;
+  font-size: 11px;
+}

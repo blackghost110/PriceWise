@@ -107,7 +107,7 @@ export class AuthService {
     return !!this.currentUser();
   }
 
-  private async refreshCurrentUser(): Promise<void> {
+  public async refreshCurrentUser(): Promise<void> {
     try {
       const user = await firstValueFrom(this.api.get<UserDto>(ApiURI.ME));
       this.currentUser.set(user);

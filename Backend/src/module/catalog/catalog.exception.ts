@@ -124,7 +124,7 @@ export class PriceCreateBadRequestException extends ApiException {
 }
 
 export class PriceCreateConflictException extends ApiException { // ---------------------------------------------------//
-  constructor(priceData: {priceId: number, productPrice: number, grossPrice: number}) {
+  constructor(priceData: {priceId: number, productPrice: number, referencePrice: number}) {
     super(ApiCodeResponse.PRICE_CREATE_CONFLICT_EXCEPTION, 409, priceData );
   }
 }

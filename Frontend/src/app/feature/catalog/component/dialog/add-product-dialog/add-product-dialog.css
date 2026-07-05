@@ -9,4 +9,10 @@ input.arrow-display::-webkit-inner-spin-button {
   color: #a94442;
   padding: 4px 10px;
 }
+.suggestion-hint {
+  color: #3c763d;
+  font-size: 0.85em;
+  padding: 0 10px;
+  margin: 0 0 8px;
+}
 

@@ -2,6 +2,7 @@ import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
 import {StoreEntity} from "./store.entity";
 import {PriceEntity} from "./price.entity";
 import {BaseEntity} from "@common/model/base.entity";
+import {Credential} from "../../../security/model/entity/credential.entity";
 
 export enum ProductUnitType {
     G = 'g',
@@ -26,6 +27,13 @@ export class ProductEntity extends BaseEntity {
 
     @Column()
     quantity: number;
+
+    @Column({ nullable: true })
+    credentialId: string;
+
+    @ManyToOne(() => Credential, { nullable: true })
+    @JoinColumn({ name: 'credentialId' })
+    credential: Credential;
 
     @OneToMany(() => PriceEntity, (price) => price.product, { cascade: true , onDelete: "CASCADE" })
     prices: PriceEntity[];

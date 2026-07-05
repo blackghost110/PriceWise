@@ -20,6 +20,9 @@ export class AppRoutes {
   static readonly DASHBOARD_PAGE = `/${AppNode.FORUM}/${AppNode.DASHBOARD}`;
   static readonly LEADERBOARD_PAGE = `/${AppNode.FORUM}/${AppNode.LEADERBOARD}`;
 
+  // Account pages
+  static readonly PROFILE_PAGE = `/${AppNode.PROFILE}`;
+
 
 
   // Méthodes helpers pour les routes avec paramètres

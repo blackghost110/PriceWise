@@ -7,5 +7,5 @@ export interface CreateProductPayload {
   unit: ProductUnitType;
   quantity: number;
   initialPrice: number;
-  initialGrossPrice: number;
+  initialReferencePrice: number;
 }

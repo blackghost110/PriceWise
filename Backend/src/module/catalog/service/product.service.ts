@@ -18,12 +18,19 @@ import {
   ProductGetAllException,
 } from '../catalog.exception';
 import { GetAllProductsQueryDTO } from '../model/dto/get-all-products-query.dto';
+import { XpService } from '../../gamification/service/xp.service';
+import { ActivityLogService } from '../../activity-log/service/activity-log.service';
+import { EntityType } from '../../activity-log/model/activity-log.entity';
 
 @Injectable()
 export class ProductService {
-    constructor(@InjectRepository(ProductEntity) private readonly productRepository: Repository<ProductEntity>,
-                @InjectRepository(PriceEntity) private readonly priceRepository: Repository<PriceEntity>,
-                @InjectRepository(StoreEntity) private readonly storeRepository: Repository<StoreEntity>,) {}
+    constructor(
+      @InjectRepository(ProductEntity) private readonly productRepository: Repository<ProductEntity>,
+      @InjectRepository(PriceEntity) private readonly priceRepository: Repository<PriceEntity>,
+      @InjectRepository(StoreEntity) private readonly storeRepository: Repository<StoreEntity>,
+      private readonly xpService: XpService,
+      private readonly activityLogService: ActivityLogService,
+    ) {}
 
     async createProduct(user: Credential, storeId: number, createProductDto: CreateProductDto) {
 
@@ -50,15 +57,22 @@ export class ProductService {
         const product = new ProductEntity();
         Object.assign(product, createProductDto)
         product.store = store;
+        product.credentialId = user.credentialId;
 
         const price = new PriceEntity();
         price.productPrice = createProductDto.initialPrice;
-        price.grossPrice = createProductDto.initialGrossPrice;
+        price.referencePrice = createProductDto.initialReferencePrice;
         price.user = user;
 
         product.prices = [price];
 
-        return await this.productRepository.save(product)
+        const saved = await this.productRepository.save(product);
+        // Attribuer +3 XP (produit) + +1 XP (prix initial) + cercle hebdo (best-effort)
+        this.xpService.awardProductXp(user.credentialId).catch(() => {});
+        // Journalisation (best-effort) : le produit et son prix initial sont deux entités créées
+        this.activityLogService.logAdd(EntityType.PRODUCT, saved.productId, user.credentialId).catch(() => {});
+        this.activityLogService.logAdd(EntityType.PRICE, saved.prices[0].priceId, user.credentialId).catch(() => {});
+        return saved;
 
       } catch (e) {
         throw new ProductCreateException();
@@ -103,7 +117,7 @@ export class ProductService {
         unit: product.unit,
         quantity: product.quantity,
         productPrice: product.prices[0].productPrice,
-        grossPrice: product.prices[0].grossPrice,
+        referencePrice: product.prices[0].referencePrice,
         priceDate: product.prices[0].priceDate,
         storeName: product.store.name,
         storeStreet: product.store.street,
@@ -134,6 +148,7 @@ export class ProductService {
       brand: product.brand,
       unit: product.unit,
       quantity: product.quantity,
+      credentialId: product.credentialId,
 
       storeName: product.store.name,
       storeStreet: product.store.street,
@@ -144,14 +159,14 @@ export class ProductService {
       prices: product.prices.map((price) => ({
         priceId: price.priceId,
         productPrice: (price.productPrice),
-        grossPrice: (price.grossPrice),
+        referencePrice: (price.referencePrice),
         priceDate: price.priceDate
       }))
     };
   }
 
   // Verifier les exceptions
-  async deleteProduct(productId: number): Promise<void> {
+  async deleteProduct(productId: number, credentialId: string): Promise<void> {
     const product = await this.productRepository.findOne({
       where: { productId } });
     if (!product) {
@@ -159,6 +174,8 @@ export class ProductService {
     }
     try {
       await this.productRepository.remove(product);
+      // Journalisation (best-effort)
+      this.activityLogService.logDelete(EntityType.PRODUCT, productId, credentialId).catch(() => {});
     } catch (e) {
       throw new ProductDeleteException();
     }

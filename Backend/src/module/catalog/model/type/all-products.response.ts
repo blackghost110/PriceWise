@@ -5,7 +5,7 @@ export class AllProductsResponse {
   unit: ProductUnitType;
   quantity: number;
   productPrice: number;
-  grossPrice: number;
+  referencePrice: number;
   priceDate: Date;
   storeName: string;
   storeStreet: string;

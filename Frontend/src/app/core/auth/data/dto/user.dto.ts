@@ -7,4 +7,5 @@ export interface UserDto {
   xp: number;
   activeBadge: string | null;
   warningCount: number;
+  weeklyCircle: number;
 }

@@ -16,7 +16,12 @@
       <article class="card" style="padding: 10px">
         <p class="article-date">Publié le {{$safeNavigationMigration(postInfo()?.created) | date: 'medium'}}</p>
         <h1>{{postInfo()?.title}}</h1>
-        <p>{{ postInfo()?.user!.displayName }}</p>
+        <p class="post-author">
+          {{ postInfo()?.user!.displayName }}
+          @if (postInfo()?.user!.activeBadge) {
+            <span class="author-badge">{{ postInfo()?.user!.activeBadge }}</span>
+          }
+        </p>
         <p>{{postInfo()?.message}}</p>
       </article>
     </div>
@@ -52,7 +57,12 @@
         @for (comment of commentList(); track comment.commentId) {
           <article class="card" >
             <div class="comment-header">
-              <p class="commentUsername">{{comment.user.displayName}}</p>
+              <p class="commentUsername">
+                {{comment.user.displayName}}
+                @if (comment.user.activeBadge) {
+                  <span class="author-badge">{{ comment.user.activeBadge }}</span>
+                }
+              </p>
               <p class="commentDate">{{comment.created | date: "medium"}}</p>
             </div>
 

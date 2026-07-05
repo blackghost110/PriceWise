@@ -39,6 +39,10 @@
         <mat-icon>settings</mat-icon>
       </button>
       <mat-menu #currentUserMenu="matMenu">
+        <button mat-menu-item [routerLink]="AppRoutes.PROFILE_PAGE">
+          <mat-icon>person</mat-icon>
+          <span>Mon Profil</span>
+        </button>
         <button mat-menu-item (click)="onLogout()">
           <mat-icon>logout</mat-icon>
           <span>Déconnexion</span>

@@ -2,6 +2,12 @@ export enum ApiURI {
   ME='account/me',
   ACCOUNT_GET_ALL = 'account/all',
   ACCOUNT_UPDATE = 'account/:userId',
+  ACCOUNT_DISPLAY_NAME_AVAILABLE = 'account/display-name/available',
+  ACCOUNT_DISPLAY_NAME_UPDATE = 'account/me/display-name',
+
+  BADGE_OVERVIEW = 'badge/overview',
+  BADGE_SET_ACTIVE = 'badge/active',
+  GAMIFICATION_PROFILE = 'badge/profile',
 
 
   COMMENT_CREATE='comment',

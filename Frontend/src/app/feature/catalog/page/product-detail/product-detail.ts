@@ -19,7 +19,7 @@ import {
 } from '@features/catalog/component/dialog/add-product-to-list-dialog/add-product-to-list-dialog';
 import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
-import {grossPriceUnitLabel} from '@features/catalog/data/dto/product.dto';
+import {referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 import {SnackbarService} from '@shared/service/snackbar.service';
 
 @Component({
@@ -166,7 +166,7 @@ export class ProductDetail implements OnInit{
         if (this.priceTypeFilter() === 'product') {
           return price.priceId === 0 ? null : price.productPrice;
         } else {
-          return price.priceId === 0 ? null : price.grossPrice;
+          return price.priceId === 0 ? null : price.referencePrice;
         }
       });
 
@@ -225,7 +225,7 @@ export class ProductDetail implements OnInit{
 
 
   protected readonly AppNode = AppNode;
-  protected readonly grossPriceUnitLabel = grossPriceUnitLabel;
+  protected readonly referencePriceUnitLabel = referencePriceUnitLabel;
 }
 
 

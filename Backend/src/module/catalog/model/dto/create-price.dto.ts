@@ -9,7 +9,7 @@ export class CreatePriceDto {
 
     @ApiProperty()
     @IsNotEmpty()
-    grossPrice: number;
+    referencePrice: number;
 
     @ApiProperty({
         type: Date,

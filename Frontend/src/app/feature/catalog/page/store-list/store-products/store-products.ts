@@ -32,7 +32,7 @@ import {
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
-import {grossPriceUnitLabel} from '@features/catalog/data/dto/product.dto';
+import {referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
 
 @Component({
@@ -80,7 +80,7 @@ export class StoreProducts implements OnInit {
   private dialogService = inject(DialogService);
   paginator = viewChild(MatPaginator);
   protected readonly AppNode = AppNode;
-  protected readonly grossPriceUnitLabel = grossPriceUnitLabel;
+  protected readonly referencePriceUnitLabel = referencePriceUnitLabel;
 
   dataSource = new MatTableDataSource<ProductDto>([]);
   displayedColumns: string[] = ['name','quantity', 'price', 'lastPrice', 'action' ];
