@@ -7,10 +7,12 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {CreateStoreDto} from "../model/dto/create-store.dto";
 import {StoreService} from "../service/store.service";
+import {StoreBrandService} from "../service/store-brand.service";
 import { StoreProductsResponse} from "../model/type/store-products.response";
 import { AdminGuard } from '@common/api/admin.guard';
 import { UpdateStoreDto } from '../model/dto/update-store.dto';
@@ -21,7 +23,10 @@ import { Credential } from "../../../security/model/entity/credential.entity";
 @ApiTags('Store Controller')
 @Controller('store')
 export class StoreController {
-  constructor(private readonly storeService: StoreService) {}
+  constructor(
+    private readonly storeService: StoreService,
+    private readonly storeBrandService: StoreBrandService,
+  ) {}
 
   @Post()
   async createStore(@User() user: Credential, @Body() createStoreDto: CreateStoreDto) {
@@ -36,6 +41,12 @@ export class StoreController {
   @Get('/last')
   async findTwoLast() {
     return this.storeService.findTwoLast();
+  }
+
+  // Déclaré avant ':storeId' pour éviter que 'brand' soit capté comme un storeId
+  @Get('/brand')
+  async getBrandByName(@Query('name') name: string) {
+    return this.storeBrandService.getBrandByName(name);
   }
 
 

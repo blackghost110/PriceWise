@@ -16,43 +16,135 @@
   </div>
 </nav>
 
-<main class="main-content">
-  <div class="content-container">
-    <div class="main-section">
-      <div class="section-header">
-        <h2>Liste des utilisateurs</h2>
+<main class="page">
 
-
-      </div>
-      @if (userList() !== null) {
-        <table mat-table [dataSource]="userList()!" class="product-table">
-          <ng-container matColumnDef="displayName" >
-            <th mat-header-cell *matHeaderCellDef> Nom </th>
-            <td mat-cell *matCellDef="let user" class="table-name">{{user.displayName}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="score">
-            <th mat-header-cell *matHeaderCellDef>Score </th>
-            <td mat-cell *matCellDef="let user">{{ user.pricecount }}
-            </td>
-          </ng-container>
-
-
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-        </table>
-
-      }
-
-
-
-
-    </div>
+  <div class="page-header">
+    <h1 class="page-header__title">Classement</h1>
+    <p class="page-header__sub">Grimpe dans le classement en gagnant de l'XP</p>
   </div>
 
-</main>
+  <!-- ══════════════ FILTERS CARD ══════════════ -->
+  <div class="filters-card">
 
+    <div class="filters-row">
+      <div class="segmented">
+        <button type="button" class="segmented__btn" [class.segmented__btn--active]="scale() === 'global'" (click)="setScale('global')">🌍 Mondial</button>
+        <button type="button" class="segmented__btn" [class.segmented__btn--active]="scale() === 'local'" (click)="setScale('local')">📍 Locale</button>
+      </div>
+    </div>
+
+    <div class="segmented segmented--fit">
+      <button type="button" class="segmented__btn" [class.segmented__btn--active]="period() === 'all'" (click)="setPeriod('all')">Tout temps</button>
+      <button type="button" class="segmented__btn" [class.segmented__btn--active]="period() === 'month'" (click)="setPeriod('month')">Mensuel</button>
+    </div>
+
+    @if (period() === 'month') {
+      <div class="countdown">
+        ⏳ Se termine dans {{ monthCountdown().days }}j {{ monthCountdown().hours }}h {{ monthCountdown().minutes }}min
+      </div>
+    }
+  </div>
+
+  @if (scale() === 'local') {
+
+    <!-- ══════════════ CLASSEMENT LOCAL — À VENIR ══════════════ -->
+    <div class="empty-state">
+      <div class="empty-state__icon">🚧</div>
+      <div class="empty-state__title">Classement local</div>
+      <div class="empty-state__sub">Bientôt disponible — cette fonctionnalité arrive prochainement</div>
+    </div>
+
+  } @else if (errorMessage()) {
+
+    <div class="empty-state">
+      <div class="empty-state__icon">⚠️</div>
+      <div class="empty-state__title">Oups</div>
+      <div class="empty-state__sub">{{ errorMessage() }}</div>
+    </div>
+
+  } @else if (isLoading() && entries().length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-state__sub">Chargement du classement...</div>
+    </div>
+
+  } @else if (entries().length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-state__icon">🏆</div>
+      <div class="empty-state__title">Aucun joueur pour l'instant</div>
+      <div class="empty-state__sub">Sois le premier à marquer des points !</div>
+    </div>
+
+  } @else {
+
+    <!-- ══════════════ PODIUM (top 3) ══════════════ -->
+    <div class="podium">
+      @for (entry of podium(); track entry.userId) {
+        <div class="podium__slot"
+             [class.podium__slot--first]="entry.rank === 1"
+             [class.podium__slot--side]="entry.rank !== 1"
+             [style.order]="entry.rank === 1 ? 2 : (entry.rank === 2 ? 1 : 3)">
+
+          @if (entry.rank === 1) {
+            <div class="podium__crown">👑</div>
+          }
+
+          <div class="podium__avatar"
+               [class.podium__avatar--first]="entry.rank === 1"
+               [class.podium__avatar--side]="entry.rank !== 1"
+               [style.background]="avatarGradient(entry.userId)">
+            {{ initials(entry.displayName) }}
+          </div>
+
+          <div class="podium__name">{{ entry.displayName }}</div>
+          @if (entry.codename) {
+            <div class="podium__codename">{{ entry.codename }}</div>
+          }
+
+          <div class="podium__card" [style.height.px]="entry.rank === 1 ? 190 : (entry.rank === 2 ? 160 : 148)">
+            <div class="podium__rank-badge" [style.background]="medalColor(entry.rank)">{{ entry.rank }}</div>
+            <div class="podium__xp" [style.color]="medalColor(entry.rank)">{{ formatXp(entry.xp) }} XP</div>
+            <div class="podium__meta">🏅 {{ entry.badges }}/36 · Niv. {{ entry.level }}</div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- ══════════════ RANKED LIST (rank 4+) ══════════════ -->
+    @if (rest().length > 0) {
+      <div class="ranked-list">
+
+        <div class="ranked-list__header">
+          <span>Rang</span>
+          <span>Joueur</span>
+          <span class="col-center">Badges</span>
+          <span class="col-center">Niveau</span>
+          <span class="col-right">XP</span>
+        </div>
+
+        @for (entry of rest(); track entry.userId) {
+          <div class="ranked-row" [class.ranked-row--me]="entry.isMe">
+            <div class="ranked-row__rank">{{ entry.rank }}</div>
+            <div class="ranked-row__player">
+              <div class="ranked-row__avatar" [style.background]="avatarGradient(entry.userId)">{{ initials(entry.displayName) }}</div>
+              <div class="ranked-row__identity">
+                <div class="ranked-row__name">{{ entry.displayName }}</div>
+                @if (entry.codename) {
+                  <div class="ranked-row__codename">{{ entry.codename }}</div>
+                }
+              </div>
+            </div>
+            <div class="ranked-row__badges">🏅 {{ entry.badges }}/36</div>
+            <div class="ranked-row__level-wrap"><div class="ranked-row__level">{{ entry.level }}</div></div>
+            <div class="ranked-row__xp">⚡ {{ formatXp(entry.xp) }}</div>
+          </div>
+        }
+      </div>
+    }
+
+  }
+
+</main>
 
 <app-footer/>

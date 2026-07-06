@@ -16,87 +16,89 @@
 
 
 <main class="main-content">
-  <div class="content-container">
-    <div class="main-section">
-      <div class="section-header">
-        <h2>Liste des magasins</h2>
-<!--        <p>Selection de magasin disponible : 20</p>-->
+  <div class="content-grid">
+    <div class="section-header">
+      <h2>Liste des magasins</h2>
 
-        <mat-form-field appearance="outline" class="white-background">
-          <mat-label>Rechercher un magasin</mat-label>
-          <input matInput
-                 placeholder="Nom ou rue..."
-                 [value]="searchTerm()"
-                 (input)="onSearchChange($event.target!.value)" >
-          @if (searchTerm()) {
-            <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
-          } @else {
-            <mat-icon matIconSuffix>search</mat-icon>
-          }
-        </mat-form-field>
-        <button matButton="elevated" style="float: right" (click)="onOpenDialogAddStore()">
-          <mat-icon>add</mat-icon>
-          Ajouter un magasin</button>
-      </div>
+      <mat-form-field appearance="outline" class="white-background">
+        <mat-label>Rechercher un magasin</mat-label>
+        <input matInput
+               placeholder="Nom ou rue..."
+               [value]="searchTerm()"
+               (input)="onSearchChange($event.target!.value)" >
+        @if (searchTerm()) {
+          <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
+        } @else {
+          <mat-icon matIconSuffix>search</mat-icon>
+        }
+      </mat-form-field>
+      <button matButton="elevated" style="float: right" (click)="onOpenDialogAddStore()">
+        <mat-icon>add</mat-icon>
+        Ajouter un magasin</button>
+    </div>
 
-      <div class="list">
-        @if (filteredStores()?.length !== 0) {
+    <div class="results">
+      @if (filteredStores()?.length !== 0) {
+        <div class="store-grid">
           @for (store of filteredStores(); track store.storeId) {
-            <article class="card" (click)="onNavigateToStore(store)">
-              <h3 class="title">{{ store.name }} - {{ store.city }} {{ store.postalCode }}</h3>
-              <div class="street">
-                <span>{{ store.street }}, {{ store.number }}</span>
-                @if (isAdmin()) {
-                  <button matIconButton [matMenuTriggerFor]="ProductMenu" class="detail-button" (click)="$event.stopPropagation()">
-                    <mat-icon>settings</mat-icon>
+            <article class="store-card" (click)="onNavigateToStore(store)">
+              @if (isAdmin()) {
+                <button matIconButton [matMenuTriggerFor]="ProductMenu" class="detail-button" (click)="$event.stopPropagation()">
+                  <mat-icon>settings</mat-icon>
+                </button>
+                <mat-menu #ProductMenu="matMenu">
+                  <button mat-menu-item (click)="onOpenDialogUpdateStore(store)" style="color: darkred">
+                    <mat-icon style="color: darkred">edit_square</mat-icon>
+                    Modifier ce magasin
                   </button>
-                  <mat-menu #ProductMenu="matMenu">
-                    <button mat-menu-item (click)="onOpenDialogUpdateStore(store)" style="color: darkred">
-                      <mat-icon style="color: darkred">edit_square</mat-icon>
-                      Modifier ce magasin
-                    </button>
-                    <button mat-menu-item (click)="onOpenDialogDeleteStore(store)" style="color: darkred">
-                      <mat-icon style="color: darkred">delete</mat-icon>
-                      Supprimer ce magasin
-                    </button>
-                  </mat-menu>
-                }
-
+                  <button mat-menu-item (click)="onOpenDialogDeleteStore(store)" style="color: darkred">
+                    <mat-icon style="color: darkred">delete</mat-icon>
+                    Supprimer ce magasin
+                  </button>
+                </mat-menu>
+              }
+              <span class="store-badge" [style.background]="badgeBg(store)" [style.color]="badgeText(store)">
+                {{ store.name }}
+              </span>
+              <div class="store-card__address">
+                <div class="store-card__street"><span class="store-card__pin">📍</span>{{ store.street }}, {{ store.number }}</div>
+                <div class="store-card__city">{{ store.postalCode }} {{ store.city }}</div>
               </div>
             </article>
           }
-        } @else {
-          <p>Aucun magasin disponible! Vérifiez vos filtres ou ajoutez un magasin !</p>
-        }
-      </div>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <div class="empty-state__icon">🔎</div>
+          <div class="empty-state__title">Aucun magasin trouvé</div>
+          <div class="empty-state__sub">Vérifiez vos filtres ou ajoutez un magasin !</div>
+        </div>
+      }
     </div>
 
     <aside class="sidebar">
-      <div class="sidebar-header">
-        <h3>Nouveau ajout</h3>
-      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-card__title">✨ Nouveaux ajouts</div>
 
-      <div class="hot-deals">
-        @for (store of storeLastTwo(); track $index) {
-          <div class="hot-deal-item">
-            <div>
-              <div >{{ store.postalCode }}</div>
-              <div >{{ store.name }} - {{ store.city }}</div>
-              <div >{{ store.street }}, {{ store.number }}</div>
+        <div class="recent-list">
+          @for (store of storeLastTwo(); track $index) {
+            <div class="recent-item">
+              <div class="recent-item__top">
+                <span class="store-badge store-badge--sm" [style.background]="badgeBg(store)" [style.color]="badgeText(store)">
+                  {{ store.name }}
+                </span>
+                <span class="recent-item__tag">{{ relativeDate(store.created) }}</span>
+              </div>
+              <div class="recent-item__street">{{ store.street }}, {{ store.number }}</div>
+              <div class="recent-item__city">{{ store.postalCode }} {{ store.city }}</div>
             </div>
-          </div>
-          @if (!$last) {
-            <hr>
           }
-        }
-
+        </div>
       </div>
     </aside>
-
 
   </div>
 
 </main>
 
 <app-footer/>
-

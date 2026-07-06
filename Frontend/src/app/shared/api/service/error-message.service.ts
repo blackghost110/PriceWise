@@ -101,6 +101,7 @@ export class ErrorMessageService {
     ['api.badge.error.set-active-not-unlocked-exception', 'Vous devez d\'abord débloquer ce badge pour l\'afficher'],
     ['api.badge.error.set-active-exception', 'Impossible de mettre à jour le badge actif. Veuillez réessayer.'],
     ['api.gamification.error.profile-exception', 'Impossible de charger votre profil de jeu. Veuillez réessayer.'],
+    ['api.gamification.error.leaderboard-exception', 'Impossible de charger le classement. Veuillez réessayer.'],
 
     // Message par défaut
     ['default', 'Une erreur inattendue s\'est produite. Veuillez réessayer.']

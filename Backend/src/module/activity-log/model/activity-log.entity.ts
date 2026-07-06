@@ -12,6 +12,8 @@ export enum EntityType {
   STORE = 'STORE',
   PRODUCT = 'PRODUCT',
   PRICE = 'PRICE',
+  // Complétion d'un cercle hebdomadaire (+20 XP) — pas d'entité propre, entityId = 0.
+  WEEKLY_CIRCLE = 'WEEKLY_CIRCLE',
 }
 
 // Journal d'activité : trace chaque mutation (ADD/UPDATE/DELETE) faite sur les

@@ -10,6 +10,7 @@ import {
   XP_THRESHOLDS,
 } from '../data/xp.constants';
 import { ProfileGamificationResponse } from '../model/type/profile-gamification.response';
+import { ActivityLogService } from '../../activity-log/service/activity-log.service';
 
 @Injectable()
 export class XpService {
@@ -20,6 +21,7 @@ export class XpService {
     private readonly credentialRepository: Repository<Credential>,
     @InjectRepository(PriceEntity)
     private readonly priceRepository: Repository<PriceEntity>,
+    private readonly activityLogService: ActivityLogService,
   ) {}
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -139,6 +141,7 @@ export class XpService {
     await this.credentialRepository.increment({ credentialId }, 'xp', XP_REWARDS.WEEKLY_CIRCLE);
     await this.credentialRepository.increment({ credentialId }, 'weeklyCircle', 1);
     await this.credentialRepository.update({ credentialId }, { lastWeeklyCircleWeek: currentWeekKey });
+    this.activityLogService.logWeeklyCircle(credentialId, currentWeekKey).catch(() => {});
   }
 
   /**

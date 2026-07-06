@@ -9,6 +9,7 @@ import {
 } from "@angular/material/dialog";
 import {MatFormField} from "@angular/material/form-field";
 import {MatInput, MatLabel} from "@angular/material/input";
+import {MatCheckbox} from "@angular/material/checkbox";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
@@ -28,7 +29,8 @@ import {StoreDto} from '@features/catalog/data/dto/store.dto';
     MatFormField,
     MatInput,
     MatLabel,
-    ReactiveFormsModule],
+    ReactiveFormsModule,
+    MatCheckbox],
   templateUrl: './update-store-dialog.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './update-store-dialog.css'
@@ -57,6 +59,17 @@ export class UpdateStoreDialog {
       postalCode: this.data.store.postalCode,
       city: this.data.store.city
     });
+
+    // Pré-remplir les couleurs depuis la marque partagée (si elle existe déjà)
+    const brand = this.store.brand;
+    if (brand) {
+      this.storeForm.patchValue({
+        textColor: brand.textColor,
+        bgColor: brand.bgColor,
+        useGradient: !!brand.gradientColor,
+        gradientColor: brand.gradientColor ?? this.storeForm.controls.gradientColor.value,
+      });
+    }
   }
 
 
@@ -76,6 +89,13 @@ export class UpdateStoreDialog {
     city: new FormControl<string>('', {
       validators: [Validators.required]
     }),
+
+    // Apparence du badge du magasin (modifier ici met à jour la marque partagée :
+    // tous les magasins du même nom suivront cette couleur)
+    textColor: new FormControl<string>('#ffffff', { nonNullable: true }),
+    bgColor: new FormControl<string>('#43a047', { nonNullable: true }),
+    useGradient: new FormControl<boolean>(false, { nonNullable: true }),
+    gradientColor: new FormControl<string>('#e30613', { nonNullable: true }),
   })
 
 
@@ -95,6 +115,9 @@ export class UpdateStoreDialog {
       number: formValue.number!,
       postalCode: formValue.postalCode!,
       city: formValue.city!,
+      textColor: formValue.textColor,
+      bgColor: formValue.bgColor,
+      gradientColor: formValue.useGradient ? formValue.gradientColor : null,
 
     }
 
@@ -109,7 +132,21 @@ export class UpdateStoreDialog {
 
   }
 
+  badgePreviewBg(): string {
+    const { bgColor, useGradient, gradientColor } = this.storeForm.getRawValue();
+    if (useGradient && gradientColor) {
+      return `linear-gradient(100deg, ${bgColor} 0%, ${bgColor} 55%, ${gradientColor} 100%)`;
+    }
+    return bgColor;
+  }
 
+  badgePreviewColor(): string {
+    return this.storeForm.getRawValue().textColor;
+  }
+
+  badgePreviewName(): string {
+    return this.storeForm.getRawValue().name?.trim() || 'Aperçu';
+  }
 
 
 

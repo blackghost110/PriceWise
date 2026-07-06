@@ -1,5 +1,6 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {StoreDto} from '@features/catalog/data/dto/store.dto';
+import {StoreBrandDto} from '@features/catalog/data/dto/store-brand.dto';
 import {tap} from 'rxjs';
 import {ApiService} from '@shared/api/service/api.service';
 import {CreateStorePayload} from '@features/catalog/data/payload/create-store.payload';
@@ -52,6 +53,10 @@ export class StoreService {
     return this.api.get<StoreDto>(`${ApiURI.STORE_GET}/${storeId}`).pipe(
       tap((store) => this._selectedStore.set(store))
     )
+  }
+
+  getBrandByName(name: string) {
+    return this.api.get<StoreBrandDto | null>(`${ApiURI.STORE_BRAND}?name=${encodeURIComponent(name)}`);
   }
 
   updateStore(payload: UpdateStorePayload, storeId: number) {

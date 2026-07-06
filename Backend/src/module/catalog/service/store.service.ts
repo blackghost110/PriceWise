@@ -23,6 +23,7 @@ import { UpdateStoreDto } from '../model/dto/update-store.dto';
 import { XpService } from '../../gamification/service/xp.service';
 import { ActivityLogService } from '../../activity-log/service/activity-log.service';
 import { EntityType } from '../../activity-log/model/activity-log.entity';
+import { StoreBrandService } from './store-brand.service';
 
 @Injectable()
 export class StoreService {
@@ -35,6 +36,7 @@ export class StoreService {
     private readonly priceRepository: Repository<PriceEntity>,
     private readonly xpService: XpService,
     private readonly activityLogService: ActivityLogService,
+    private readonly storeBrandService: StoreBrandService,
   ) {}
 
   async createStore(createStoreDto: CreateStoreDto, user: Credential) {
@@ -55,6 +57,16 @@ export class StoreService {
       const store = new StoreEntity();
       Object.assign(store, createStoreDto);
       store.credentialId = user.credentialId;
+
+      // 1 seule couleur par nom de magasin : réutilise la marque existante si elle existe,
+      // sinon la crée à partir des couleurs soumises.
+      const brand = await this.storeBrandService.resolveForCreate(createStoreDto.name, {
+        textColor: createStoreDto.textColor,
+        bgColor: createStoreDto.bgColor,
+        gradientColor: createStoreDto.gradientColor,
+      });
+      store.brandId = brand.brandId;
+
       const saved = await this.storeRepository.save(store);
       // Attribuer +10 XP (best-effort, n'annule pas la création en cas d'erreur)
       this.xpService.awardStoreXp(user.credentialId).catch(() => {});
@@ -68,7 +80,7 @@ export class StoreService {
 
   async findAll(): Promise<StoreEntity[]> {
     try {
-      return await this.storeRepository.find();
+      return await this.storeRepository.find({ relations: { brand: true } });
     } catch (e) {
       throw new StoreFindAllException();
     }
@@ -79,6 +91,7 @@ export class StoreService {
       return await this.storeRepository.find({
         order: { created: 'DESC' },
         take: 2,
+        relations: { brand: true },
       });
     } catch (e) {
       throw new StoreFindTwoException();
@@ -164,6 +177,17 @@ export class StoreService {
       store.number = dto.number;
       store.postalCode = dto.postalCode;
       store.city = dto.city;
+
+      // Si des couleurs sont fournies, met à jour la marque partagée pour ce nom :
+      // tous les magasins portant ce nom suivent automatiquement la nouvelle couleur.
+      if (dto.textColor || dto.bgColor || dto.gradientColor) {
+        const brand = await this.storeBrandService.upsertForUpdate(dto.name, {
+          textColor: dto.textColor,
+          bgColor: dto.bgColor,
+          gradientColor: dto.gradientColor,
+        });
+        store.brandId = brand.brandId;
+      }
 
       const saved = await this.storeRepository.save(store);
       // Journalisation (best-effort)

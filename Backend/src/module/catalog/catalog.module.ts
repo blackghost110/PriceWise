@@ -8,6 +8,8 @@ import {ListEntity} from "./model/list.entity";
 import {ProductEntity} from "./model/product.entity";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {StoreEntity} from "./model/store.entity";
+import {StoreBrandEntity} from "./model/store-brand.entity";
+import {StoreBrandService} from "./service/store-brand.service";
 import {PriceEntity} from "./model/price.entity";
 import {Module} from "@nestjs/common";
 import {ListProductEntity} from "./model/list-product.entity";
@@ -23,12 +25,12 @@ import { ActivityLogModule } from '../activity-log/activity-log.module';
 
 @Module({
     imports: [
-      TypeOrmModule.forFeature([ListEntity, Credential, ProductEntity, StoreEntity, PriceEntity, ListProductEntity]),
+      TypeOrmModule.forFeature([ListEntity, Credential, ProductEntity, StoreEntity, StoreBrandEntity, PriceEntity, ListProductEntity]),
       GamificationModule,
       ActivityLogModule,
     ],
     controllers: [ListController, ProductController, StoreController, PriceController, SecurityController, ListProductController],
-    providers: [ListService, ProductService, StoreService, PriceService, SecurityService, ListProductService],
+    providers: [ListService, ProductService, StoreService, StoreBrandService, PriceService, SecurityService, ListProductService],
 })
 export class CatalogModule {
 }

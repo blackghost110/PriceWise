@@ -135,5 +135,45 @@ export class StoreList implements OnInit{
     this.searchTerm.set('')
   }
 
+  /**
+   * Couleur de fond du badge : celle de la marque du magasin (dégradé si définie),
+   * sinon une couleur de secours déterministe dérivée du nom (stable pour un même nom).
+   */
+  badgeBg(store: StoreDto): string {
+    const brand = store.brand;
+    if (brand) {
+      if (brand.gradientColor) {
+        return `linear-gradient(100deg, ${brand.bgColor} 0%, ${brand.bgColor} 55%, ${brand.gradientColor} 100%)`;
+      }
+      return brand.bgColor;
+    }
+    return this.fallbackColor(store.name);
+  }
+
+  badgeText(store: StoreDto): string {
+    return store.brand?.textColor ?? '#ffffff';
+  }
+
+  private fallbackColor(name: string): string {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = Math.abs(hash) % 360;
+    return `hsl(${hue} 55% 42%)`;
+  }
+
+  relativeDate(created: Date | string): string {
+    const date = new Date(created);
+    const diffDays = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays <= 0) {
+      return "Aujourd'hui";
+    }
+    if (diffDays === 1) {
+      return 'Hier';
+    }
+    return `Il y a ${diffDays}j`;
+  }
+
   protected readonly AppNode = AppNode;
 }

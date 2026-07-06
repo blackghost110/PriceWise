@@ -8,6 +8,7 @@ export enum ApiURI {
   BADGE_OVERVIEW = 'badge/overview',
   BADGE_SET_ACTIVE = 'badge/active',
   GAMIFICATION_PROFILE = 'badge/profile',
+  LEADERBOARD = 'leaderboard',
 
 
   COMMENT_CREATE='comment',
@@ -43,6 +44,7 @@ export enum ApiURI {
   STORE_GET_TWO='store/last',
   STORE_UPDATE='store',
   STORE_DELETE='store',
+  STORE_BRAND='store/brand',
 
 
 }

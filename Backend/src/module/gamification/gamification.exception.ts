@@ -28,3 +28,11 @@ export class GamificationProfileException extends ApiException {
     super(ApiCodeResponse.GAMIFICATION_PROFILE_EXCEPTION, 500);
   }
 }
+
+// Leaderboard Exceptions ------------------------------------------------------//
+
+export class LeaderboardGetException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.GAMIFICATION_LEADERBOARD_EXCEPTION, 500);
+  }
+}

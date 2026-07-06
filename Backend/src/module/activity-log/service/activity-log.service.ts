@@ -40,6 +40,15 @@ export class ActivityLogService {
     return this.write(ActionType.DELETE, entityType, entityId, credentialId, { id: entityId });
   }
 
+  /**
+   * Journalise la complétion d'un cercle hebdomadaire (+20 XP). Pas d'entité propre
+   * (entityId = 0), utilisé pour reconstituer l'XP mensuel du classement.
+   * Appelé en fire-and-forget (.catch(() => {})).
+   */
+  logWeeklyCircle(credentialId: string, weekKey: string): Promise<void> {
+    return this.write(ActionType.ADD, EntityType.WEEKLY_CIRCLE, 0, credentialId, { weekKey });
+  }
+
   /** Journalise la modification d'une entité, avec son état avant/après. Appelé en fire-and-forget. */
   logUpdate(
     entityType: EntityType,

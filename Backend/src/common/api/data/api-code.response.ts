@@ -90,6 +90,7 @@ export enum ApiCodeResponse {
   BADGE_SET_ACTIVE_NOT_UNLOCKED_EXCEPTION = 'api.badge.error.set-active-not-unlocked-exception',
   BADGE_SET_ACTIVE_EXCEPTION = 'api.badge.error.set-active-exception',
   GAMIFICATION_PROFILE_EXCEPTION = 'api.gamification.error.profile-exception',
+  GAMIFICATION_LEADERBOARD_EXCEPTION = 'api.gamification.error.leaderboard-exception',
 
   // ACTIVITY LOG API EXCEPTIONS --------------------------------------------//
 

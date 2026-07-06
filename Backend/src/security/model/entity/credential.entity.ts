@@ -3,6 +3,7 @@ import {BaseEntity} from "@common/model/base.entity";
 import {ListEntity} from "../../../module/catalog/model/list.entity";
 import { PostEntity } from '../../../module/social/model/post.entity';
 import { CommentEntity } from '../../../module/social/model/comment.entity';
+import { UserBadgeEntity } from '../../../module/gamification/model/user-badge.entity';
 
 @Entity({ name: 'credential'})
 export class Credential extends BaseEntity {
@@ -47,5 +48,8 @@ export class Credential extends BaseEntity {
 
     @OneToMany(() => CommentEntity, (comment) => comment.user)
     comments: CommentEntity[]
+
+    @OneToMany(() => UserBadgeEntity, (userBadge) => userBadge.credential)
+    userBadges: UserBadgeEntity[];
 
 }

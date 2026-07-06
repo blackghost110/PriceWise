@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsHexColor, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class UpdateStoreDto {
 
@@ -22,4 +22,20 @@ export class UpdateStoreDto {
   @ApiProperty()
   @IsNotEmpty()
   city: string;
+
+  // Si fourni, met à jour la marque partagée (couleurs) pour ce nom de magasin
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsHexColor()
+  textColor?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsHexColor()
+  bgColor?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsHexColor()
+  gradientColor?: string;
 }

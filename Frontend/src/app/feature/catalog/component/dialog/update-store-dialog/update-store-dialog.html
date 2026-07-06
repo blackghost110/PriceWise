@@ -34,6 +34,35 @@
       <input matInput placeholder="Ex. Verviers" formControlName="city"/>
     </mat-form-field>
 
+    <div class="brand-section">
+      <h3>Apparence du badge</h3>
+      <p class="brand-warning">Modifier ces couleurs les change pour tous les magasins portant ce nom.</p>
+
+      <div class="color-pickers">
+        <label class="color-picker">
+          <span>Texte</span>
+          <input type="color" formControlName="textColor"/>
+        </label>
+        <label class="color-picker">
+          <span>Fond</span>
+          <input type="color" formControlName="bgColor"/>
+        </label>
+        <mat-checkbox formControlName="useGradient">Dégradé à droite</mat-checkbox>
+        @if (storeForm.controls.useGradient.value) {
+          <label class="color-picker">
+            <span>Dégradé</span>
+            <input type="color" formControlName="gradientColor"/>
+          </label>
+        }
+      </div>
+
+      <div class="badge-preview">
+        <span class="store-badge" [style.background]="badgePreviewBg()" [style.color]="badgePreviewColor()">
+          {{ badgePreviewName() }}
+        </span>
+      </div>
+    </div>
+
   </mat-dialog-content>
 
   @if (errorMessage()) {

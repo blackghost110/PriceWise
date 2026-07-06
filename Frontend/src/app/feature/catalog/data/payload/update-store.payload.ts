@@ -4,4 +4,7 @@ export interface UpdateStorePayload {
   number: string;
   postalCode: string;
   city: string;
+  textColor?: string;
+  bgColor?: string;
+  gradientColor?: string | null;
 }

@@ -44,6 +44,39 @@
       <mat-label>Ville</mat-label>
       <input matInput placeholder="Ex. Verviers" formControlName="city"/>
     </mat-form-field>
+
+    <div class="brand-section">
+      <h3>Apparence du badge</h3>
+
+      @if (brandLocked()) {
+        <p class="brand-locked-note">Couleur déjà définie pour « {{ lockedBrandName() }} »</p>
+      }
+
+      <div class="color-pickers">
+        <label class="color-picker">
+          <span>Texte</span>
+          <input type="color" formControlName="textColor"/>
+        </label>
+        <label class="color-picker">
+          <span>Fond</span>
+          <input type="color" formControlName="bgColor"/>
+        </label>
+        <mat-checkbox formControlName="useGradient">Dégradé à droite</mat-checkbox>
+        @if (storeForm.controls.useGradient.value) {
+          <label class="color-picker">
+            <span>Dégradé</span>
+            <input type="color" formControlName="gradientColor"/>
+          </label>
+        }
+      </div>
+
+      <div class="badge-preview">
+        <span class="store-badge" [style.background]="badgePreviewBg()" [style.color]="badgePreviewColor()">
+          {{ badgePreviewName() }}
+        </span>
+      </div>
+    </div>
+
     @if (errorMessage()) {
       <p class="control-error">{{ errorMessage() }}</p>
     }
