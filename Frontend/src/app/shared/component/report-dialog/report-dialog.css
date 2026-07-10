@@ -1,0 +1,48 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  margin-right: 5px;
+}
+
+.header > h2 {
+  margin: 0;
+}
+
+.report-target {
+  color: #616161;
+  margin: 0 0 8px;
+}
+
+.report-details {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+.report-details__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  padding: 3px 0;
+}
+
+.report-details__label {
+  color: #9e9e9e;
+  flex-shrink: 0;
+}
+
+.report-details__value {
+  color: #1a1a1a;
+  font-weight: 500;
+  text-align: right;
+}
+
+.control-error {
+  color: #a94442;
+  padding: 4px 0;
+  white-space: pre-line;
+}

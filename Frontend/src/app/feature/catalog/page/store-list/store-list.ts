@@ -1,7 +1,7 @@
 import {Component, computed, DestroyRef, inject, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {StoreDto} from '@features/catalog/data/dto/store.dto';
-import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {Router} from '@angular/router';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {StoreService} from '@features/catalog/service/store.service';
 import {MatButton, MatIconButton} from '@angular/material/button';
@@ -17,6 +17,7 @@ import {AuthService} from '@core/auth/auth.service';
 import {UpdateStoreDialog} from '@features/catalog/component/dialog/update-store-dialog/update-store-dialog';
 import {Footer} from '@core/layout/footer/footer';
 import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
+import {CatalogNav} from '@features/catalog/component/catalog-nav/catalog-nav';
 
 @Component({
   selector: 'app-store-list',
@@ -28,13 +29,12 @@ import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
     MatInput,
     MatLabel,
     MatSuffix,
-    RouterLink,
-    RouterLinkActive,
     MatIconButton,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
     Footer,
+    CatalogNav,
   ],
   templateUrl: './store-list.html',
   changeDetection: ChangeDetectionStrategy.Eager,

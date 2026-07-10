@@ -1,55 +1,82 @@
 <app-header/>
+<app-admin-nav/>
 
-<main class="main-content">
-  <div class="content-container">
-    <div class="main-section">
-      <div class="section-header">
-        <h2>Liste des utilisateurs</h2>
+<main class="page">
 
-
-      </div>
-      @if (userList() !== null) {
-        <table mat-table [dataSource]="userList()!" class="product-table">
-          <ng-container matColumnDef="displayName" >
-            <th mat-header-cell *matHeaderCellDef> Nom </th>
-            <td mat-cell *matCellDef="let user" class="table-name">{{user.displayName}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="role">
-            <th mat-header-cell *matHeaderCellDef>Admin role </th>
-            <td mat-cell *matCellDef="let user" [ngStyle]="{ color: user.role === 'ADMIN' ? 'red' : 'blue' }">{{ user.role }}
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="actions" >
-            <th mat-header-cell *matHeaderCellDef> </th>
-            <td mat-cell *matCellDef="let user" class="table-action" (click)="$event.stopPropagation()">
-              <button matIconButton [matMenuTriggerFor]="userMenu">
-                <mat-icon>settings</mat-icon>
-              </button>
-              <mat-menu #userMenu="matMenu">
-                <button mat-menu-item (click)="onOpenDialogUpdateRole(user)">
-                  <mat-icon>square_edit</mat-icon>
-                  Modifier rôle
-                </button>
-              </mat-menu>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="AppRoutes.productDetailPage(row.productId)"></tr>
-
-        </table>
-
-      }
-
-
-
-
-    </div>
+  <div class="page-header">
+    <h1 class="page-header__title">Utilisateurs</h1>
+    <p class="page-header__sub">Gère les rôles et consulte l'activité des membres</p>
   </div>
 
-</main>
+  @if (userList() === null) {
 
+    <div class="empty-state">
+      <div class="empty-state__sub">Chargement des utilisateurs...</div>
+    </div>
+
+  } @else if (userList()!.length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-state__icon">👤</div>
+      <div class="empty-state__title">Aucun utilisateur</div>
+    </div>
+
+  } @else {
+
+    <div class="user-list">
+
+      <div class="user-list__header">
+        <span>Membre</span>
+        <span class="col-center">Rôle</span>
+        <span class="col-center">Niveau</span>
+        <span class="col-center">Avertissements</span>
+        <span></span>
+      </div>
+
+      @for (user of userList(); track user.credentialId) {
+        <div class="user-row">
+          <div class="user-row__player">
+            <div class="user-row__avatar" [style.background]="avatarGradient(user.displayName)">{{ initials(user.displayName) }}</div>
+            <div class="user-row__identity">
+              <div class="user-row__name">{{ user.displayName }}</div>
+              <div class="user-row__email">{{ user.email }}</div>
+            </div>
+          </div>
+
+          <div class="col-center">
+            <span class="role-chip" [class.role-chip--admin]="user.role === 'ADMIN'">{{ user.role }}</span>
+          </div>
+
+          <div class="col-center">
+            <span class="level-chip">Niv. {{ user.level }}</span>
+          </div>
+
+          <div class="col-center">
+            @if (user.warningCount > 0) {
+              <span class="warning-chip">⚠️ {{ user.warningCount }}</span>
+            } @else {
+              <span class="warning-chip warning-chip--none">—</span>
+            }
+          </div>
+
+          <div class="user-row__actions">
+            <button matIconButton [matMenuTriggerFor]="userMenu">
+              <mat-icon>settings</mat-icon>
+            </button>
+            <mat-menu #userMenu="matMenu">
+              <button mat-menu-item (click)="onOpenDialogUpdateRole(user)">
+                <mat-icon>edit</mat-icon>
+                Modifier rôle
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+      }
+
+    </div>
+
+  }
+
+</main>
 
 <app-footer/>

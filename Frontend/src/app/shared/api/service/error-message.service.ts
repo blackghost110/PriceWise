@@ -64,6 +64,8 @@ export class ErrorMessageService {
     ['api.list-product.error.create-not-found-product-exception', 'Ce produit n\'existe pas ou n\'est plus disponible'],
     ['api.list-product.error.create-exception', 'Impossible d\'ajouter le produit à la liste. Veuillez réessayer.'],
     ['api.list-product.error.get-by-list-exception', 'Impossible de charger les produits de cette liste. Veuillez réessayer.'],
+    ['api.list-product.error.delete-not-found-exception', 'Ce produit n\'est plus dans la liste'],
+    ['api.list-product.error.delete-exception', 'Impossible de retirer le produit de la liste. Veuillez réessayer.'],
 
     // Prices
     ['api.price.error.create-user-not-found-exception', 'Utilisateur introuvable pour enregistrer le prix'],
@@ -83,6 +85,7 @@ export class ErrorMessageService {
     ['api.product.error.create-exception', 'Impossible de créer le produit. Veuillez réessayer.'],
     ['api.product.error.get-all-exception', 'Impossible de charger les produits. Veuillez réessayer.'],
     ['api.product.error.detail-not-found-exception', 'Ce produit n\'existe pas ou n\'est plus disponible'],
+    ['api.product.error.lookup-exception', 'Impossible de contacter la base produits. Remplissez les champs manuellement.'],
 
     // Stores
     ['api.store.error.create-conflict-exception', 'Un magasin avec ce nom existe déjà'],
@@ -102,6 +105,15 @@ export class ErrorMessageService {
     ['api.badge.error.set-active-exception', 'Impossible de mettre à jour le badge actif. Veuillez réessayer.'],
     ['api.gamification.error.profile-exception', 'Impossible de charger votre profil de jeu. Veuillez réessayer.'],
     ['api.gamification.error.leaderboard-exception', 'Impossible de charger le classement. Veuillez réessayer.'],
+
+    // ERREURS ACTIVITY LOG (Admin)
+    ['api.activity-log.error.get-all-exception', 'Impossible de charger le journal d\'activité. Veuillez réessayer.'],
+
+    // ERREURS REPORT (Signalements)
+    ['api.report.error.create-exception', 'Impossible d\'envoyer le signalement. Veuillez réessayer.'],
+    ['api.report.error.get-all-exception', 'Impossible de charger les signalements. Veuillez réessayer.'],
+    ['api.report.error.get-by-id-exception', 'Ce signalement n\'existe pas ou n\'est plus disponible'],
+    ['api.report.error.update-exception', 'Impossible de mettre à jour le signalement. Veuillez réessayer.'],
 
     // Message par défaut
     ['default', 'Une erreur inattendue s\'est produite. Veuillez réessayer.']

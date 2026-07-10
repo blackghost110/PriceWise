@@ -4,6 +4,7 @@ export class AllProductsResponse {
   brand: string;
   unit: ProductUnitType;
   quantity: number;
+  ean: string;
   productPrice: number;
   referencePrice: number;
   priceDate: Date;
@@ -12,6 +13,13 @@ export class AllProductsResponse {
   storeNumber: string;
   storePostalCode: string;
   storeCity: string;
+  storeBrand: {
+    brandId: number;
+    name: string;
+    textColor: string;
+    bgColor: string;
+    gradientColor: string | null;
+  } | null;
 }
 
 export enum ProductUnitType {

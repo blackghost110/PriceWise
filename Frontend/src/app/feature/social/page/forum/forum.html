@@ -1,84 +1,100 @@
 <app-header/>
+<app-forum-nav/>
 
-<nav class="nav-bar">
-  <div class="nav-container">
-    <div class="nav-items">
-      <button [routerLink]="AppRoutes.DASHBOARD_PAGE" routerLinkActive="active" class="nav-item">
-        <mat-icon>forum</mat-icon>
-        <span>Forum</span>
-      </button>
-      <button [routerLink]="AppRoutes.LEADERBOARD_PAGE" class="nav-item">
-        <mat-icon>leaderboard</mat-icon>
-        <span>Classement</span>
-      </button>
-    </div>
+<main class="page">
+
+  <div class="page-header">
+    <h1 class="page-header__title">Discussions</h1>
+    <p class="page-header__sub">Échange avec les autres membres autour des courses et des bons plans</p>
   </div>
-</nav>
 
+  <div class="action-bar">
+    <mat-form-field appearance="outline" class="white-background search-field">
+      <mat-label>Rechercher une discussion</mat-label>
+      <input matInput
+             placeholder="Sujet ou Code Postal..."
+             [value]="searchTerm()"
+             (input)="onSearchChange($event.target!.value)">
+      @if (searchTerm()) {
+        <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
+      } @else {
+        <mat-icon matIconSuffix>search</mat-icon>
+      }
+    </mat-form-field>
 
-<main class="main-content">
-  <div class="content-container">
-    <div class="main-section">
-      <div class="section-header">
-        <h2>Liste des discussion</h2>
+    <button matButton="elevated" (click)="onOpenDialogAddPost()">
+      <mat-icon>add</mat-icon>
+      Créer une discussion
+    </button>
+  </div>
 
-        <mat-form-field appearance="outline" class="white-background" >
-          <mat-label>Rechercher une discussion</mat-label>
-          <input matInput
-                 placeholder="Sujet ou Code Postal..."
-                 [value]="searchTerm()"
-                 (input)="onSearchChange($event.target!.value)" >
-          @if (searchTerm()) {
-            <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
-          } @else {
-            <mat-icon matIconSuffix>search</mat-icon>
-          }
-        </mat-form-field>
-        <button matButton="elevated" (click)="onOpenDialogAddPost()" style="float: right">Créer une discussion</button>
+  @if (postList() === null) {
+
+    <div class="empty-state">
+      <div class="empty-state__sub">Chargement des discussions...</div>
+    </div>
+
+  } @else if (postList()!.length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-state__icon">💬</div>
+      <div class="empty-state__title">Aucune discussion pour l'instant</div>
+      <div class="empty-state__sub">Sois le premier à lancer une discussion !</div>
+    </div>
+
+  } @else if (filteredPosts()!.length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-state__icon">🔎</div>
+      <div class="empty-state__title">Aucune discussion trouvée</div>
+      <div class="empty-state__sub">Vérifiez votre recherche</div>
+    </div>
+
+  } @else {
+
+    <div class="discussion-list">
+      @for (post of visiblePosts(); track post.postId) {
+        <article class="discussion-card" [routerLink]="AppRoutes.postPage(post.postId.toString())">
+          <div class="discussion-card__top">
+            <h2 class="discussion-card__title">{{ post.title }}</h2>
+            <span class="discussion-card__comments">
+              <mat-icon>chat_bubble_outline</mat-icon>
+              {{ post.commentCount }}
+            </span>
+          </div>
+
+          <p class="discussion-card__preview">{{ post.message }}</p>
+
+          <div class="discussion-card__meta">
+            <div class="discussion-card__author">
+              <span class="avatar avatar--sm" [style.background]="avatarGradient(post.user.displayName)">
+                {{ initials(post.user.displayName) }}
+              </span>
+              <div class="discussion-card__identity">
+                <span class="discussion-card__author-name">{{ post.user.displayName }}</span>
+                @if (post.user.activeBadge) {
+                  <span class="badge-chip">{{ post.user.activeBadge }}</span>
+                }
+              </div>
+            </div>
+
+            <div class="discussion-card__tags">
+              <span class="postal-chip">📍 {{ post.postalCode }}</span>
+              <span class="date-chip" [title]="post.created | date:'medium'">{{ post.created | relativeTime }}</span>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (hasMore()) {
+      <div class="load-more-wrap">
+        <button class="load-more" type="button" (click)="onShowMore()">Voir plus de discussions</button>
       </div>
+    }
 
-      <table mat-table [dataSource]="dataSource" class="product-table">
-        <ng-container matColumnDef="title" >
-          <th mat-header-cell *matHeaderCellDef> Sujet </th>
-          <td mat-cell *matCellDef="let post" [routerLink]="AppRoutes.postPage(post.postId)" style="cursor: pointer"> {{post.title}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="postalCode">
-          <th mat-header-cell *matHeaderCellDef> Code Postal </th>
-          <td mat-cell *matCellDef="let post"> {{post.postalCode}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="commentCount">
-          <th mat-header-cell *matHeaderCellDef> Com. </th>
-          <td mat-cell *matCellDef="let post"> {{post.commentCount}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="user">
-          <th mat-header-cell *matHeaderCellDef> Auteur </th>
-          <td mat-cell *matCellDef="let post">
-            {{post.user.displayName}}
-            @if (post.user.activeBadge) {
-              <span class="author-badge">{{ post.user.activeBadge }}</span>
-            }
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-      </table>
-      <mat-paginator [pageSizeOptions]="[10, 20]"
-                     showFirstLastButtons
-                     aria-label="Select page of periodic elements">
-      </mat-paginator>
-
-    </div>
-  </div>
+  }
 
 </main>
 
-
 <app-footer/>
-
-
-

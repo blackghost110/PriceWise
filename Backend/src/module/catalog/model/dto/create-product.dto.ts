@@ -18,6 +18,10 @@ export class CreateProductDto {
     @IsNumber()
     quantity: number;
 
+    @ApiProperty({ required: false })
+    @IsOptional()
+    ean?: string;
+
     // @ApiProperty()
     // @IsNumber()
     // storeId: number;

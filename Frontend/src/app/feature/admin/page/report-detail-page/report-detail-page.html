@@ -1,0 +1,64 @@
+<app-header/>
+<app-admin-nav/>
+
+<main class="page">
+
+  <button class="back-link" type="button" [routerLink]="AppRoutes.ADMIN_REPORTS_PAGE">
+    <mat-icon>arrow_back_ios_new</mat-icon>
+    Retour aux signalements
+  </button>
+
+  @if (report(); as r) {
+    <article class="report-card">
+      <div class="report-card__header">
+        <div>
+          <span class="target-chip">{{ reportTargetTypeLabel(r.targetType) }} #{{ r.targetId }}</span>
+          <span class="status-chip" [class.status-chip--resolved]="r.status === ReportStatus.RESOLVED">
+            {{ r.status === ReportStatus.RESOLVED ? 'Résolu' : 'En attente' }}
+          </span>
+        </div>
+        @if (targetLink(); as link) {
+          <a class="target-link" [routerLink]="link">
+            Voir le contenu signalé
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+        }
+      </div>
+
+      <p class="report-card__description">{{ r.description }}</p>
+
+      <div class="report-card__meta">
+        <div class="report-card__author">
+          <span class="avatar avatar--md" [style.background]="avatarGradient(r.credential?.displayName ?? '?')">
+            {{ initials(r.credential?.displayName ?? '?') }}
+          </span>
+          <div class="report-card__identity">
+            <span class="report-card__author-name">Signalé par {{ r.credential?.displayName ?? 'Utilisateur inconnu' }}</span>
+            <span class="report-card__date" [title]="r.created | date:'medium'">{{ r.created | relativeTime }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-card__actions">
+        @if (r.status === ReportStatus.PENDING) {
+          <button matButton="elevated" (click)="onResolve()">
+            <mat-icon>check_circle</mat-icon>
+            Marquer comme résolu
+          </button>
+        } @else {
+          <button matButton (click)="onReopen()">
+            <mat-icon>replay</mat-icon>
+            Rouvrir le signalement
+          </button>
+        }
+      </div>
+    </article>
+  } @else {
+    <div class="empty-state">
+      <div class="empty-state__sub">Chargement du signalement...</div>
+    </div>
+  }
+
+</main>
+
+<app-footer/>

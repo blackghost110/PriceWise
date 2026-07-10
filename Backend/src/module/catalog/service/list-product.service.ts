@@ -14,6 +14,8 @@ import {
   ListProductCreateException,
   ListProductCreateNotFoundListException,
   ListProductCreateNotFoundProductException,
+  ListProductDeleteException,
+  ListProductDeleteNotFoundException,
   ListProductGetByListException,
 } from '../catalog.exception';
 
@@ -72,6 +74,7 @@ export class ListProductService {
         .createQueryBuilder('listProduct')
         .leftJoinAndSelect('listProduct.product', 'product')
         .leftJoinAndSelect('product.store', 'store')
+        .leftJoinAndSelect('store.brand', 'brand')
         .leftJoinAndSelect(
           'product.prices',
           'price',
@@ -99,13 +102,36 @@ export class ListProductService {
         storeStreet: listProduct.product.store.street,
         storeNumber: listProduct.product.store.number,
         storePostalCode: listProduct.product.store.postalCode,
-        storeCity: listProduct.product.store.city
+        storeCity: listProduct.product.store.city,
+        storeBrand: listProduct.product.store.brand
+          ? {
+              brandId: listProduct.product.store.brand.brandId,
+              name: listProduct.product.store.brand.name,
+              textColor: listProduct.product.store.brand.textColor,
+              bgColor: listProduct.product.store.brand.bgColor,
+              gradientColor: listProduct.product.store.brand.gradientColor,
+            }
+          : null,
       }));
     } catch (e) {
       throw new ListProductGetByListException();
     }
 
 
+  }
+
+  async deleteListProduct(listProductId: number): Promise<void> {
+    const listProduct = await this.listProductRepository.findOne({
+      where: { listProductId },
+    });
+    if (!listProduct) {
+      throw new ListProductDeleteNotFoundException();
+    }
+    try {
+      await this.listProductRepository.remove(listProduct);
+    } catch (e) {
+      throw new ListProductDeleteException();
+    }
   }
 
 }

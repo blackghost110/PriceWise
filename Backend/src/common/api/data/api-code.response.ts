@@ -50,6 +50,8 @@ export enum ApiCodeResponse {
   LIST_PRODUCT_CREATE_NOT_FOUND_PRODUCT_EXCEPTION = 'api.list-product.error.create-not-found-product-exception',
   LIST_PRODUCT_CREATE_EXCEPTION = 'api.list-product.error.create-exception',
   LIST_PRODUCT_GET_BY_LIST_EXCEPTION = 'api.list-product.error.get-by-list-exception',
+  LIST_PRODUCT_DELETE_NOT_FOUND_EXCEPTION = 'api.list-product.error.delete-not-found-exception',
+  LIST_PRODUCT_DELETE_EXCEPTION = 'api.list-product.error.delete-exception',
 
   // Price Service Exception Codes
   PRICE_CREATE_USER_NOT_FOUND_EXCEPTION = 'api.price.error.create-user-not-found-exception',
@@ -73,6 +75,7 @@ export enum ApiCodeResponse {
   PRODUCT_DETAIL_NOT_FOUND_EXCEPTION = 'api.product.error.detail-not-found-exception',
   PRODUCT_DELETE_NOT_FOUND_EXCEPTION = 'api.product.error.delete-not-found-exception',
   PRODUCT_DELETE_EXCEPTION = 'api.product.error.delete-exception',
+  PRODUCT_LOOKUP_EXCEPTION = 'api.product.error.lookup-exception',
 
   // Store Service Exception Codes
   STORE_CREATE_CONFLICT_EXCEPTION = 'api.store.error.create-conflict-exception',
@@ -95,5 +98,12 @@ export enum ApiCodeResponse {
   // ACTIVITY LOG API EXCEPTIONS --------------------------------------------//
 
   ACTIVITY_LOG_GET_ALL_EXCEPTION = 'api.activity-log.error.get-all-exception',
+
+  // REPORT API EXCEPTIONS --------------------------------------------//
+
+  REPORT_CREATE_EXCEPTION = 'api.report.error.create-exception',
+  REPORT_GET_ALL_EXCEPTION = 'api.report.error.get-all-exception',
+  REPORT_GET_BY_ID_EXCEPTION = 'api.report.error.get-by-id-exception',
+  REPORT_UPDATE_EXCEPTION = 'api.report.error.update-exception',
 
 }

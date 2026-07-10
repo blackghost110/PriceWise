@@ -1,63 +1,308 @@
+/* ══════════════════════════════════════
+   DESIGN TOKENS (mêmes valeurs que la page Classement)
+══════════════════════════════════════ */
+:host {
+  --color-bg:           #f0f2f5;
+  --color-card:         #ffffff;
+  --color-green-mid:    #2e7d32;
+  --color-green-bg:     #e8f5e9;
 
-/* Main Content */
-.main-content {
-  max-width: 1100px;
+  --color-text-primary:   #1a1a1a;
+  --color-text-secondary: #616161;
+  --color-text-muted:     #9e9e9e;
+  --color-text-faint:     #bbbbbb;
+
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.09);
+  --radius-card: 16px;
+}
+
+/* ══════════════════════════════════════
+   PAGE
+══════════════════════════════════════ */
+.page {
+  display: block;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 24px 16px;
-}
-
-.content-container {
-  display: flex;
-  gap: 24px;
-}
-
-.main-section {
-  flex: 1;
-}
-.section-header {
-  margin-bottom: 10px;
-}
-
-
-.article-date {
-  color: #666;
-  font-size: 14px;
-  float: right;
-}
-
-/* Deal Cards */
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.card {
-  background: white;
-  border-radius: 8px;
-  padding: 0 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 28px 24px 60px;
+  min-height: 100vh;
+  background: var(--color-bg);
 }
 
 .white-background ::ng-deep .mat-mdc-text-field-wrapper {
   background-color: white;
 }
-.commentDate {
-  font-size: 12px;
-  color: #666;
-}
-.commentUsername {
- color: darkslategrey;
-}
-.comment-header {
+
+/* ══════════════════════════════════════
+   BACK LINK
+══════════════════════════════════════ */
+.top-bar {
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
 }
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--color-green-mid);
+  font-weight: 600;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.back-link mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* ══════════════════════════════════════
+   AVATAR (générique, dupliqué par composant)
+══════════════════════════════════════ */
+.avatar {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.avatar--md {
+  width: 44px;
+  height: 44px;
+  font-size: 15px;
+}
+
+.avatar--sm {
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+}
+
+.badge-chip {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.postal-chip {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  padding: 3px 9px;
+  border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════
+   POST CARD
+══════════════════════════════════════ */
+.post-card {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 22px 24px;
+  margin-bottom: 20px;
+}
+
+.post-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.post-card__author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.post-card__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.post-card__author-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.post-card__date {
+  font-size: 11px;
+  color: var(--color-text-faint);
+}
+
+.post-card__title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  letter-spacing: -0.3px;
+  margin: 4px 0 10px;
+}
+
+.post-card__message {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════
+   COMPOSER
+══════════════════════════════════════ */
+.composer {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 18px 20px;
+  margin-bottom: 26px;
+}
+
+.composer__field {
+  width: 100%;
+}
+
+.composer__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
 .control-error {
   color: #a94442;
+  font-size: 13px;
+  margin: 0 0 10px;
 }
-.author-badge {
-  display: block;
-  color: #999;
+
+/* ══════════════════════════════════════
+   SECTION TITLE
+══════════════════════════════════════ */
+.section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 4px 0 14px;
+}
+
+.section-title__count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-faint);
+}
+
+/* ══════════════════════════════════════
+   EMPTY STATE
+══════════════════════════════════════ */
+.empty-state {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 60px 24px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.empty-state__icon {
+  font-size: 38px;
+  margin-bottom: 12px;
+}
+
+.empty-state__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+
+.empty-state__sub {
+  font-size: 13px;
+  color: var(--color-text-faint);
+}
+
+/* ══════════════════════════════════════
+   COMMENT CARDS
+══════════════════════════════════════ */
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment-card {
+  position: relative;
+  background: var(--color-card);
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  padding: 14px 16px;
+}
+
+.comment-card:hover app-report-button {
+  opacity: 1;
+}
+
+.comment-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.comment-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.comment-card__author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.comment-card__author-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comment-card__date {
   font-size: 11px;
+  color: var(--color-text-faint);
+  flex-shrink: 0;
+}
+
+.comment-card__message {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+  margin: 0;
 }

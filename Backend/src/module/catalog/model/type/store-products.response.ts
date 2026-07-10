@@ -4,6 +4,7 @@ export class StoreProductsResponse {
   brand: string;
   unit: ProductUnitType;
   quantity: number;
+  ean: string;
   productPrice: number;
   referencePrice: number;
   priceDate: Date;

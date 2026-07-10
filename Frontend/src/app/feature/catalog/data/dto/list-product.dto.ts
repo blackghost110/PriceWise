@@ -1,3 +1,5 @@
+import {StoreBrandDto} from '@features/catalog/data/dto/store-brand.dto';
+
 export interface ListProductDto {
   created: Date;
   listProductId: number;
@@ -15,4 +17,5 @@ export interface ListProductDto {
   storeNumber: string;
   storePostalCode: string;
   storeCity: string;
+  storeBrand: StoreBrandDto | null;
 }

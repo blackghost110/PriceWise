@@ -29,6 +29,9 @@ export class ProductEntity extends BaseEntity {
     quantity: number;
 
     @Column({ nullable: true })
+    ean: string;
+
+    @Column({ nullable: true })
     credentialId: string;
 
     @ManyToOne(() => Credential, { nullable: true })

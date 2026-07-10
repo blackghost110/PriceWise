@@ -6,6 +6,10 @@ export enum AppNode {
 
   // Admin routes
   ADMIN = 'admin',
+  ADMIN_USERS = 'users',
+  ADMIN_ACTIVITY = 'activity',
+  ADMIN_REPORTS = 'reports',
+  ADMIN_REPORT = ':reportId',
 
   // Home routes
   HOME = 'home',

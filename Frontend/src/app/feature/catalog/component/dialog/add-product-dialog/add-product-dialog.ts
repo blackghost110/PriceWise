@@ -1,6 +1,7 @@
 import {Component, DestroyRef, inject, signal, ChangeDetectionStrategy} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
+  MatDialog,
   MatDialogActions,
   MatDialogContent,
   MatDialogRef,
@@ -16,10 +17,12 @@ import {CreateProductPayload} from '@features/catalog/data/payload/create-produc
 import {computeReferencePrice, ProductDto, ProductUnitType, referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ProductService} from '@features/catalog/service/product.service';
-import {debounceTime, distinctUntilChanged, map, merge, startWith, catchError, EMPTY} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, merge, startWith, catchError, finalize, EMPTY} from 'rxjs';
 import {MatAutocomplete, MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
 import {HttpErrorResponse} from '@angular/common/http';
+import {AddPriceDialog} from '@features/catalog/component/dialog/add-price-dialog/add-price-dialog';
+import {BarcodeScanner} from '@features/catalog/component/barcode-scanner/barcode-scanner';
 
 
 @Component({
@@ -39,7 +42,8 @@ import {HttpErrorResponse} from '@angular/common/http';
     MatOption,
     MatHint,
     MatAutocompleteTrigger,
-    MatAutocomplete
+    MatAutocomplete,
+    BarcodeScanner
   ],
   templateUrl: './add-product-dialog.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -50,6 +54,7 @@ export class AddProductDialog {
   destroyRef = inject(DestroyRef);
   dialogRef = inject(MatDialogRef<AddProductDialog>);
   data = inject(MAT_DIALOG_DATA);
+  dialog = inject(MatDialog);
 
 
   productService = inject(ProductService)
@@ -67,6 +72,12 @@ export class AddProductDialog {
 
   suggestionHint = signal<string | null>(null);
   private referenceManuallyEdited = signal(false);
+
+  // Scan de code-barres (EAN) / Open Food Facts
+  showScanner = signal(false);
+  lookupInProgress = signal(false);
+  lookupMessage = signal<string | null>(null);
+  existingProduct = signal<ProductDto | null>(null);
 
   constructor() {
     this.productService.getProducts(Number(this.store.storeId))
@@ -97,6 +108,7 @@ export class AddProductDialog {
     referencePrice: new FormControl<number| null>(null, {
       validators: [Validators.required, Validators.min(0.01)]
     }),
+    ean: new FormControl<string>(''),
   })
 
 
@@ -107,14 +119,21 @@ export class AddProductDialog {
       console.log('invalid form')
       return
     }
+    if (this.existingProduct()) {
+      // Ce code-barres correspond déjà à un produit de ce magasin : on redirige vers l'actualisation du prix
+      // plutôt que de créer un doublon.
+      return;
+    }
     this.errorMessage.set(null);
 
     const formValue = this.productForm.value;
+    const ean = formValue.ean?.trim();
     const payload: CreateProductPayload = {
       name: formValue.name!,
       brand: formValue.brand ?? '',
       unit: formValue.unit!,
       quantity: formValue.quantity!,
+      ean: ean ? ean : undefined,
       initialPrice: formValue.productPrice!,
       initialReferencePrice: formValue.referencePrice!
     }
@@ -216,6 +235,68 @@ export class AddProductDialog {
 
   onClose() {
     this.dialogRef.close();
+  }
+
+  toggleScanner() {
+    this.showScanner.update(v => !v);
+  }
+
+  /**
+   * Point d'entrée commun à la saisie manuelle de l'EAN et au scan caméra.
+   * 1) Cherche d'abord si ce code correspond à un produit déjà présent dans ce magasin (`allProducts`).
+   * 2) Sinon, interroge Open Food Facts (via le backend) pour pré-remplir nom/marque/unité/quantité.
+   */
+  lookupEan(rawEan: string | null | undefined) {
+    const ean = (rawEan ?? '').trim();
+    if (!ean) {
+      return;
+    }
+
+    this.showScanner.set(false);
+    this.existingProduct.set(null);
+    this.lookupMessage.set(null);
+    this.productForm.patchValue({ ean });
+
+    const match = this.allProducts().find(product => product.ean === ean);
+    if (match) {
+      this.existingProduct.set(match);
+      this.lookupMessage.set(
+        `Ce produit existe déjà dans ce magasin (dernier prix : ${match.productPrice} €). Vous pouvez actualiser son prix.`
+      );
+      return;
+    }
+
+    this.lookupInProgress.set(true);
+    this.productService.lookupByEan(ean).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.lookupInProgress.set(false)),
+      catchError((err: HttpErrorResponse) => {
+        this.lookupMessage.set(this.errorMessageService.getErrorMessage(err.error?.code, err.error?.data));
+        return EMPTY;
+      })
+    ).subscribe(result => {
+      if (!result.found) {
+        this.lookupMessage.set('Produit non reconnu par Open Food Facts. Complétez les champs manuellement.');
+        return;
+      }
+
+      this.productForm.patchValue({
+        name: result.name ?? this.productForm.value.name,
+        brand: result.brand ?? this.productForm.value.brand,
+        unit: result.unit ?? this.productForm.value.unit,
+        quantity: result.quantity ?? this.productForm.value.quantity,
+      });
+      this.lookupMessage.set('Produit trouvé, champs pré-remplis. Indiquez le prix.');
+    });
+  }
+
+  onUpdateExistingPrice() {
+    const product = this.existingProduct();
+    if (!product) {
+      return;
+    }
+    this.dialogRef.close();
+    this.dialog.open(AddPriceDialog, { data: { product } });
   }
 
 }

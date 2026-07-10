@@ -135,6 +135,7 @@ export class StoreService {
         brand: product.brand,
         unit: product.unit,
         quantity: product.quantity,
+        ean: product.ean,
         productPrice: product.prices[0].productPrice,
         referencePrice: product.prices[0].referencePrice,
         priceDate: product.prices[0].priceDate,

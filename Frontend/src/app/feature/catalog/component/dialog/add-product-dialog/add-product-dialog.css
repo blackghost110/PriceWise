@@ -16,3 +16,30 @@ input.arrow-display::-webkit-inner-spin-button {
   margin: 0 0 8px;
 }
 
+.scan-section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.scan-section h3 {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.scan-hint {
+  font-size: 12px;
+  color: #2e7d32;
+  background: #e8f5e9;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 8px 0;
+  display: inline-block;
+}
+
+.scan-hint-warning {
+  color: #8a6d00;
+  background: #fff8e1;
+}
+

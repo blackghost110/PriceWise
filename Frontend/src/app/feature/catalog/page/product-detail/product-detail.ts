@@ -21,10 +21,12 @@ import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
 import {referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 import {SnackbarService} from '@shared/service/snackbar.service';
+import {ReportButton} from '@shared/component/report-button/report-button';
+import {ReportTargetType} from '@features/report/data/dto/report.dto';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [BaseChartDirective, Header, Footer, FormsModule, MatFormField, MatLabel, MatOption, MatSelect, ReactiveFormsModule, MatFabButton, MatIcon, MatButton, CurrencyPipe],
+  imports: [BaseChartDirective, Header, Footer, FormsModule, MatFormField, MatLabel, MatOption, MatSelect, ReactiveFormsModule, MatFabButton, MatIcon, MatButton, CurrencyPipe, ReportButton],
   templateUrl: './product-detail.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './product-detail.css'
@@ -226,6 +228,7 @@ export class ProductDetail implements OnInit{
 
   protected readonly AppNode = AppNode;
   protected readonly referencePriceUnitLabel = referencePriceUnitLabel;
+  protected readonly ReportTargetType = ReportTargetType;
 }
 
 

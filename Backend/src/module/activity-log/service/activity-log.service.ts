@@ -20,7 +20,7 @@ export class ActivityLogService {
   /** Retourne l'ensemble des logs d'activité, du plus récent au plus ancien. */
   async findAll(): Promise<ActivityLogEntity[]> {
     try {
-      return await this.activityLogRepository.find({ order: { created: 'DESC' } });
+      return await this.activityLogRepository.find({ relations: { credential: true }, order: { created: 'DESC' } });
     } catch (e) {
       throw new ActivityLogGetAllException();
     }

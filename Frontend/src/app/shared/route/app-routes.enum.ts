@@ -7,6 +7,9 @@ export class AppRoutes {
 
   // Admin pages
   static readonly ADMIN_PAGE = `/${AppNode.ADMIN}`;
+  static readonly ADMIN_USERS_PAGE = `/${AppNode.ADMIN}/${AppNode.ADMIN_USERS}`;
+  static readonly ADMIN_ACTIVITY_PAGE = `/${AppNode.ADMIN}/${AppNode.ADMIN_ACTIVITY}`;
+  static readonly ADMIN_REPORTS_PAGE = `/${AppNode.ADMIN}/${AppNode.ADMIN_REPORTS}`;
 
   // Home page
   static readonly HOME_PAGE = `/${AppNode.HOME}`;
@@ -36,5 +39,9 @@ export class AppRoutes {
 
   static postPage(postId: string): string {
     return `/${AppNode.FORUM}/post/${postId}`;
+  }
+
+  static adminReportPage(reportId: string): string {
+    return `/${AppNode.ADMIN}/report/${reportId}`;
   }
 }

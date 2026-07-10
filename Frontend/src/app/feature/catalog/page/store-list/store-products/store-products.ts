@@ -1,9 +1,9 @@
-import {Component, computed, DestroyRef, effect, inject, input, OnInit, signal, viewChild, ChangeDetectionStrategy} from '@angular/core';
+import {Component, computed, DestroyRef, inject, input, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
 import {Header} from "@core/layout/header/header";
 import { RouterLink} from '@angular/router';
 import {ProductDto} from '@features/catalog/data/dto/product.dto';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {CurrencyPipe, DatePipe, Location} from '@angular/common';
+import {CurrencyPipe, Location} from '@angular/common';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {AddPriceDialog} from '@features/catalog/component/dialog/add-price-dialog/add-price-dialog';
 import {MatDialog} from '@angular/material/dialog';
@@ -16,31 +16,26 @@ import {MatFormField, MatSuffix} from '@angular/material/form-field';
 import {MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {MatIcon} from '@angular/material/icon';
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell, MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable, MatTableDataSource
-} from '@angular/material/table';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {
   AddProductToListDialog
 } from '@features/catalog/component/dialog/add-product-to-list-dialog/add-product-to-list-dialog';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
-import {referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
+import {formatQuantity, referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
+import {CatalogNav} from '@features/catalog/component/catalog-nav/catalog-nav';
+import {ReportButton} from '@shared/component/report-button/report-button';
+import {ReportTargetType} from '@features/report/data/dto/report.dto';
+import {ReportDialogDetail} from '@shared/component/data/report-dialog.type';
+import {StoreDto} from '@features/catalog/data/dto/store.dto';
 
 @Component({
   selector: 'app-store-products',
   imports: [
     Header,
     RouterLink,
-    DatePipe,
     CurrencyPipe,
     MatButton,
     Footer,
@@ -49,21 +44,13 @@ import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
     MatInput,
     MatIcon,
     MatSuffix,
-    MatCell,
-    MatCellDef,
-    MatColumnDef,
-    MatHeaderCell,
-    MatHeaderRow,
-    MatHeaderRowDef,
     MatPaginator,
-    MatRow,
-    MatRowDef,
-    MatTable,
-    MatHeaderCellDef,
     MatMenu,
     MatMenuTrigger,
     MatIconButton,
     MatMenuItem,
+    CatalogNav,
+    ReportButton,
   ],
   templateUrl: './store-products.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -78,13 +65,10 @@ export class StoreProducts implements OnInit {
   private productService = inject(ProductService);
   private storeService = inject(StoreService);
   private dialogService = inject(DialogService);
-  paginator = viewChild(MatPaginator);
   protected readonly AppNode = AppNode;
   protected readonly referencePriceUnitLabel = referencePriceUnitLabel;
-
-  dataSource = new MatTableDataSource<ProductDto>([]);
-  displayedColumns: string[] = ['name','quantity', 'price', 'lastPrice', 'action' ];
-
+  protected readonly formatQuantity = formatQuantity;
+  protected readonly ReportTargetType = ReportTargetType;
 
   // dynamic url
   storeId = input.required<string>();
@@ -99,24 +83,11 @@ export class StoreProducts implements OnInit {
   searchTerm = signal('');
   readonly AppRoutes = AppRoutes;
 
+  pageIndex = signal(0);
+  pageSize = signal(10);
+
 
   constructor(public location: Location) {
-
-    // Effect pour mettre à jour le dataSource quand les données changent
-    effect(() => {
-      const product = this.filteredProducts();
-      if (product) {
-        this.dataSource.data = product;
-      }
-    });
-
-    // Effect pour connecter le paginator quand il est disponible
-    effect(() => {
-      const page = this.paginator();
-      if (page) {
-        this.dataSource.paginator = page;
-      }
-    });
   }
 
   ngOnInit() {
@@ -155,6 +126,12 @@ export class StoreProducts implements OnInit {
 
   })
 
+  pagedProducts = computed(() => {
+    const items = this.filteredProducts() ?? [];
+    const start = this.pageIndex() * this.pageSize();
+    return items.slice(start, start + this.pageSize());
+  })
+
 
   // getProductDetailUrl(productId: string): string {
   //   return AppRoutes.PRODUCT_DETAIL_PAGE.replace(':productId', productId);
@@ -162,6 +139,34 @@ export class StoreProducts implements OnInit {
 
   onSearchChange(searchValue: string) {
     this.searchTerm.set(searchValue);
+    this.pageIndex.set(0);
+  }
+
+  onPage(event: PageEvent) {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
+  }
+
+  relativeDate(date: Date | string): string {
+    const target = new Date(date);
+    const diffDays = Math.floor((Date.now() - target.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays <= 0) {
+      return "Aujourd'hui";
+    }
+    if (diffDays === 1) {
+      return 'Hier';
+    }
+    if (diffDays < 7) {
+      return `Il y a ${diffDays}j`;
+    }
+    if (diffDays < 30) {
+      return `Il y a ${Math.round(diffDays / 7)} sem.`;
+    }
+    if (diffDays < 365) {
+      return `Il y a ${Math.round(diffDays / 30)} mois`;
+    }
+    const years = Math.round(diffDays / 365);
+    return `Il y a ${years} an${years > 1 ? 's' : ''}`;
   }
 
   onOpenDialogAddPrice(product: ProductDto,) {
@@ -198,6 +203,22 @@ export class StoreProducts implements OnInit {
 
   onClearSearch() {
     this.searchTerm.set('')
+    this.pageIndex.set(0);
+  }
+
+  storeReportDetails(store: StoreDto): ReportDialogDetail[] {
+    const details: ReportDialogDetail[] = [
+      {label: 'Magasin', value: store.name},
+    ];
+    if (store.brand?.name) {
+      details.push({label: 'Enseigne', value: store.brand.name});
+    }
+    details.push(
+      {label: 'Adresse', value: `${store.street} ${store.number}`},
+      {label: 'Code postal', value: store.postalCode},
+      {label: 'Ville', value: store.city},
+    );
+    return details;
   }
 
 

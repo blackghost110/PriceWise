@@ -6,6 +6,7 @@ export interface CreateProductPayload {
   brand: string;
   unit: ProductUnitType;
   quantity: number;
+  ean?: string;
   initialPrice: number;
   initialReferencePrice: number;
 }

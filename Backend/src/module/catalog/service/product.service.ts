@@ -91,6 +91,7 @@ export class ProductService {
       const queryBuilder = this.productRepository
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.store', 'store')
+        .leftJoinAndSelect('store.brand', 'brand')
         .leftJoinAndSelect(
           'product.prices',
           'price',
@@ -116,6 +117,7 @@ export class ProductService {
         brand: product.brand,
         unit: product.unit,
         quantity: product.quantity,
+        ean: product.ean,
         productPrice: product.prices[0].productPrice,
         referencePrice: product.prices[0].referencePrice,
         priceDate: product.prices[0].priceDate,
@@ -123,7 +125,16 @@ export class ProductService {
         storeStreet: product.store.street,
         storeNumber: product.store.number,
         storePostalCode: product.store.postalCode,
-        storeCity: product.store.city
+        storeCity: product.store.city,
+        storeBrand: product.store.brand
+          ? {
+              brandId: product.store.brand.brandId,
+              name: product.store.brand.name,
+              textColor: product.store.brand.textColor,
+              bgColor: product.store.brand.bgColor,
+              gradientColor: product.store.brand.gradientColor,
+            }
+          : null,
       }));
     } catch (e) {
       console.log('Error Log :', e);

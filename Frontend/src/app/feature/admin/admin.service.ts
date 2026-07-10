@@ -5,6 +5,7 @@ import {tap} from 'rxjs';
 import {UserDto} from '@core/auth/data/dto/user.dto';
 import {UpdateUserPayload} from '@features/admin/data/payload/update-user.payload';
 import {SnackbarService} from '@shared/service/snackbar.service';
+import {ActivityLogDto} from '@features/admin/data/dto/activity-log.dto';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -15,6 +16,9 @@ export class AdminService {
 
   private _userList = signal<UserDto[] | null>(null)
   userList = this._userList.asReadonly()
+
+  private _activityLogs = signal<ActivityLogDto[] | null>(null)
+  activityLogs = this._activityLogs.asReadonly()
 
   getUsers() {
     return this.api.get<UserDto[]>(ApiURI.ACCOUNT_GET_ALL)
@@ -30,6 +34,13 @@ export class AdminService {
         this.snackbar.show('Utilisateur modifié avec succès')
       })
     );
+  }
+
+  getActivityLogs() {
+    return this.api.get<ActivityLogDto[]>(ApiURI.ACTIVITY_LOG_GET_ALL)
+      .pipe(
+        tap((logs) => this._activityLogs.set(logs))
+      )
   }
 
 }

@@ -19,12 +19,25 @@ import {Credential} from "../../../security/model/entity/credential.entity";
 import { User } from "@common/config/decorator/user.decorator";
 import { GetAllProductsQueryDTO } from '../model/dto/get-all-products-query.dto';
 import { AdminGuard } from '@common/api/admin.guard';
+import { OpenFoodFactsService } from '../service/open-food-facts.service';
 
 @ApiBearerAuth('access-token')
 @ApiTags('Product Controller')
 @Controller()
 export class ProductController {
-    constructor(private readonly productService: ProductService) {}
+    constructor(
+        private readonly productService: ProductService,
+        private readonly openFoodFactsService: OpenFoodFactsService,
+    ) {}
+
+    @Get('product/lookup/:ean')
+    @ApiOperation({
+      summary: 'Rechercher un produit via son code-barres (EAN)',
+      description: 'Interroge Open Food Facts pour pré-remplir nom/marque/quantité à partir d\'un EAN scanné',
+    })
+    async lookupProductByEan(@Param('ean') ean: string) {
+        return await this.openFoodFactsService.lookup(ean);
+    }
 
     @Post('product/:storeId')
     @ApiOperation({

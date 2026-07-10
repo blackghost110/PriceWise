@@ -25,6 +25,7 @@ export enum ApiURI {
 
   LIST_PRODUCT_CREATE='list-product',
   LIST_PRODUCT_GET_ALL='list-product',
+  LIST_PRODUCT_DELETE='list-product',
 
   PRICE_CREATE='price',
   PRICE_UPDATE='price',
@@ -35,6 +36,7 @@ export enum ApiURI {
   PRODUCT_GET_BY_STORE='store/:storeId/products',
   PRODUCT_MULTIPLE_DETAIL='product',
   PRODUCT_DELETE='product',
+  PRODUCT_LOOKUP='product/lookup',
 
   // -- x
 
@@ -46,5 +48,11 @@ export enum ApiURI {
   STORE_DELETE='store',
   STORE_BRAND='store/brand',
 
+  REPORT_CREATE='report',
+  REPORT_GET_ALL='report',
+  REPORT_GET='report',
+  REPORT_UPDATE_STATUS='report',
+
+  ACTIVITY_LOG_GET_ALL='activityLog',
 
 }

@@ -1,0 +1,18 @@
+<nav class="nav-bar">
+  <div class="nav-container">
+    <div class="nav-items">
+      <button [routerLink]="AppRoutes.ADMIN_USERS_PAGE" routerLinkActive="active" class="nav-item">
+        <mat-icon>group</mat-icon>
+        <span>Utilisateurs</span>
+      </button>
+      <button [routerLink]="AppRoutes.ADMIN_ACTIVITY_PAGE" routerLinkActive="active" class="nav-item">
+        <mat-icon>history</mat-icon>
+        <span>Activité</span>
+      </button>
+      <button [routerLink]="AppRoutes.ADMIN_REPORTS_PAGE" routerLinkActive="active" class="nav-item">
+        <mat-icon>flag</mat-icon>
+        <span>Signalements</span>
+      </button>
+    </div>
+  </div>
+</nav>

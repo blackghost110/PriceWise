@@ -1,79 +1,125 @@
 <app-header/>
+<app-forum-nav/>
 
+<main class="page">
 
-<main class="main-content">
-  <div class="content-container">
-    <div class="main-section">
-      <div class="section-header">
-        <h2>
-          <button mat-button color="primary" [routerLink]="AppRoutes.DASHBOARD_PAGE">
-          <mat-icon>arrow_back_ios_new</mat-icon>
-          Retour aux discussion
-        </button>
-        </h2>
+  <div class="top-bar">
+    <button class="back-link" type="button" [routerLink]="AppRoutes.DASHBOARD_PAGE">
+      <mat-icon>arrow_back_ios_new</mat-icon>
+      Retour aux discussions
+    </button>
 
-
-      <article class="card" style="padding: 10px">
-        <p class="article-date">Publié le {{$safeNavigationMigration(postInfo()?.created) | date: 'medium'}}</p>
-        <h1>{{postInfo()?.title}}</h1>
-        <p class="post-author">
-          {{ postInfo()?.user!.displayName }}
-          @if (postInfo()?.user!.activeBadge) {
-            <span class="author-badge">{{ postInfo()?.user!.activeBadge }}</span>
-          }
-        </p>
-        <p>{{postInfo()?.message}}</p>
-      </article>
-    </div>
-      <h2>Commentaires</h2>
-      @if (errorMessage()) {
-        <p class="control-error">{{ errorMessage() }}</p>
-      }
-      <form formGroup>
-        <mat-form-field class="white-background" style="width: 100%">
-          <mat-label>Leave a comment</mat-label>
-          <textarea matInput placeholder="Ex. It makes me feel..."
-                    [rows]="isExpanded ? 5 : 1"
-                    (focus)="isExpanded = true"
-                    style="resize: none"
-                    [(ngModel)]="commentText"></textarea>
-
-          @if (isExpanded) {
-            <button
-              mat-raised-button
-              style="float: right"
-              (click)="onAddComment()"
-              [disabled]="!commentText().trim()">
-              Envoyer
-            </button>
-          }
-
-        </mat-form-field>
-
-      </form>
-
-
-      <div class="list">
-        @for (comment of commentList(); track comment.commentId) {
-          <article class="card" >
-            <div class="comment-header">
-              <p class="commentUsername">
-                {{comment.user.displayName}}
-                @if (comment.user.activeBadge) {
-                  <span class="author-badge">{{ comment.user.activeBadge }}</span>
-                }
-              </p>
-              <p class="commentDate">{{comment.created | date: "medium"}}</p>
-            </div>
-
-            <p>{{comment.message}}</p>
-          </article>
-        }
-      </div>
-    </div>
-
-
+    @if (postInfo(); as post) {
+      <app-report-button [targetType]="ReportTargetType.POST"
+                          [targetId]="post.postId.toString()"
+                          [label]="post.title"/>
+    }
   </div>
+
+  @if (postInfo(); as post) {
+    <article class="post-card">
+      <div class="post-card__header">
+        <div class="post-card__author">
+          <span class="avatar avatar--md" [style.background]="avatarGradient(post.user.displayName)">
+            {{ initials(post.user.displayName) }}
+          </span>
+          <div class="post-card__identity">
+            <span class="post-card__author-name">
+              {{ post.user.displayName }}
+              @if (post.user.activeBadge) {
+                <span class="badge-chip">{{ post.user.activeBadge }}</span>
+              }
+            </span>
+            <span class="post-card__date" [title]="post.created | date:'medium'">{{ post.created | relativeTime }}</span>
+          </div>
+        </div>
+        <span class="postal-chip">📍 {{ post.postalCode }}</span>
+      </div>
+
+      <h1 class="post-card__title">{{ post.title }}</h1>
+      <p class="post-card__message">{{ post.message }}</p>
+    </article>
+  } @else {
+    <div class="empty-state">
+      <div class="empty-state__sub">Chargement de la discussion...</div>
+    </div>
+  }
+
+  <div class="composer">
+    <h2 class="section-title">Laisser un commentaire</h2>
+
+    @if (errorMessage()) {
+      <p class="control-error">{{ errorMessage() }}</p>
+    }
+
+    <mat-form-field class="white-background composer__field" appearance="outline">
+      <mat-label>Votre commentaire</mat-label>
+      <textarea matInput placeholder="Ex. Ça me fait penser à..."
+                [rows]="isExpanded ? 5 : 1"
+                (focus)="isExpanded = true"
+                style="resize: none"
+                [(ngModel)]="commentText"></textarea>
+    </mat-form-field>
+
+    @if (isExpanded) {
+      <div class="composer__actions">
+        <button mat-raised-button (click)="onAddComment()" [disabled]="!commentText().trim()">
+          Envoyer
+        </button>
+      </div>
+    }
+  </div>
+
+  <h2 class="section-title">
+    Commentaires
+    <span class="section-title__count">· {{ commentList()?.length ?? 0 }}</span>
+  </h2>
+
+  @if (commentList() === null) {
+
+    <div class="empty-state">
+      <div class="empty-state__sub">Chargement des commentaires...</div>
+    </div>
+
+  } @else if (commentList()!.length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-state__icon">💭</div>
+      <div class="empty-state__title">Aucun commentaire</div>
+      <div class="empty-state__sub">Sois le premier à réagir !</div>
+    </div>
+
+  } @else {
+
+    <div class="comment-list">
+      @for (comment of commentList(); track comment.commentId) {
+        <article class="comment-card">
+          <div class="comment-card__header">
+            <div class="comment-card__author">
+              <span class="avatar avatar--sm" [style.background]="avatarGradient(comment.user.displayName)">
+                {{ initials(comment.user.displayName) }}
+              </span>
+              <span class="comment-card__author-name">
+                {{ comment.user.displayName }}
+                @if (comment.user.activeBadge) {
+                  <span class="badge-chip">{{ comment.user.activeBadge }}</span>
+                }
+              </span>
+            </div>
+            <div class="comment-card__actions">
+              <span class="comment-card__date" [title]="comment.created | date:'medium'">{{ comment.created | relativeTime }}</span>
+              <app-report-button variant="ghost"
+                                  [targetType]="ReportTargetType.COMMENT"
+                                  [targetId]="comment.commentId.toString()"
+                                  [label]="comment.message.slice(0, 60)"/>
+            </div>
+          </div>
+          <p class="comment-card__message">{{ comment.message }}</p>
+        </article>
+      }
+    </div>
+
+  }
 
 </main>
 

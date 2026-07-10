@@ -1,0 +1,40 @@
+<div class="scanner-wrapper">
+
+  @if (devices().length > 1) {
+    <select
+      class="scanner-device-select"
+      (change)="onDeviceChange($any($event.target).value)"
+    >
+      @for (device of devices(); track device.deviceId) {
+        <option [value]="device.deviceId" [selected]="device.deviceId === selectedDevice()?.deviceId">
+          {{ device.label || 'Caméra' }}
+        </option>
+      }
+    </select>
+  }
+
+  <zxing-scanner
+    [formats]="allowedFormats"
+    [autostart]="true"
+    [device]="selectedDevice()"
+    (scanSuccess)="onScanSuccess($event)"
+    (camerasFound)="onCamerasFound($event)"
+    (camerasNotFound)="onCamerasNotFound()"
+    (permissionResponse)="onPermissionResponse($event)"
+  ></zxing-scanner>
+
+  @if (permissionDenied()) {
+    <p class="scanner-hint scanner-hint-error">
+      Accès à la caméra refusé. Autorisez la caméra dans votre navigateur ou saisissez le code EAN manuellement.
+    </p>
+  } @else if (hasCamera() === false) {
+    <p class="scanner-hint scanner-hint-error">
+      Aucune caméra détectée. Saisissez le code EAN manuellement.
+    </p>
+  } @else if (hasCamera() === null) {
+    <p class="scanner-hint">Démarrage de la caméra…</p>
+  } @else {
+    <p class="scanner-hint">Visez le code-barres du produit.</p>
+  }
+
+</div>

@@ -5,6 +5,7 @@ import {ApiService} from '@shared/api/service/api.service';
 import {CreateProductPayload} from '@features/catalog/data/payload/create-product.payload';
 import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
 import {ProductDetailDto} from '@features/catalog/data/dto/product-detail.dto';
+import {ProductLookupDto} from '@features/catalog/data/dto/product-lookup.dto';
 import {PriceDto} from '@features/catalog/data/dto/price.dto';
 import {ApiURI} from '@shared/api/api-uri.enum';
 import {SnackbarService} from '@shared/service/snackbar.service';
@@ -81,6 +82,10 @@ export class ProductService {
       .pipe(
         tap((products) => this._allProducts.set(products))
       )
+  }
+
+  lookupByEan(ean: string) {
+    return this.api.get<ProductLookupDto>(`${ApiURI.PRODUCT_LOOKUP}/${ean}`);
   }
 
   addProduct(payload: CreateProductPayload, storeId: number) {

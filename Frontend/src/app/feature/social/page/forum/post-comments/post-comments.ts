@@ -1,8 +1,8 @@
-import {Component, inject, input, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, input, OnInit, signal} from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {Footer} from '@core/layout/footer/footer';
-import {MatFormField} from '@angular/material/form-field';
-import {MatLabel} from '@angular/material/form-field';
+import {ForumNav} from '@features/social/component/forum-nav/forum-nav';
+import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
 import {FormsModule} from '@angular/forms';
@@ -15,14 +15,18 @@ import {PostService} from '@features/social/service/post.service';
 import {catchError, EMPTY} from 'rxjs';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
+import {RelativeTimePipe} from '@shared/pipe/relative-time.pipe';
+import {avatarGradient, initials} from '@shared/util/avatar.util';
+import {ReportButton} from '@shared/component/report-button/report-button';
+import {ReportTargetType} from '@features/report/data/dto/report.dto';
 
 @Component({
   selector: 'app-post-comments',
   imports: [
     Header,
     Footer,
+    ForumNav,
     MatFormField,
     MatLabel,
     MatInput,
@@ -30,20 +34,22 @@ import {AppRoutes} from '@shared/route/app-routes.enum';
     FormsModule,
     DatePipe,
     MatIcon,
-    RouterLink
+    RouterLink,
+    RelativeTimePipe,
+    ReportButton,
   ],
   templateUrl: './post-comments.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './post-comments.css'
 })
 export class PostComments implements OnInit {
 
-  commentService = inject(CommentService)
-  postService = inject(PostService);
-  private errorMessageService = inject(ErrorMessageService)
+  private readonly commentService = inject(CommentService);
+  private readonly postService = inject(PostService);
+  private readonly errorMessageService = inject(ErrorMessageService);
 
   // dynamic url
-  postId = input.required<string>()
+  postId = input.required<string>();
 
   isExpanded = false;
   commentText = signal('');
@@ -52,36 +58,35 @@ export class PostComments implements OnInit {
   commentList = this.commentService.commentList;
   postInfo = this.postService.postInfo;
   readonly AppRoutes = AppRoutes;
-
+  protected readonly initials = initials;
+  protected readonly avatarGradient = avatarGradient;
+  protected readonly ReportTargetType = ReportTargetType;
 
   ngOnInit() {
-    this.commentService.getComments(+this.postId()).subscribe()
-    this.postService.getPost(+this.postId()).subscribe()
+    this.commentService.getComments(+this.postId()).subscribe();
+    this.postService.getPost(+this.postId()).subscribe();
   }
 
   onAddComment() {
-      const text = this.commentText().trim();
+    const text = this.commentText().trim();
 
-      if (!text) {
-        return;
-      }
+    if (!text) {
+      return;
+    }
 
-      const payload: CreateCommentPayload = {
-        message: text,
-      };
+    const payload: CreateCommentPayload = {
+      message: text,
+    };
 
-      this.commentService.addComment(payload, +this.postId()).pipe(
-        catchError((err: HttpErrorResponse) => {
-          this.errorMessage.set(this.errorMessageService.getErrorMessage(err.error?.code, err.error?.data))
-          return EMPTY;
-        })
-      )
-        .subscribe(() => {
-          this.commentText.set('');
-          this.isExpanded = false;
-        });
-
+    this.commentService.addComment(payload, +this.postId()).pipe(
+      catchError((err: HttpErrorResponse) => {
+        this.errorMessage.set(this.errorMessageService.getErrorMessage(err.error?.code, err.error?.data))
+        return EMPTY;
+      })
+    )
+      .subscribe(() => {
+        this.commentText.set('');
+        this.isExpanded = false;
+      });
   }
-
-  protected readonly AppNode = AppNode;
 }

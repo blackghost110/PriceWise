@@ -1,6 +1,7 @@
-import {Body, Controller, Delete, Get, Param, Put, Query } from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Put, Query, UseGuards } from "@nestjs/common";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {User} from "@common/config/decorator/user.decorator";
+import { AdminGuard } from '@common/api/admin.guard';
 import {SecurityService} from "./security.service";
 import { Credential } from './model/entity/credential.entity';
 import { UpdateUserPayload } from "./model/payload/update-user.payload";
@@ -24,6 +25,7 @@ export class SecurityController {
     public delete(@Param('id') id: string) {
         return this.service.delete(id);
     }
+    @UseGuards(AdminGuard)
     @Put(':userId')
     public update(@Param('userId') userId: string, @Body() payload: UpdateUserPayload) {
       return this.service.update(userId, payload);

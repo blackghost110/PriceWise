@@ -1,4 +1,5 @@
 import {ProductUnitType} from '@features/catalog/data/dto/product.dto';
+import {StoreBrandDto} from '@features/catalog/data/dto/store-brand.dto';
 
 export interface ProductsAllDto {
 
@@ -15,4 +16,5 @@ export interface ProductsAllDto {
   storeNumber: string;
   storePostalCode: string;
   storeCity: string;
+  storeBrand: StoreBrandDto | null;
 }

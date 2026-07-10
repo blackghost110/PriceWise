@@ -69,6 +69,38 @@
       <p class="suggestion-hint">{{ suggestionHint() }}</p>
     }
     <br>
+
+    <div class="scan-section">
+      <h3>Scan du code-barres (optionnel)</h3>
+
+      <span class="mat-form-field-wrapper">
+        <mat-form-field>
+          <mat-label>Code EAN</mat-label>
+          <input matInput placeholder="Ex. 3017620422003" formControlName="ean" (keyup.enter)="lookupEan(productForm.value.ean)"/>
+        </mat-form-field>
+      </span>
+      <button matButton type="button" (click)="lookupEan(productForm.value.ean)" [disabled]="lookupInProgress()">Rechercher</button>
+      <button matButton type="button" (click)="toggleScanner()">
+        {{ showScanner() ? 'Fermer la caméra' : 'Scanner avec la caméra' }}
+      </button>
+
+      @if (showScanner()) {
+        <app-barcode-scanner (codeScanned)="lookupEan($event)"></app-barcode-scanner>
+      }
+
+      @if (lookupInProgress()) {
+        <p class="scan-hint">Recherche en cours…</p>
+      }
+
+      @if (lookupMessage()) {
+        <p class="scan-hint" [class.scan-hint-warning]="existingProduct()">{{ lookupMessage() }}</p>
+      }
+
+      @if (existingProduct()) {
+        <button matButton type="button" (click)="onUpdateExistingPrice()">Actualiser le prix de ce produit</button>
+      }
+    </div>
+
     @if (errorMessage()) {
       <p class="control-error">{{ errorMessage() }}</p>
     }
@@ -79,7 +111,7 @@
 
 
     <button matButton (click)="onClose()">Fermer</button>
-    <button matButton (click)="onAddProduct()">Ajouter produit</button>
+    <button matButton (click)="onAddProduct()" [disabled]="!!existingProduct()">Ajouter produit</button>
 
 
   </mat-dialog-actions>

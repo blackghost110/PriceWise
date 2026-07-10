@@ -101,6 +101,18 @@ export class ListProductGetByListException extends ApiException {
   }
 }
 
+export class ListProductDeleteNotFoundException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.LIST_PRODUCT_DELETE_NOT_FOUND_EXCEPTION, 404);
+  }
+}
+
+export class ListProductDeleteException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.LIST_PRODUCT_DELETE_EXCEPTION, 500);
+  }
+}
+
 
 // Price Service Exceptions ------------------------------------------------------//
 
@@ -217,6 +229,12 @@ export class ProductDeleteNotFoundException extends ApiException {
 export class ProductDeleteException extends ApiException {
   constructor() {
     super(ApiCodeResponse.PRODUCT_DELETE_EXCEPTION, 500);
+  }
+}
+
+export class ProductLookupException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.PRODUCT_LOOKUP_EXCEPTION, 500);
   }
 }
 

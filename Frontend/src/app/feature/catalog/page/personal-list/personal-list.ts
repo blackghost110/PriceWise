@@ -1,7 +1,7 @@
-import {Component, computed, effect, inject, OnInit, signal, viewChild, ChangeDetectionStrategy} from '@angular/core';
+import {Component, computed, effect, inject, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
 import {Header} from '@core/layout/header/header';
 import {Footer} from '@core/layout/footer/footer';
-import {CurrencyPipe, DatePipe} from '@angular/common';
+import {CurrencyPipe} from '@angular/common';
 import {MatFormField, MatSuffix} from '@angular/material/form-field';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput, MatLabel} from '@angular/material/input';
@@ -9,26 +9,18 @@ import {MatOption, MatSelect} from '@angular/material/select';
 import {ReactiveFormsModule} from '@angular/forms';
 import {ListService} from '@features/catalog/service/list.service';
 import {ListProductService} from '@features/catalog/service/list-product.service';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {AddListDialog} from '@features/catalog/component/dialog/add-list-dialog/add-list-dialog';
 import {MatDialog} from '@angular/material/dialog';
 import {UpdateListDialog} from '@features/catalog/component/dialog/update-list-dialog/update-list-dialog';
 import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell, MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable, MatTableDataSource
-} from '@angular/material/table';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {ListProductDto} from '@features/catalog/data/dto/list-product.dto';
 import {RouterLink} from '@angular/router';
 import {AppRoutes} from '@shared/route/app-routes.enum';
-import {referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
+import {formatQuantity, referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
+import {CatalogNav} from '@features/catalog/component/catalog-nav/catalog-nav';
 
 @Component({
   selector: 'app-personal-list',
@@ -42,26 +34,16 @@ import {referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
     MatSelect,
     ReactiveFormsModule,
     CurrencyPipe,
-    DatePipe,
-    Header,
     MatInput,
     MatSuffix,
     MatButton,
+    MatIconButton,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
-    MatCell,
-    MatCellDef,
-    MatColumnDef,
-    MatHeaderCell,
-    MatHeaderRow,
-    MatHeaderRowDef,
     MatPaginator,
-    MatRow,
-    MatRowDef,
-    MatTable,
-    MatHeaderCellDef,
-    RouterLink
+    RouterLink,
+    CatalogNav,
   ],
   templateUrl: './personal-list.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -73,17 +55,15 @@ export class PersonalList implements OnInit{
   listService = inject(ListService)
   listProductService = inject(ListProductService)
   dialogService = inject(DialogService)
-  paginator = viewChild(MatPaginator);
-
-  dataSource = new MatTableDataSource<ListProductDto>([]);
-  displayedColumns: string[] = ['name','quantity', 'price','place', 'lastPrice' ];
-
 
   personalList = this.listService.personalList
   listProducts = this.listProductService.listProducts
 
   selectedList = signal(0);
   searchTerm = signal('');
+
+  pageIndex = signal(0);
+  pageSize = signal(10);
 
 
   constructor() {
@@ -97,23 +77,11 @@ export class PersonalList implements OnInit{
       }
     });
 
-    //  mettre à jour le dataSource
+    //  revenir à la première page lorsque la liste sélectionnée change
     effect(() => {
-      const product = this.filteredProducts();
-      if (product) {
-        this.dataSource.data = product;
-      }
+      this.selectedList();
+      this.pageIndex.set(0);
     });
-
-    //  connecter le paginator
-    effect(() => {
-      const page = this.paginator();
-      if (page) {
-        this.dataSource.paginator = page;
-      }
-    });
-
-
   }
 
   ngOnInit() {
@@ -148,7 +116,16 @@ export class PersonalList implements OnInit{
 
   })
 
+  pagedProducts = computed(() => {
+    const items = this.filteredProducts() ?? [];
+    const start = this.pageIndex() * this.pageSize();
+    return items.slice(start, start + this.pageSize());
+  })
 
+  onPage(event: PageEvent) {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
+  }
 
   // getProductDetailUrl(productId: string): string {
   //   return AppRoutes.PRODUCT_DETAIL_PAGE.replace(':productId', productId);
@@ -178,12 +155,78 @@ export class PersonalList implements OnInit{
 
   onSearchChange(searchValue: string) {
     this.searchTerm.set(searchValue);
+    this.pageIndex.set(0);
   }
 
   onClearSearch() {
     this.searchTerm.set('')
+    this.pageIndex.set(0);
+  }
+
+  onRemoveFromList(product: ListProductDto) {
+    this.dialogService.confirmDialog({
+      title: 'Êtes vous sûr ?',
+      message: 'En confirmant cette action, ce produit sera retiré de la liste',
+      confirmCaption: 'Supprimer',
+      cancelCaption: 'Annuler'
+    }).subscribe((result) => {
+      if (result) {
+        this.listProductService.deleteListProduct(product.listProductId, this.selectedList()).subscribe()
+      }
+    })
+  }
+
+  relativeDate(date: Date | string): string {
+    const target = new Date(date);
+    const diffDays = Math.floor((Date.now() - target.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays <= 0) {
+      return "Aujourd'hui";
+    }
+    if (diffDays === 1) {
+      return 'Hier';
+    }
+    if (diffDays < 7) {
+      return `Il y a ${diffDays}j`;
+    }
+    if (diffDays < 30) {
+      return `Il y a ${Math.round(diffDays / 7)} sem.`;
+    }
+    if (diffDays < 365) {
+      return `Il y a ${Math.round(diffDays / 30)} mois`;
+    }
+    const years = Math.round(diffDays / 365);
+    return `Il y a ${years} an${years > 1 ? 's' : ''}`;
+  }
+
+  /**
+   * Couleur de fond du badge : celle de la marque du magasin (dégradé si définie),
+   * sinon une couleur de secours déterministe dérivée du nom (stable pour un même nom).
+   */
+  badgeBg(product: ListProductDto): string {
+    const brand = product.storeBrand;
+    if (brand) {
+      if (brand.gradientColor) {
+        return `linear-gradient(100deg, ${brand.bgColor} 0%, ${brand.bgColor} 55%, ${brand.gradientColor} 100%)`;
+      }
+      return brand.bgColor;
+    }
+    return this.fallbackColor(product.storeName);
+  }
+
+  badgeText(product: ListProductDto): string {
+    return product.storeBrand?.textColor ?? '#ffffff';
+  }
+
+  private fallbackColor(name: string): string {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = Math.abs(hash) % 360;
+    return `hsl(${hue} 55% 42%)`;
   }
 
   readonly AppRoutes = AppRoutes;
   readonly referencePriceUnitLabel = referencePriceUnitLabel;
+  readonly formatQuantity = formatQuantity;
 }

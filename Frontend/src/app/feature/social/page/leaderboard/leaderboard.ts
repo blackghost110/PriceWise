@@ -1,14 +1,12 @@
 import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
 import {Footer} from '@core/layout/footer/footer';
 import {Header} from '@core/layout/header/header';
-import {MatIcon} from '@angular/material/icon';
-import {RouterLink, RouterLinkActive} from '@angular/router';
+import {ForumNav} from '@features/social/component/forum-nav/forum-nav';
 import {catchError, EMPTY} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SocialService} from '@features/social/service/social.service';
 import {AuthService} from '@core/auth/auth.service';
 import {ErrorMessageService} from '@shared/api/service/error-message.service';
-import {AppRoutes} from '@shared/route/app-routes.enum';
 import {LeaderboardEntryDto, LeaderboardPeriod} from '@features/social/data/dto/leaderboard-entry.dto';
 
 type Scale = 'global' | 'local';
@@ -34,9 +32,7 @@ const XP_FORMATTER = new Intl.NumberFormat('fr-FR');
   imports: [
     Footer,
     Header,
-    MatIcon,
-    RouterLinkActive,
-    RouterLink,
+    ForumNav,
   ],
   templateUrl: './leaderboard.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,8 +43,6 @@ export class Leaderboard implements OnInit {
   private readonly socialService = inject(SocialService);
   private readonly authService = inject(AuthService);
   private readonly errorMessageService = inject(ErrorMessageService);
-
-  readonly AppRoutes = AppRoutes;
 
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);

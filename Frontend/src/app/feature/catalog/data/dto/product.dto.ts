@@ -5,6 +5,7 @@ export interface ProductDto {
   brand: string;
   unit: ProductUnitType;
   quantity: number;
+  ean?: string;
   productPrice: number;
   referencePrice: number;
   priceDate: Date;
@@ -28,6 +29,29 @@ export function referencePriceUnitLabel(unit: string): string {
     default:
       return unit;
   }
+}
+
+/**
+ * Formate la quantité affichée d'un produit dans l'unité la plus lisible : kg/l pour les
+ * multiples de 500 (g/ml), cl pour les multiples de 10 (ml uniquement), sinon la valeur brute.
+ */
+export function formatQuantity(quantity: number, unit: string): string {
+  if (unit === ProductUnitType.G) {
+    if (quantity % 500 === 0) {
+      return `${quantity / 1000} kg`;
+    }
+    return `${quantity}g`;
+  }
+  if (unit === ProductUnitType.ML) {
+    if (quantity % 500 === 0) {
+      return `${quantity / 1000} l`;
+    }
+    if (quantity % 10 === 0) {
+      return `${quantity / 10} cl`;
+    }
+    return `${quantity}ml`;
+  }
+  return `${quantity}${unit}`;
 }
 
 /**

@@ -1,0 +1,86 @@
+<app-header/>
+<app-admin-nav/>
+
+<main class="page">
+
+  <div class="page-header">
+    <h1 class="page-header__title">Journal d'activité</h1>
+    <p class="page-header__sub">Historique des ajouts, modifications et suppressions sur le catalogue</p>
+  </div>
+
+  <div class="filter-bar">
+    <mat-form-field appearance="outline" class="white-background">
+      <mat-label>Utilisateur</mat-label>
+      <mat-select [(ngModel)]="userFilter">
+        <mat-option value="">Tous</mat-option>
+        @for (name of userOptions(); track name) {
+          <mat-option [value]="name">{{ name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="white-background">
+      <mat-label>Type d'entité</mat-label>
+      <mat-select [(ngModel)]="entityTypeFilter">
+        <mat-option value="">Tous</mat-option>
+        <mat-option [value]="EntityType.STORE">Magasin</mat-option>
+        <mat-option [value]="EntityType.PRODUCT">Produit</mat-option>
+        <mat-option [value]="EntityType.PRICE">Prix</mat-option>
+        <mat-option [value]="EntityType.WEEKLY_CIRCLE">Cercle hebdomadaire</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="white-background">
+      <mat-label>Action</mat-label>
+      <mat-select [(ngModel)]="actionTypeFilter">
+        <mat-option value="">Toutes</mat-option>
+        <mat-option [value]="ActionType.ADD">Ajout</mat-option>
+        <mat-option [value]="ActionType.UPDATE">Modification</mat-option>
+        <mat-option [value]="ActionType.DELETE">Suppression</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button class="clear-filters" type="button" (click)="onClearFilters()">Réinitialiser</button>
+  </div>
+
+  @if (activityLogs() === null) {
+
+    <div class="empty-state">
+      <div class="empty-state__sub">Chargement du journal...</div>
+    </div>
+
+  } @else if (filteredLogs()!.length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-state__icon">🗒️</div>
+      <div class="empty-state__title">Aucune activité trouvée</div>
+      <div class="empty-state__sub">Essayez d'autres filtres</div>
+    </div>
+
+  } @else {
+
+    <div class="log-list">
+      @for (log of filteredLogs(); track log.logId) {
+        <article class="log-card">
+          <span class="avatar avatar--sm" [style.background]="avatarGradient(log.credential?.displayName ?? '?')">
+            {{ initials(log.credential?.displayName ?? '?') }}
+          </span>
+          <div class="log-card__body">
+            <p class="log-card__line">
+              <strong>{{ log.credential?.displayName ?? 'Utilisateur inconnu' }}</strong>
+              {{ actionTypeLabel(log.actionType) }}
+              {{ entityTypeLabel(log.entityType) }}
+              <span class="entity-id">#{{ log.entityId }}</span>
+            </p>
+            <span class="log-card__date" [title]="log.created | date:'medium'">{{ log.created | relativeTime }}</span>
+          </div>
+          <span class="action-chip" [class]="'action-chip--' + log.actionType.toLowerCase()">{{ log.actionType }}</span>
+        </article>
+      }
+    </div>
+
+  }
+
+</main>
+
+<app-footer/>

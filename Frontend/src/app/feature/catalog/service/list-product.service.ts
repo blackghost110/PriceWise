@@ -34,6 +34,15 @@ export class ListProductService {
     );
   }
 
+  deleteListProduct(listProductId: number, listId: number) {
+    return this.api.delete(`${ApiURI.LIST_PRODUCT_DELETE}/${listProductId}`).pipe(
+      tap(() => {
+        this.getListProducts(listId).subscribe()
+        this.snackbar.show('Produit retiré de la liste');
+      })
+    );
+  }
+
 
   clearListProducts() {
     this._listProducts.set(null)

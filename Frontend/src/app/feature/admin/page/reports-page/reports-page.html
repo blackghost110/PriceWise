@@ -1,0 +1,71 @@
+<app-header/>
+<app-admin-nav/>
+
+<main class="page">
+
+  <div class="page-header">
+    <h1 class="page-header__title">Signalements</h1>
+    <p class="page-header__sub">Contenus signalés par les utilisateurs</p>
+  </div>
+
+  <div class="segmented segmented--fit">
+    <button type="button"
+            class="segmented__btn"
+            [class.segmented__btn--active]="statusFilter() === ReportStatus.PENDING"
+            (click)="onFilterChange(ReportStatus.PENDING)">En attente</button>
+    <button type="button"
+            class="segmented__btn"
+            [class.segmented__btn--active]="statusFilter() === ReportStatus.RESOLVED"
+            (click)="onFilterChange(ReportStatus.RESOLVED)">Résolus</button>
+    <button type="button"
+            class="segmented__btn"
+            [class.segmented__btn--active]="statusFilter() === 'ALL'"
+            (click)="onFilterChange('ALL')">Tous</button>
+  </div>
+
+  @if (reportList() === null) {
+
+    <div class="empty-state">
+      <div class="empty-state__sub">Chargement des signalements...</div>
+    </div>
+
+  } @else if (reportList()!.length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-state__icon">✅</div>
+      <div class="empty-state__title">Aucun signalement</div>
+      <div class="empty-state__sub">Rien à traiter pour ce filtre</div>
+    </div>
+
+  } @else {
+
+    <div class="report-list">
+      @for (report of reportList(); track report.reportId) {
+        <article class="report-card" [routerLink]="AppRoutes.adminReportPage(report.reportId.toString())">
+          <div class="report-card__top">
+            <span class="target-chip">{{ reportTargetTypeLabel(report.targetType) }} #{{ report.targetId }}</span>
+            <span class="status-chip" [class.status-chip--resolved]="report.status === ReportStatus.RESOLVED">
+              {{ report.status === ReportStatus.RESOLVED ? 'Résolu' : 'En attente' }}
+            </span>
+          </div>
+
+          <p class="report-card__preview">{{ report.description }}</p>
+
+          <div class="report-card__meta">
+            <div class="report-card__author">
+              <span class="avatar avatar--sm" [style.background]="avatarGradient(report.credential?.displayName ?? '?')">
+                {{ initials(report.credential?.displayName ?? '?') }}
+              </span>
+              <span class="report-card__author-name">{{ report.credential?.displayName ?? 'Utilisateur inconnu' }}</span>
+            </div>
+            <span class="date-chip" [title]="report.created | date:'medium'">{{ report.created | relativeTime }}</span>
+          </div>
+        </article>
+      }
+    </div>
+
+  }
+
+</main>
+
+<app-footer/>

@@ -17,7 +17,7 @@ export const routes: Routes = [
   },
   {
     path: AppNode.ADMIN,
-    loadComponent: () => import('@features/admin/page/admin-dashboard-page/admin-dashboard-page').then(c => c.AdminDashboardPage),
+    loadChildren: () => import('@features/admin/admin.routes').then(r => r.adminRoutes),
     canActivate: [adminGuard]
   },
   {

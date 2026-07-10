@@ -4,12 +4,17 @@
   <main class="main-content">
 
         <div class="section-header">
-          <h2>Detail du produit : {{ product.name }} {{ product.brand }}
-            <button mat-button color="primary" (click)="location.back()">
-              <mat-icon>arrow_back_ios_new</mat-icon>
-              Retour aux produits
-            </button>
-          </h2>
+          <div class="title-row">
+            <h2>Detail du produit : {{ product.name }} {{ product.brand }}
+              <button mat-button color="primary" (click)="location.back()">
+                <mat-icon>arrow_back_ios_new</mat-icon>
+                Retour aux produits
+              </button>
+            </h2>
+            <app-report-button [targetType]="ReportTargetType.PRODUCT"
+                                [targetId]="product.productId.toString()"
+                                [label]="product.name + (product.brand ? ' ' + product.brand : '')"/>
+          </div>
           <article class="article-info">
             <div>
               <p>Quantité : {{product.quantity}}{{product.unit}}</p>

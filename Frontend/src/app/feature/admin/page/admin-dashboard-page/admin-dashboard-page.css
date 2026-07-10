@@ -1,47 +1,203 @@
-/* Main Content */
-.main-content {
+/* ══════════════════════════════════════
+   DESIGN TOKENS (mêmes valeurs que les autres pages admin)
+══════════════════════════════════════ */
+:host {
+  --color-bg:           #f0f2f5;
+  --color-card:         #ffffff;
+  --color-green-mid:    #2e7d32;
+  --color-green-bg:     #e8f5e9;
+
+  --color-text-primary:   #1a1a1a;
+  --color-text-secondary: #616161;
+  --color-text-muted:     #9e9e9e;
+  --color-text-faint:     #bbbbbb;
+
+  --color-divider:     #f5f5f5;
+  --color-row-divider: #f7f7f7;
+
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.09);
+  --radius-card: 16px;
+}
+
+/* ══════════════════════════════════════
+   PAGE
+══════════════════════════════════════ */
+.page {
+  display: block;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 28px 24px 60px;
+  min-height: 100vh;
+  background: var(--color-bg);
 }
 
-.content-container {
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-header__title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.3px;
+  margin-bottom: 5px;
+}
+
+.page-header__sub {
+  font-size: 13px;
+  color: var(--color-text-faint);
+}
+
+/* ══════════════════════════════════════
+   EMPTY STATE
+══════════════════════════════════════ */
+.empty-state {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.empty-state__icon {
+  font-size: 38px;
+  margin-bottom: 12px;
+}
+
+.empty-state__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+
+.empty-state__sub {
+  font-size: 13px;
+  color: var(--color-text-faint);
+}
+
+/* ══════════════════════════════════════
+   USER LIST
+══════════════════════════════════════ */
+.user-list {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.user-list__header {
+  display: grid;
+  grid-template-columns: 1fr 100px 90px 130px 56px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 20px;
+  font-size: 10.5px;
+  color: var(--color-text-faint);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.col-center { text-align: center; }
+
+.user-row {
+  display: grid;
+  grid-template-columns: 1fr 100px 90px 130px 56px;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--color-row-divider);
+}
+
+.user-row:last-child {
+  border-bottom: none;
+}
+
+.user-row:hover {
+  background: #fafafa;
+}
+
+.user-row__player {
   display: flex;
-  gap: 24px;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
-.main-section {
-  flex: 1;
-}
-.section-header {
-  margin-bottom: 10px;
+.user-row__avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
-.section-header h2 {
-  font-size: 24px;
-  color: #666;
-  margin-bottom: 24px;
+.user-row__identity {
+  min-width: 0;
 }
 
-.section-header p {
-  color: #666;
-  font-size: 14px;
-}
-.product-table {
-  background: white;
-  border-radius: 8px 8px 0 0;
+.user-row__name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-}
-mat-paginator {
-  border-radius: 0 0 8px 8px;
+.user-row__email {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
   overflow: hidden;
-  background: white;
+  text-overflow: ellipsis;
 }
-.product-table .mat-mdc-row:hover {
-  background-color: #f5f5f5; /* Gris très léger */
-  cursor: pointer;
+
+.role-chip {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #2952a3;
+  background: #e8f0fe;
 }
-.table-action {
-  width: 70px;
+
+.role-chip--admin {
+  color: #c62828;
+  background: #ffebee;
+}
+
+.level-chip {
+  display: inline-block;
+  background: var(--color-green-bg);
+  color: var(--color-green-mid);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.warning-chip {
+  font-size: 12px;
+  font-weight: 600;
+  color: #b26a00;
+}
+
+.warning-chip--none {
+  color: var(--color-text-faint);
+  font-weight: 400;
+}
+
+.user-row__actions {
+  display: flex;
+  justify-content: flex-end;
 }

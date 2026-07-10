@@ -22,6 +22,7 @@ import { ListProductController } from './controller/list-product.controller';
 import { ListProductService } from './service/list-product.service';
 import { GamificationModule } from '../gamification/gamification.module';
 import { ActivityLogModule } from '../activity-log/activity-log.module';
+import { OpenFoodFactsService } from './service/open-food-facts.service';
 
 @Module({
     imports: [
@@ -30,7 +31,7 @@ import { ActivityLogModule } from '../activity-log/activity-log.module';
       ActivityLogModule,
     ],
     controllers: [ListController, ProductController, StoreController, PriceController, SecurityController, ListProductController],
-    providers: [ListService, ProductService, StoreService, StoreBrandService, PriceService, SecurityService, ListProductService],
+    providers: [ListService, ProductService, StoreService, StoreBrandService, PriceService, SecurityService, ListProductService, OpenFoodFactsService],
 })
 export class CatalogModule {
 }

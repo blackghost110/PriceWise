@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {ListProductService} from "../service/list-product.service";
 import { User } from '@common/config/decorator/user.decorator';
@@ -23,5 +23,9 @@ export class ListProductController {
     return await this.listProductService.getListProductsByList(listId);
   }
 
+  @Delete(':listProductId')
+  async deleteListProduct(@Param('listProductId') listProductId: number) {
+    return await this.listProductService.deleteListProduct(listProductId);
+  }
 
 }
