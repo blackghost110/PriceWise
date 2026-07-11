@@ -23,6 +23,9 @@ import {ErrorMessageService} from '@shared/api/service/error-message.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {AddPriceDialog} from '@features/catalog/component/dialog/add-price-dialog/add-price-dialog';
 import {BarcodeScanner} from '@features/catalog/component/barcode-scanner/barcode-scanner';
+import {ReceiptCamera} from '@features/catalog/component/receipt-camera/receipt-camera';
+import {ReceiptReviewDialog} from '@features/catalog/component/dialog/receipt-review-dialog/receipt-review-dialog';
+import {compressImage} from '@shared/util/image-compression.util';
 
 
 @Component({
@@ -43,7 +46,8 @@ import {BarcodeScanner} from '@features/catalog/component/barcode-scanner/barcod
     MatHint,
     MatAutocompleteTrigger,
     MatAutocomplete,
-    BarcodeScanner
+    BarcodeScanner,
+    ReceiptCamera
   ],
   templateUrl: './add-product-dialog.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -78,6 +82,10 @@ export class AddProductDialog {
   lookupInProgress = signal(false);
   lookupMessage = signal<string | null>(null);
   existingProduct = signal<ProductDto | null>(null);
+
+  // Scan de ticket de caisse (fichier image ou caméra)
+  showReceiptCamera = signal(false);
+  receiptProcessing = signal(false);
 
   constructor() {
     this.productService.getProducts(Number(this.store.storeId))
@@ -297,6 +305,45 @@ export class AddProductDialog {
     }
     this.dialogRef.close();
     this.dialog.open(AddPriceDialog, { data: { product } });
+  }
+
+  toggleReceiptCamera() {
+    this.showReceiptCamera.update(v => !v);
+  }
+
+  onReceiptFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = ''; // permet de resélectionner le même fichier ensuite
+    if (file) {
+      this.processReceiptImage(file);
+    }
+  }
+
+  onReceiptCaptured(blob: Blob) {
+    this.showReceiptCamera.set(false);
+    this.processReceiptImage(blob);
+  }
+
+  /**
+   * Compresse l'image du ticket puis ouvre le popup de vérification (non fermable au clic sur le
+   * fond : l'analyse IA prend plusieurs secondes). Ce popup d'ajout se ferme dans la foulée, la
+   * suite du flux (scan, revue, validation) se passe entièrement dans ReceiptReviewDialog.
+   */
+  private processReceiptImage(source: Blob) {
+    this.receiptProcessing.set(true);
+    compressImage(source).then(({ imageBase64, mimeType }) => {
+      this.dialog.open(ReceiptReviewDialog, {
+        data: { store: this.store, imageBase64, mimeType },
+        disableClose: true,
+        width: '900px',
+        maxWidth: '95vw',
+      });
+      this.dialogRef.close();
+    }).catch(() => {
+      this.receiptProcessing.set(false);
+      this.errorMessage.set('Impossible de traiter cette image. Réessayez avec une autre photo.');
+    });
   }
 
 }

@@ -1,0 +1,12 @@
+<div class="camera-wrapper">
+  @if (hasCamera()) {
+    <video #video class="camera-video" autoplay playsinline muted></video>
+    <button matButton type="button" (click)="capture()">Prendre la photo</button>
+  } @else if (permissionDenied()) {
+    <p class="camera-hint camera-hint-error">
+      Accès à la caméra refusé. Autorisez la caméra dans votre navigateur ou choisissez une image depuis votre appareil.
+    </p>
+  } @else {
+    <p class="camera-hint">Démarrage de la caméra…</p>
+  }
+</div>

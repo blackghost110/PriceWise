@@ -6,10 +6,13 @@ import {configManager} from "@common/config/config.manager";
 import {ConfigKey} from "@common/config/enum/config-key.enum";
 import {HttpExceptionFilter} from "@common/config/exception/http-exception.filter";
 import {swaggerConfiguration} from "@common/documentation/swagger.config";
+import {json} from "express";
 
 const bootstrap = async () => {
     const app = await NestFactory.create(AppModule);
     app.setGlobalPrefix(configManager.getValue(ConfigKey.APP_BASE_URL));
+    // Limite par défaut d'Express (~100kb) trop faible pour une photo de ticket de caisse en base64.
+    app.use(json({ limit: '15mb' }));
     app.enableCors();
     swaggerConfiguration.config(app);
     app.useGlobalFilters(new HttpExceptionFilter());

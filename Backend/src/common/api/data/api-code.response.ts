@@ -87,6 +87,12 @@ export enum ApiCodeResponse {
   STORE_UPDATE_NOT_FOUND_EXCEPTION = 'api.store.error.update-not-found-exception', // new
   STORE_UPDATE_EXCEPTION = 'api.store.error.update-exception', //new
 
+  // Receipt Service Exception Codes (scan de ticket de caisse via IA)
+  RECEIPT_STORE_NOT_FOUND_EXCEPTION = 'api.receipt.error.store-not-found-exception',
+  RECEIPT_SCAN_CONFIG_EXCEPTION = 'api.receipt.error.scan-config-exception',
+  RECEIPT_SCAN_EXCEPTION = 'api.receipt.error.scan-exception',
+  RECEIPT_APPLY_EXCEPTION = 'api.receipt.error.apply-exception',
+
   // GAMIFICATION API EXCEPTIONS (Badges & XP) --------------------------------------------//
 
   BADGE_OVERVIEW_EXCEPTION = 'api.badge.error.overview-exception',

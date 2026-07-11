@@ -101,6 +101,26 @@
       }
     </div>
 
+    <div class="scan-section">
+      <h3>Scan de ticket de caisse</h3>
+
+      <input #receiptFileInput type="file" accept="image/*" hidden (change)="onReceiptFileSelected($event)"/>
+      <button matButton type="button" (click)="receiptFileInput.click()" [disabled]="receiptProcessing()">
+        Choisir une image
+      </button>
+      <button matButton type="button" (click)="toggleReceiptCamera()" [disabled]="receiptProcessing()">
+        {{ showReceiptCamera() ? 'Fermer la caméra' : 'Ouvrir la caméra' }}
+      </button>
+
+      @if (showReceiptCamera()) {
+        <app-receipt-camera (captured)="onReceiptCaptured($event)"></app-receipt-camera>
+      }
+
+      @if (receiptProcessing()) {
+        <p class="scan-hint">Préparation de l'image…</p>
+      }
+    </div>
+
     @if (errorMessage()) {
       <p class="control-error">{{ errorMessage() }}</p>
     }

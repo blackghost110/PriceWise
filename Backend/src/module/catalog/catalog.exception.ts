@@ -289,3 +289,31 @@ export class StoreUpdateException extends ApiException {
     super(ApiCodeResponse.STORE_UPDATE_EXCEPTION, 500);
   }
 }
+
+
+// Receipt Service Exceptions ------------------------------------------------------//
+
+
+export class ReceiptStoreNotFoundException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.RECEIPT_STORE_NOT_FOUND_EXCEPTION, 404);
+  }
+}
+
+export class ReceiptScanConfigException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.RECEIPT_SCAN_CONFIG_EXCEPTION, 500);
+  }
+}
+
+export class ReceiptScanException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.RECEIPT_SCAN_EXCEPTION, 500);
+  }
+}
+
+export class ReceiptApplyException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.RECEIPT_APPLY_EXCEPTION, 500);
+  }
+}

@@ -23,6 +23,9 @@ import { ListProductService } from './service/list-product.service';
 import { GamificationModule } from '../gamification/gamification.module';
 import { ActivityLogModule } from '../activity-log/activity-log.module';
 import { OpenFoodFactsService } from './service/open-food-facts.service';
+import { ReceiptController } from './controller/receipt.controller';
+import { ReceiptService } from './service/receipt.service';
+import { GeminiService } from './service/gemini.service';
 
 @Module({
     imports: [
@@ -30,8 +33,8 @@ import { OpenFoodFactsService } from './service/open-food-facts.service';
       GamificationModule,
       ActivityLogModule,
     ],
-    controllers: [ListController, ProductController, StoreController, PriceController, SecurityController, ListProductController],
-    providers: [ListService, ProductService, StoreService, StoreBrandService, PriceService, SecurityService, ListProductService, OpenFoodFactsService],
+    controllers: [ListController, ProductController, StoreController, PriceController, SecurityController, ListProductController, ReceiptController],
+    providers: [ListService, ProductService, StoreService, StoreBrandService, PriceService, SecurityService, ListProductService, OpenFoodFactsService, ReceiptService, GeminiService],
 })
 export class CatalogModule {
 }

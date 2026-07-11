@@ -1,0 +1,159 @@
+.scan-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 0;
+  color: #666;
+}
+
+.review-hint {
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.review-empty {
+  color: #999;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 55vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.review-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 12px 40px 12px 12px;
+  border: 1px solid #eee;
+}
+
+.review-card__fields {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.review-card__raw {
+  font-size: 11px;
+  color: #999;
+  font-style: italic;
+}
+
+.review-card__badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.review-card__badge--existing {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.review-card__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.review-input,
+.review-select {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 13px;
+  background: white;
+}
+
+.review-input--name {
+  flex: 2;
+  min-width: 120px;
+}
+
+.review-price-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.review-price-wrap::before {
+  content: '€';
+  position: absolute;
+  left: 8px;
+  color: #888;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.review-input--price {
+  padding-left: 20px;
+}
+
+.review-input--brand {
+  flex: 1;
+  min-width: 90px;
+}
+
+.review-input--number {
+  width: 80px;
+}
+
+.review-reference {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4CA3EA;
+  margin-left: auto;
+}
+
+.review-link-label {
+  font-size: 11px;
+  color: #666;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+}
+
+.review-select--link {
+  width: 100%;
+}
+
+/* Bouton supprimer révélé au survol de la carte, comme le bouton "engrenage" des cartes produit
+   (voir store-products.css : .product-card:hover .gear-btn). */
+.review-card__delete {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.review-card:hover .review-card__delete,
+.review-card:focus-within .review-card__delete {
+  opacity: 1;
+}
+
+.control-error {
+  color: #a94442;
+  padding: 4px 10px;
+}

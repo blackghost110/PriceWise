@@ -48,6 +48,9 @@ export enum ApiURI {
   STORE_DELETE='store',
   STORE_BRAND='store/brand',
 
+  RECEIPT_SCAN='receipt/scan',
+  RECEIPT_APPLY='receipt/apply',
+
   REPORT_CREATE='report',
   REPORT_GET_ALL='report',
   REPORT_GET='report',

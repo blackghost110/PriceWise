@@ -29,6 +29,13 @@ class ConfigManager {
             privateKey: this.getValue(ConfigKey.FIREBASE_PRIVATE_KEY).replace(/\\n/g, '\n'),
         }
     }
+    // Clé API Google AI Studio (Gemini) pour le scan de ticket de caisse.
+    // Lue directement depuis process.env (PAS via getValue/ConfigKey) pour rester optionnelle :
+    // l'ajouter à ConfigKey la rendrait obligatoire au démarrage (cf. configMinimalKeys) et
+    // ferait planter l'app pour quiconque n'a pas encore configuré cette clé.
+    public getGeminiApiKey(): string | undefined {
+        return this.env['GEMINI_API_KEY'];
+    }
     getValue(key: ConfigKey, throwOnMissing = true): string {
         const value = this.env[key];
         if (!value && throwOnMissing) {
