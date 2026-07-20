@@ -85,6 +85,8 @@ export class ErrorMessageService {
     ['api.product.error.create-exception', 'Impossible de créer le produit. Veuillez réessayer.'],
     ['api.product.error.get-all-exception', 'Impossible de charger les produits. Veuillez réessayer.'],
     ['api.product.error.detail-not-found-exception', 'Ce produit n\'existe pas ou n\'est plus disponible'],
+    ['api.product.error.update-not-found-exception', 'Ce produit n\'existe pas ou n\'est plus disponible'],
+    ['api.product.error.update-exception', 'Impossible de modifier le produit. Veuillez réessayer.'],
     ['api.product.error.lookup-exception', 'Impossible de contacter la base produits. Remplissez les champs manuellement.'],
 
     // Stores

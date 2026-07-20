@@ -4,6 +4,7 @@ export class ProductDetailResponse {
   brand: string;
   unit: string;
   quantity: number;
+  ean: string;
   credentialId: string;
 
   storeName: string;

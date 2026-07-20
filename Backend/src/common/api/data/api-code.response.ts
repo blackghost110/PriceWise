@@ -75,6 +75,8 @@ export enum ApiCodeResponse {
   PRODUCT_DETAIL_NOT_FOUND_EXCEPTION = 'api.product.error.detail-not-found-exception',
   PRODUCT_DELETE_NOT_FOUND_EXCEPTION = 'api.product.error.delete-not-found-exception',
   PRODUCT_DELETE_EXCEPTION = 'api.product.error.delete-exception',
+  PRODUCT_UPDATE_NOT_FOUND_EXCEPTION = 'api.product.error.update-not-found-exception',
+  PRODUCT_UPDATE_EXCEPTION = 'api.product.error.update-exception',
   PRODUCT_LOOKUP_EXCEPTION = 'api.product.error.lookup-exception',
 
   // Store Service Exception Codes

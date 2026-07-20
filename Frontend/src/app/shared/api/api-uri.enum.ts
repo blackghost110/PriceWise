@@ -35,6 +35,7 @@ export enum ApiURI {
   PRODUCT_DETAIL='product',
   PRODUCT_GET_BY_STORE='store/:storeId/products',
   PRODUCT_MULTIPLE_DETAIL='product',
+  PRODUCT_UPDATE='product',
   PRODUCT_DELETE='product',
   PRODUCT_LOOKUP='product/lookup',
 

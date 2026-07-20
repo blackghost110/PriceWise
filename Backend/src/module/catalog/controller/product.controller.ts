@@ -10,10 +10,12 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import {CreateProductDto} from "../model/dto/create-product.dto";
+import {UpdateProductDto} from "../model/dto/update-product.dto";
 import {ProductService} from "../service/product.service";
 import {Credential} from "../../../security/model/entity/credential.entity";
 import { User } from "@common/config/decorator/user.decorator";
@@ -67,6 +69,18 @@ export class ProductController {
   })
   async getProductDetails(@Param('productId') productId: number) {
     return this.productService.getProductDetails(productId);
+  }
+
+  @Put('product/:productId')
+  @ApiOperation({
+    summary: 'Modifier un produit',
+    description: 'Met à jour les informations (nom, marque, quantité, unité, EAN) d\'un produit',
+  })
+  async updateProduct(
+      @User() user: Credential,
+      @Param('productId') productId: number,
+      @Body() updateProductDto: UpdateProductDto) {
+    return await this.productService.updateProduct(productId, updateProductDto, user.credentialId);
   }
 
   @UseGuards(AdminGuard)

@@ -7,6 +7,7 @@ export interface ProductDetailDto {
   brand: string;
   unit: string;
   quantity: number;
+  ean: string;
   credentialId: string;
 
   storeName: string;

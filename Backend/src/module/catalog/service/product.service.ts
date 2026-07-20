@@ -3,6 +3,7 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {ProductEntity} from "../model/product.entity";
 import {CreateProductDto} from "../model/dto/create-product.dto";
+import {UpdateProductDto} from "../model/dto/update-product.dto";
 import {PriceEntity} from "../model/price.entity";
 import {Credential} from "../../../security/model/entity/credential.entity";
 import {StoreEntity} from "../model/store.entity";
@@ -16,6 +17,8 @@ import {
   ProductDeleteNotFoundException,
   ProductDetailNotFoundException,
   ProductGetAllException,
+  ProductUpdateException,
+  ProductUpdateNotFoundException,
 } from '../catalog.exception';
 import { GetAllProductsQueryDTO } from '../model/dto/get-all-products-query.dto';
 import { XpService } from '../../gamification/service/xp.service';
@@ -159,6 +162,7 @@ export class ProductService {
       brand: product.brand,
       unit: product.unit,
       quantity: product.quantity,
+      ean: product.ean,
       credentialId: product.credentialId,
 
       storeName: product.store.name,
@@ -174,6 +178,38 @@ export class ProductService {
         priceDate: price.priceDate
       }))
     };
+  }
+
+  async updateProduct(productId: number, updateProductDto: UpdateProductDto, credentialId: string): Promise<ProductEntity> {
+    const product = await this.productRepository.findOne({ where: { productId } });
+    if (!product) {
+      throw new ProductUpdateNotFoundException();
+    }
+
+    const before = {
+      name: product.name,
+      brand: product.brand,
+      unit: product.unit,
+      quantity: product.quantity,
+      ean: product.ean,
+    };
+
+    try {
+      Object.assign(product, updateProductDto);
+      const saved = await this.productRepository.save(product);
+      // Journalisation (best-effort)
+      const after = {
+        name: product.name,
+        brand: product.brand,
+        unit: product.unit,
+        quantity: product.quantity,
+        ean: product.ean,
+      };
+      this.activityLogService.logUpdate(EntityType.PRODUCT, productId, credentialId, before, after).catch(() => {});
+      return saved;
+    } catch (e) {
+      throw new ProductUpdateException();
+    }
   }
 
   // Verifier les exceptions

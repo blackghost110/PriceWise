@@ -14,6 +14,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ProductService} from '@features/catalog/service/product.service';
 import {MatIcon} from '@angular/material/icon';
 import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
+import {formatQuantity} from '@features/catalog/data/dto/product.dto';
 
 @Component({
   selector: 'app-search-product-dialog',
@@ -134,5 +135,7 @@ export class SearchProductDialog implements OnInit {
     this.productService.clearSelectedProducts();
     this.dialogRef.close({ compare: false });
   }
+
+  protected readonly formatQuantity = formatQuantity;
 
 }

@@ -232,6 +232,18 @@ export class ProductDeleteException extends ApiException {
   }
 }
 
+export class ProductUpdateNotFoundException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.PRODUCT_UPDATE_NOT_FOUND_EXCEPTION, 404);
+  }
+}
+
+export class ProductUpdateException extends ApiException {
+  constructor() {
+    super(ApiCodeResponse.PRODUCT_UPDATE_EXCEPTION, 500);
+  }
+}
+
 export class ProductLookupException extends ApiException {
   constructor() {
     super(ApiCodeResponse.PRODUCT_LOOKUP_EXCEPTION, 500);

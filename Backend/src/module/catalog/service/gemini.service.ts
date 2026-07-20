@@ -2,12 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { configManager } from '@common/config/config.manager';
 import { ReceiptScanConfigException, ReceiptScanException } from '../catalog.exception';
 
-// NB : 'gemini-2.5-flash' (le modèle initialement prévu) renvoie 404 "no longer available to new
-// users" pour un compte Google AI Studio récent, et 'gemini-2.0-flash' a un quota gratuit à 0 pour
-// ce type de compte (vérifié en direct sur la clé de ce projet). 'gemini-3.1-flash-lite' est le
-// modèle stable (non-preview) actuellement accessible en free tier qui gère à la fois le JSON
-// structuré (responseSchema) et l'entrée image (inline_data) — voir vérifications manuelles dans
-// la conversation d'implémentation. Si Google fait évoluer sa gamme, ajuster cette constante.
+
 const GEMINI_MODEL = 'gemini-3.1-flash-lite';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 

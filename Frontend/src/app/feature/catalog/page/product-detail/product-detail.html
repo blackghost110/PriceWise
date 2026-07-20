@@ -4,37 +4,82 @@
   <main class="main-content">
 
         <div class="section-header">
-          <div class="title-row">
-            <h2>Detail du produit : {{ product.name }} {{ product.brand }}
-              <button mat-button color="primary" (click)="location.back()">
+          <div class="hero-card">
+            <div class="hero-top">
+              <button mat-button color="primary" (click)="location.back()" class="back-btn">
                 <mat-icon>arrow_back_ios_new</mat-icon>
                 Retour aux produits
               </button>
-            </h2>
-            <app-report-button [targetType]="ReportTargetType.PRODUCT"
-                                [targetId]="product.productId.toString()"
-                                [label]="product.name + (product.brand ? ' ' + product.brand : '')"/>
-          </div>
-          <article class="article-info">
-            <div>
-              <p>Quantité : {{product.quantity}}{{product.unit}}</p>
-              @if (numberOfPrice() > 0) {
-                <p>Prix actuel : {{ product.prices[numberOfPrice() - 1].productPrice | currency: 'EUR' }} | {{ product.prices[numberOfPrice() - 1].referencePrice | currency: 'EUR' }}/{{referencePriceUnitLabel(product.unit)}}</p>
-              } @else {
-                <p>Prix actuel : Aucun prix enregistré</p>
+
+              <div class="hero-actions">
+                <app-report-button [targetType]="ReportTargetType.PRODUCT"
+                                    [targetId]="product.productId.toString()"
+                                    [label]="product.name + (product.brand ? ' ' + product.brand : '')"/>
+                <button matIconButton [matMenuTriggerFor]="ProductMenu" aria-label="Actions produit">
+                  <mat-icon>settings</mat-icon>
+                </button>
+                <mat-menu #ProductMenu="matMenu">
+                  <button mat-menu-item (click)="onOpenDialogEditProduct()">
+                    <mat-icon>edit</mat-icon>
+                    Modifier le produit
+                  </button>
+                  <button mat-menu-item (click)="onOpenDialogAddPrice(product)">
+                    <mat-icon>more_time</mat-icon>
+                    Ajouter un prix
+                  </button>
+                  @if (isAdmin()) {
+                    <button mat-menu-item (click)="onOpenDialogDeleteProduct()" style="color: darkred">
+                      <mat-icon style="color: darkred">delete</mat-icon>
+                      Supprimer ce produit
+                    </button>
+                  }
+                </mat-menu>
+              </div>
+            </div>
+
+            <h2 class="product-title">
+              {{ product.name }}
+              @if (product.brand) {
+                <span class="product-brand">{{ product.brand }}</span>
               }
-              <p>Nombre de prix enregistré : {{numberOfPrice()}}</p>
-            </div>
+            </h2>
 
-            <div>
-              <p>{{product.storeName}} - {{product.storeCity}} {{product.storePostalCode}}</p>
-              <p>{{product.storeStreet}}, {{product.storeNumber}}</p>
-            </div>
-            <div class="button-add-price">
-              <button matButton (click)="onOpenDialogAddPrice(product)"><mat-icon>more_time</mat-icon>Ajouter prix</button>
-            </div>
+            <div class="hero-grid">
+              <div class="info-card">
+                <div class="info-row">
+                  <mat-icon>inventory_2</mat-icon>
+                  <span>{{ formatQuantity(product.quantity, product.unit) }}</span>
+                </div>
 
-          </article>
+                @if (numberOfPrice() > 0) {
+                  <div class="price-block">
+                    <span class="price-block__price">{{ product.prices[numberOfPrice() - 1].productPrice | currency: 'EUR' }}</span>
+                    <span class="price-block__unit">{{ product.prices[numberOfPrice() - 1].referencePrice | currency: 'EUR' }}/{{ referencePriceUnitLabel(product.unit) }}</span>
+                  </div>
+                } @else {
+                  <p class="no-price">Aucun prix enregistré</p>
+                }
+
+                <p class="price-count">{{ numberOfPrice() }} prix enregistré{{ numberOfPrice() > 1 ? 's' : '' }}</p>
+              </div>
+
+              <div class="info-card">
+                <div class="info-row">
+                  <mat-icon>storefront</mat-icon>
+                  <span class="store-name">{{ product.storeName }}</span>
+                </div>
+                <p class="store-address">
+                  <mat-icon>place</mat-icon>
+                  {{ product.storeStreet }} {{ product.storeNumber }}, {{ product.storePostalCode }} {{ product.storeCity }}
+                </p>
+              </div>
+
+              <div class="info-card description-card">
+                <h3>Description</h3>
+                <p class="description-placeholder">Aucune description pour le moment.</p>
+              </div>
+            </div>
+          </div>
 
           <mat-form-field appearance="outline" class="white-background" style="margin-right: 14px">
             <mat-label>Période</mat-label>

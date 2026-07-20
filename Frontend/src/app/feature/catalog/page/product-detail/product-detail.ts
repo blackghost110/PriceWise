@@ -8,8 +8,9 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormField} from '@angular/material/form-field';
 import {MatLabel} from '@angular/material/form-field';
 import {MatOption, MatSelect} from '@angular/material/select';
-import {MatButton, MatFabButton} from '@angular/material/button';
+import {MatButton, MatFabButton, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {SearchProductDialog} from '@features/catalog/component/dialog/search-product-dialog/search-product-dialog';
 import {MatDialog} from '@angular/material/dialog';
 import {CurrencyPipe, Location} from '@angular/common';
@@ -17,16 +18,19 @@ import {AddPriceDialog} from '@features/catalog/component/dialog/add-price-dialo
 import {
   AddProductToListDialog
 } from '@features/catalog/component/dialog/add-product-to-list-dialog/add-product-to-list-dialog';
+import {UpdateProductDialog} from '@features/catalog/component/dialog/update-product-dialog/update-product-dialog';
 import {AppNode} from '@shared/route/node.enum';
 import {AppRoutes} from '@shared/route/app-routes.enum';
-import {referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
+import {formatQuantity, referencePriceUnitLabel} from '@features/catalog/data/dto/product.dto';
 import {SnackbarService} from '@shared/service/snackbar.service';
 import {ReportButton} from '@shared/component/report-button/report-button';
 import {ReportTargetType} from '@features/report/data/dto/report.dto';
+import {AuthService} from '@core/auth/auth.service';
+import {DialogService} from '@shared/component/confirm-dialog/dialog.service';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [BaseChartDirective, Header, Footer, FormsModule, MatFormField, MatLabel, MatOption, MatSelect, ReactiveFormsModule, MatFabButton, MatIcon, MatButton, CurrencyPipe, ReportButton],
+  imports: [BaseChartDirective, Header, Footer, FormsModule, MatFormField, MatLabel, MatOption, MatSelect, ReactiveFormsModule, MatFabButton, MatIcon, MatIconButton, MatMenu, MatMenuItem, MatMenuTrigger, MatButton, CurrencyPipe, ReportButton],
   templateUrl: './product-detail.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './product-detail.css'
@@ -36,6 +40,10 @@ export class ProductDetail implements OnInit{
   productService = inject(ProductService);
   dialog = inject(MatDialog);
   snackbar = inject(SnackbarService);
+  private authService = inject(AuthService);
+  private dialogService = inject(DialogService);
+
+  isAdmin = this.authService.isAdmin;
 
   // dynamic url
   productId = input.required<string>();
@@ -215,6 +223,8 @@ export class ProductDetail implements OnInit{
   onOpenDialogSearchProduct() {
     this.dialog.open(SearchProductDialog, {
       disableClose: true,
+      width: '900px',
+      maxWidth: '95vw',
       data: {selectedProduct: this.productDetail()!}
     });
   }
@@ -225,9 +235,31 @@ export class ProductDetail implements OnInit{
     });
   }
 
+  onOpenDialogEditProduct() {
+    this.dialog.open(UpdateProductDialog, {
+      data: {product: this.productDetail()!}
+    });
+  }
+
+  onOpenDialogDeleteProduct() {
+    this.dialogService.confirmDialog({
+      title: 'Êtes-vous sûr ?',
+      message: 'En confirmant cette action, vous supprimerez le produit, ainsi que tous ses prix.',
+      confirmCaption: 'Supprimer',
+      cancelCaption: 'Annuler'
+    }).subscribe((result) => {
+      if (result) {
+        this.productService.deleteProduct(this.productDetail()!.productId).subscribe(() => {
+          this.location.back();
+        });
+      }
+    });
+  }
+
 
   protected readonly AppNode = AppNode;
   protected readonly referencePriceUnitLabel = referencePriceUnitLabel;
+  protected readonly formatQuantity = formatQuantity;
   protected readonly ReportTargetType = ReportTargetType;
 }
 

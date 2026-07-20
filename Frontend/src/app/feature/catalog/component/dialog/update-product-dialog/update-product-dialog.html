@@ -1,0 +1,55 @@
+<form [formGroup]="productForm" autocomplete="off">
+
+  <h2 mat-dialog-title>Modifier le produit</h2>
+  <mat-dialog-content>
+    <p>Veuillez remplir ces champs</p>
+
+    <span class="mat-form-field-wrapper">
+      <mat-form-field>
+        <mat-label>Nom</mat-label>
+        <input matInput placeholder="Ex. Lait entier" formControlName="name" autocomplete="off" name="product-name"/>
+      </mat-form-field>
+    </span>
+    <span>
+      <mat-form-field>
+        <mat-label>Marque</mat-label>
+        <input matInput placeholder="Ex. Milbona" formControlName="brand" autocomplete="off" name="product-brand"/>
+      </mat-form-field>
+    </span>
+    <br>
+
+    <span class="mat-form-field-wrapper">
+      <mat-form-field>
+        <mat-label>Unité</mat-label>
+        <mat-select required formControlName="unit">
+          <mat-option value="g">Gramme</mat-option>
+          <mat-option value="ml">Millilitre</mat-option>
+          <mat-option value="p">Pièce</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </span>
+    <span>
+      <mat-form-field>
+        <mat-label>Quantité</mat-label>
+        <input matInput type="number" placeholder="0" class="arrow-display" formControlName="quantity"/>
+      </mat-form-field>
+    </span>
+    <br>
+
+    <mat-form-field>
+      <mat-label>Code EAN</mat-label>
+      <input matInput placeholder="Ex. 3017620422003" formControlName="ean" autocomplete="off" name="product-ean"/>
+    </mat-form-field>
+
+    @if (errorMessage()) {
+      <p class="control-error">{{ errorMessage() }}</p>
+    }
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button matButton (click)="onClose()">Fermer</button>
+    <button matButton (click)="onUpdateProduct()">Modifier produit</button>
+  </mat-dialog-actions>
+
+</form>

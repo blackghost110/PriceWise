@@ -3,6 +3,7 @@ import { forkJoin, Observable, tap} from 'rxjs';
 import {ProductDto} from '@features/catalog/data/dto/product.dto';
 import {ApiService} from '@shared/api/service/api.service';
 import {CreateProductPayload} from '@features/catalog/data/payload/create-product.payload';
+import {UpdateProductPayload} from '@features/catalog/data/payload/update-product.payload';
 import {ProductsAllDto} from '@features/catalog/data/dto/products-all.dto';
 import {ProductDetailDto} from '@features/catalog/data/dto/product-detail.dto';
 import {ProductLookupDto} from '@features/catalog/data/dto/product-lookup.dto';
@@ -97,11 +98,22 @@ export class ProductService {
     );
   }
 
-  deleteProduct(productId: number, storeId: number) {
+  deleteProduct(productId: number, storeId?: number) {
     return this.api.delete(`${ApiURI.PRODUCT_DELETE}/${productId}`).pipe(
       tap(() => {
-        this.getProducts(storeId).subscribe()
+        if (storeId) {
+          this.getProducts(storeId).subscribe()
+        }
         this.snackbar.show('Produit supprimé avec succès');
+      })
+    );
+  }
+
+  updateProduct(payload: UpdateProductPayload, productId: number) {
+    return this.api.put(`${ApiURI.PRODUCT_UPDATE}/${productId}`, payload).pipe(
+      tap(() => {
+        this.getProductDetail(productId.toString()).subscribe()
+        this.snackbar.show('Produit modifié avec succès');
       })
     );
   }

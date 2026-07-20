@@ -1,82 +1,96 @@
-
-
+<div class="dialog-header">
   <h2 mat-dialog-title>Comparer un produit</h2>
-  <mat-dialog-content class="mat-dialog-flex">
-    <div>
-      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px; margin-top: 20px;">
-        <mat-form-field appearance="outline">
-          <mat-label>Rechercher un produit</mat-label>
-          <input matInput
-                 placeholder="Nom ou marque..."
-                 [value]="searchTerm()"
-                 (input)="onSearchChange($event.target!.value)">
-          @if (searchTerm()) {
-            <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
-          } @else {
-            <mat-icon matIconSuffix>search</mat-icon>
-          }
-        </mat-form-field>
+  <p class="dialog-subtitle">Sélectionnez jusqu'à 8 produits à afficher sur le graphique de comparaison.</p>
+</div>
 
-      </div>
+<mat-dialog-content class="compare-content">
 
-      <div class="article-container">
-        @for (product of filteredProducts(); track product.productId) {
-          <article class="card" (click)="onAddToSelectedProducts(product)">
-            <h3>{{ product.name }}<small> ({{ product.quantity }}{{ product.unit }})</small>
-              @if (product.brand) {
-                -  <small>{{ product.brand }}</small>
-              }
-              <br>
-              <em><small>{{ product.storeName }} {{ product.storeCity }} {{ product.storePostalCode }} </small> </em>
-
-            </h3>
-            <small>{{ product.storeStreet }}, {{ product.storeNumber }}</small>
-            <button matIconButton style="float: right"><mat-icon>add</mat-icon></button>
-
-
-          </article>
-        }
-      </div>
-
-    </div>
-    <div>
-      <h3>Produits choisis</h3>
-      @if (selectedProducts().length === 8) {
-        <p style="color: red">Vous ne pouvez comparer que huit produits</p>
+  <div class="compare-column">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Rechercher un produit</mat-label>
+      <input matInput
+             placeholder="Nom, marque, magasin..."
+             [value]="searchTerm()"
+             (input)="onSearchChange($event.target!.value)">
+      @if (searchTerm()) {
+        <mat-icon class="icon-hover" matIconSuffix (click)="onClearSearch()">close</mat-icon>
+      } @else {
+        <mat-icon matIconSuffix>search</mat-icon>
       }
-      <div class="article-container">
-        @for (product of selectedProducts(); track $index) {
-          <article class="card">
-            <p>{{ product.name }}<small>({{ product.quantity }}{{ product.unit }})</small>
-              @if (product.brand) {
-                -  <small>{{ product.brand }}</small>
-              }
-              <em><small> {{ product.storeName }} {{ product.storeCity }} {{ product.storePostalCode }} </small> </em>
+    </mat-form-field>
 
-            </p>
-            <p class="chosen-product-delete"><small>{{ product.storeStreet }}, {{ product.storeNumber }}</small>
-              @if ($index !== 0) {
-                <button matIconButton (click)="onRemoveFromSelectedProducts(product)"><mat-icon>clear</mat-icon></button>
-              }
-            </p>
+    <div class="product-list">
+      @if (filteredProducts()?.length) {
+        @for (product of filteredProducts(); track product.productId) {
+          <article class="compare-card" (click)="onAddToSelectedProducts(product)">
+            <div class="compare-card__main">
+              <div class="compare-card__name">
+                {{ product.name }}
+                @if (product.brand) {
+                  <span class="compare-card__brand">{{ product.brand }}</span>
+                }
+              </div>
+              <div class="compare-card__meta">{{ formatQuantity(product.quantity, product.unit) }}</div>
+              <div class="compare-card__store">
+                <mat-icon>storefront</mat-icon>
+                {{ product.storeName }} {{ product.storeCity }} - {{ product.storeStreet }}, {{ product.storeNumber }}
+              </div>
+            </div>
+            <button matIconButton class="compare-card__add" aria-label="Ajouter à la comparaison">
+              <mat-icon>add</mat-icon>
+            </button>
           </article>
         }
-      </div>
-
-
+      } @else {
+        <div class="empty-state">
+          <div class="empty-state__icon">🔎</div>
+          <div class="empty-state__title">Aucun produit trouvé</div>
+        </div>
+      }
     </div>
+  </div>
 
+  <div class="compare-column">
+    <div class="selected-header">
+      <h3>Produits sélectionnés</h3>
+      <span class="selected-count" [class.selected-count--max]="selectedProducts().length === 8">{{ selectedProducts().length }}/8</span>
+    </div>
+    @if (selectedProducts().length === 8) {
+      <p class="limit-warning">Vous ne pouvez comparer que huit produits</p>
+    }
 
-  </mat-dialog-content>
+    <div class="product-list">
+      @for (product of selectedProducts(); track product.productId; let i = $index) {
+        <article class="compare-card compare-card--selected">
+          <div class="compare-card__main">
+            <div class="compare-card__name">
+              {{ product.name }}
+              @if (product.brand) {
+                <span class="compare-card__brand">{{ product.brand }}</span>
+              }
+              @if (i === 0) {
+                <span class="main-badge">Produit principal</span>
+              }
+            </div>
+            <div class="compare-card__meta">{{ formatQuantity(product.quantity, product.unit) }}</div>
+            <div class="compare-card__store">
+              <mat-icon>storefront</mat-icon>
+              {{ product.storeName }} {{ product.storeCity }} - {{ product.storeStreet }}, {{ product.storeNumber }}
+            </div>
+          </div>
+          @if (i !== 0) {
+            <button matIconButton class="compare-card__remove" (click)="onRemoveFromSelectedProducts(product)" aria-label="Retirer">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </article>
+      }
+    </div>
+  </div>
 
-  <mat-dialog-actions>
+</mat-dialog-content>
 
-
-      <button matButton (click)="onClose()">Annuler</button>
-      <button matButton (click)="onAddCompare()">Comparer produit</button>
-
-  </mat-dialog-actions>
-
-
-
-
+<mat-dialog-actions>
+  <button matButton (click)="onClose()">Annuler</button>
+  <button matButton="elevated" (click)="onAddCompare()">Comparer{{ selectedProducts().length > 1 ? ' (' + selectedProducts().length + ')' : '' }}</button>
+</mat-dialog-actions>
